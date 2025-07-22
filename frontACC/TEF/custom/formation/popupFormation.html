@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  	<meta charset="utf-8">
+  	<title>Popup</title>
+  	<script src="../../js/jquery-3.7.1.min.js"></script>
+	<script language="javascript" src="../../Tools/ToolsCommon80.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="popupFormation.css">
+</head>
+<body style="display:block!important">
+	
+	<script>
+		// Système de gestion des onglets
+		function openTab(evt, tabName) {
+			$('.tabcontent').hide();
+			$('.tablinks').removeClass('active');
+			$('#' + tabName).show();
+			$(evt.currentTarget).addClass('active');
+		}
+	</script>
+
+	<h2>Point de livraison</h2>
+
+	<!-- Onglets pour les détails du PDL, les projets et les fonctions -->
+	<div class="tabs">
+		<button class="tablinks active" onclick="openTab(event, 'tab1')">Détails PDL</button>
+		<button class="tablinks" onclick="openTab(event, 'tab2')">Projets</button>
+		<button class="tablinks" onclick="openTab(event, 'tab3')">Fonctions</button>
+	</div>
+	<!-- Contenu des onglets -->
+	<!-- Onglet 1 : Détails du PDL -->
+	<div id="tab1" class="tabcontent" style="display:block;">
+		<table>
+			<tbody id="result"></tbody>
+		</table>
+	</div>
+	<!-- Onglet 2 : Projets -->
+	<div id="tab2" class="tabcontent" style="display:none;">
+		<div id="div-projets">
+			<table id="table-projets"></table>
+		</div>
+	</div>
+	<!-- Onglet 3 : Fonctions -->
+	<div id="tab3" class="tabcontent" style="display:none;">
+		<div id="div-fonctions">
+			<p id="titreFonctions">Fonctions disponibles :</p>
+			<ul class="fonctions">
+				<li><p>Déplacer le point sélectionné</p><input class="bouton" type="button" value="Déplacer" onclick="deplacer();" /></li>
+				<li><p>Créer un périmètre autour du point sélectionné</p><input class="bouton" type="button" value="Périmètre" onclick="perimetre();" /></li>
+			</ul>
+		</div>
+	</div>
+
+	<!-- Bouton fermer et version du logiciel (aucun intérêt de le mettre là mais il y est) -->
+	<footer>
+		<p id="details"></p>
+		<input id="fermer" class="bouton" type="button" value="Fermer" onclick="parent.closeIFrame();" /> 
+	</footer>
+	<script>
+
+	// Affiche les données du PDL dans le tableau
+	let tabKey = [
+		"id_pdl_geo",
+		"conso2023",
+		"conso2022",
+		"nom_tarif",
+		"invariant",
+		"owner",
+		"numero_rae_pce",
+		"puissance_souscrite_reduite",
+		"nom_patrimony"
+	];
+	// Renommage des champs pour l'affichage
+	let champs = {
+		id_pdl_geo: "ID PDL",
+		conso2023: "Consommation 2023",
+		conso2022: "Consommation 2022",
+		nom_tarif: "Nom du tarif",
+		invariant: "Invariant",
+		owner: "Propriétaire",
+		numero_rae_pce: "Numéro RAE PCE",
+		puissance_souscrite_reduite: "Puissance souscrite réduite",
+		nom_patrimony: "Nom du patrimoine"
+	};
+
+	function addItem(item) {
+		// Ajoute les données du PDL dans le tableau
+		// Pour ajouter de nouveaux champs, il faut les ajouter dans tabKey et champs
+		// Et les ajouter dans WS_Formation/formation.aspx.cs (requête SQL et JSON)
+		let retour = "<tr><td class=\"htitre\">Champs</td><td class=\"htitre\">Valeurs</td></tr>";
+		Object.entries(champs).forEach(([key, value]) => {
+			let champ = value;
+			let valeur = item[key];
+			console.log("champ", champ, "valeur", valeur);
+			if (valeur === undefined || valeur === null || valeur === "") {
+				valeur = "-";
+			}
+			retour += "<tr><td class=\"value\">" + champ + "</td><td class=\"key\">" + valeur + "</td></tr>";
+		});
+		$("#result").append(retour);
+	}
+
+	
+	function ajouter_point(id_bdd, x, y, compteur) {
+		// Intègre les données id, x, y dans le dictionnaire donnees
+		console.log("ajouter_point", id_bdd, x, y, "Compteur :", compteur);
+		console.log("compteur", compteur);
+		let nom_point = "point_" + compteur;
+		console.log("nom_point", nom_point);
+		donnees[nom_point] = {
+			id: id_bdd,
+			x: x,
+			y: y
+		};
+		console.log("donnees", donnees);
+	}
+
+
+    function deplacer() {
+		// Fonction pour déplacer le point sélectionné
+        console.log("Déplacement du point");
+    	if (layerPDL != undefined) {
+    		if (itemPopup == undefined) {
+    			g_asyncObj = layerPDL
+    				.ExecuteQueryAsync(
+    					"id_pdl_geo='" + id + "'", 1, "", SGWorld.Creator.GeometryCreator.CreatePolygonGeometry(null)
+    				)
+    				.OnResolve((features) => {
+    					itemPopup = features.Item(0);
+    					if (itemPopup) {
+    						modeDeplacer = true;
+    					} else {
+    						console.error("itemPopup n'a pas été initialisé.");
+    					}
+    				});
+    		} else {
+    			modeDeplacer = true;
+    		}
+    	}
+	}
+
+	function perimetre() {
+		// Ajoute un périmètre autour du point et récupère les points dans le périmètre
+
+		var angle = 360/32;
+		var x_i = 0;
+		var y_i = 0;
+		var distance = 0.005;
+		var points = [];
+		var compteur = 0;
+		if (donnees != {}) {donnees = {};}
+		console.log("angle", angle);
+		try {
+			console.log("g_asyncObj", g_asyncObj);
+			g_asyncObj = undefined;
+
+		} catch (error) {
+			console.log("Aucun g_asyncObj défini, on le crée");
+		}
+		console.log("id", id);
+		if (id % 100000 == 0) {
+			console.log("ID est un ID de périmètre, on le divise par 100000");
+			id = id / 100000; // Si l'id est multiplié par 100000, on le divise pour retrouver l'id d'origine
+		} else {
+			console.log("ID n'est pas un ID de périmètre, on le laisse tel quel");
+		}
+
+		g_asyncObj = layerPDL
+    		.ExecuteQueryAsync(
+    			"id_pdl_geo='" + id + "'", 1, "", SGWorld.Creator.GeometryCreator.CreatePolygonGeometry(null)
+    		)
+    		.OnResolve((features) => {
+				console.log("features", features);
+				console.log("features.Item(0)", features.Item(0));
+    			centroide = features.Item(0);
+				var x = centroide.Geometry.X;
+				var y = centroide.Geometry.Y;
+				console.log("gasyncObj", g_asyncObj);
+				console.log("centroide", centroide);
+				// Crée 32 points à équidistance autour du point sélectionné, formant un cercle
+    			for (let i = 0; i < 32; i++) {
+					x_i = x + distance * Math.cos((angle * i) * (Math.PI / 180));
+					y_i = y + distance * Math.sin((angle * i) * (Math.PI / 180));
+					console.log("x :", x_i, "y :", y_i);
+					points.push(x_i);
+					points.push(y_i);
+					points.push(0);
+				}
+				console.log("points", points);
+				// Crée la bordure du périmètre
+				var linearRing = SGWorld.Creator.GeometryCreator.CreateLinearRingGeometry(points);
+				// Crée le polygone périmètre
+				var polygon = SGWorld.Creator.GeometryCreator.CreatePolygonGeometry(linearRing, null);
+				console.log("linearRing", linearRing);
+				console.log("polygon", polygon);
+				var elements = layerPDL.ExecuteSpatialQuery(polygon, 2);
+				console.log("elements", elements);
+				console.log("element 000000000000000000000000000000000000000000000000000000000000000000", elements.Item(0));
+				console.log("POINR", elements.Item(0).DataSourceFeatureID);
+				for (let i = 0; i < elements.Count; i++) {
+					elements.Item(i).Highlight = true;
+					console.log("Point n°"+ (i+1) +" :", elements.Item(i).Geometry.X, elements.Item(i).Geometry.Y, "ID :", parseInt(elements.Item(i).DataSourceFeatureID, 10));
+					// Ajoute les points et les id dans le dictionnaire donnees
+					id = parseInt(elements.Item(i).DataSourceFeatureID, 10);
+
+					// Puissiez-vous me pardonner pour ce que je m'apprête à faire
+					// Si ID est l'ID centroïde du périmètre, id*100000 pour pouvoir
+					// le différencier lorsqu'il est envoyé au parent
+					if (id == centroide.DataSourceFeatureID) {
+						id = id * 100000;
+						console.log("NOUVEL ID :", id);
+					}
+					ajouter_point(id, elements.Item(i).Geometry.X, elements.Item(i).Geometry.Y, compteur);
+					compteur++;
+				}
+				console.log("dict", donnees);
+
+
+				console.log("DEBUT");
+				// Envoie les données au parent
+				try {
+					window.parent.postMessage({
+						url: "http://localhost:8000/custom/formation/tableau.html",
+						donnees: donnees
+					}, "*");
+					console.log("Message envoyé au parent.");
+				} catch (error) {
+					console.error("Erreur lors de l'envoi du message :", error);
+				}
+				console.log("FIN");
+    		});
+		// var r = featureLayer.ExecuteSpatialQuery(point, 1);
+	}
+
+	function OnLeftClick(Flags, X, Y) {
+		// Fonction pour déplacer le point sélectionné
+
+		console.log("mode deplacer",modeDeplacer);
+		if (!modeDeplacer) return;
+
+		const obj = SGWorld.Window.PixelToWorld(X, Y, -1);
+		//if (!obj || !obj.Position) return;
+
+		const coordArray = [
+			parseFloat(obj.Position.X.toString()),
+			parseFloat(obj.Position.Y.toString()),
+			0
+		];
+
+		const newGeometry = SGWorld.Creator.GeometryCreator.CreatePointGeometry(coordArray);
+
+		try {
+			if (itemPopup) {
+				console.log("attributs :", attributs.nom_tarif);
+
+				var body = {
+					id: id_int,
+					x: newGeometry.X,
+					y: newGeometry.Y
+				};
+				var jsonBody = JSON.stringify(body);
+				console.log("jsonBody", jsonBody);
+
+				$.ajax({
+					type: "POST",
+					url: "http://localhost:5297/pdl/edit",
+					data: jsonBody,
+					contentType: "application/json",
+					dataType: "json",
+					success: function (response) {
+						console.log("Réponse du serveur :", response);
+					},
+					error: function (xhr, status, error) {
+						console.error("Erreur lors de la requête :", error);
+						console.error("Statut :", status);
+						console.error("Détails de la requête :", xhr);
+					}
+				});
+
+				//layerPDL.SelectedFeatures.Clear();
+				//layerPDL.SelectedFeatures.Add(itemPopup.ID);
+				console.log("itemPopup", itemPopup);
+				console.log("layerPDL", layerPDL);
+				console.log("Ancien point :", itemPopup.Geometry);
+                var oldGeometry = itemPopup.Geometry;
+				console.log("old geom", oldGeometry);
+                oldGeometry.StartEdit();
+                console.log("START EDIT");
+				oldGeometry.X = newGeometry.X;
+                oldGeometry.Y = newGeometry.Y;
+                var newGeometry_2 = oldGeometry.EndEdit();
+                //console.log("3 itemPopup.Geometry XY:", oldGeometry.X, oldGeometry.Y);
+                itemPopup.Geometry = newGeometry_2;
+                console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+				console.log("Nouveau point :", itemPopup.Geometry);
+				layerPDL.SaveAsync()
+                    .OnResolve(() => {
+                        console.log("Sauvegarde réussie.");
+                        //layerPDL.Refresh(0);
+                    })
+                    .OnReject(() => {
+                        console.error("Erreur lors de la sauvegarde.");
+                    });
+				
+				console.log("Point déplacé avec succès.");
+			}else{
+				console.log("itemPopup null");
+			}
+		} catch (err) {
+			console.error("Erreur lors du déplacement :", err);
+		}
+	
+		// Fin du mode déplacement
+		modeDeplacer = false;
+	}
+
+
+    function OnRButtonUp(flag, X, Y) {
+      modeDeplacer = false;
+    }
+
+	function zoom(x, y) {
+		// Fonction pour zoomer sur le point sélectionné
+		let pos = SGWorld.Creator.CreatePosition(x, y, 0, 2, 0, -75, 0, 1000);
+		console.log("Position pour le zoom :", pos);
+		SGWorld.Navigate.FlyTo(pos, 0);
+	}
+
+    let id;
+    let SGWorld;
+    let layerPDL = undefined;
+    let itemPopup = undefined;
+	let centroide = undefined;
+    let modeDeplacer = false;
+	let attributs = undefined;
+	let donnees = {};
+
+    $(document).ready(function () {
+		console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    	id = new URLSearchParams(document.location.search).get("id");
+		id_int = parseInt(id, 10);
+
+		// Ajout de la fonction de zoom dans l'onglet des fonctions
+    	$.get(
+    		"https://igogeovendee.igo.fr/ws_Formation/formation.aspx?id=" + id,
+    		(retour) => {
+    			if (retour.status == "OK") {
+					console.log("Retour de la requête :", retour);
+    				addItem(retour.list[0]);
+					attributs = retour.list[0];
+					let point_x = parseFloat(attributs.x);
+					let point_y = parseFloat(attributs.y);
+					let pos = SGWorld.Creator.CreatePosition(point_x, point_y, 0, 2, 0, -75, 0, 1000);
+					console.log("Zoooooom :", pos);
+					SGWorld.Navigate.FlyTo(pos, 0);
+					$(".fonctions").append(`
+						<li><p>Centrer sur le point sélectionné</p><input class="bouton" type="button" value="Centrer" onclick="zoom(${attributs.x}, ${attributs.y});" /></li>
+					`);
+					console.log("Attributs récupérés :", attributs);
+    			} else {
+    				console.log("Erreur", retour);
+    			}
+    		}
+    	);
+
+		
+		
+
+    	SGWorld = parent.SGWorld;
+		console.log("SGWorld:", SGWorld);
+    	$("body").show();
+    	$("#details").append(
+    		"Version " + SGWorld.Version.Major
+    	);
+    	setTimeout(2000, () => {
+    		$("body").show();
+    	});
+
+    	let idLayer = SGWorld.ProjectTree.FindItem("cadastre_solaire.nopacc_pdl_geo.440764");
+    	if (idLayer != SGWorld.ProjectTree.RootID) {
+    		layerPDL = SGWorld.ProjectTree.GetLayer(idLayer);
+			layerPDL.LoadAsync().OnResolve(() => {
+				console.log("La couche est chargée.");
+    	}).OnReject(() => {
+				console.error("La couche n'a pas pu être chargée.");
+			});
+		} else {
+			console.error("La couche n'existe pas.");
+		}
+
+    	if (layerPDL && layerPDL.Editable) {
+    		console.log("La couche est modifiable.");
+    	} else {
+    		console.error("La couche n'est pas modifiable.");
+    	}
+
+    	//SGWorld.AttachEvent("OnFrame", OnFrame);
+		SGWorld.AttachEvent("OnLButtonClicked", OnLeftClick);
+    	SGWorld.AttachEvent("OnRButtonUp", OnRButtonUp);
+
+		console.log("creation de la geometrie");
+
+		// Sert à rien je crois
+		let vertices = [0.0, 0.0, 0.0];
+    	let testGeometry = SGWorld.Creator.GeometryCreator.CreatePointGeometry(vertices);
+		console.log("testGeometry:", testGeometry);
+    	
+		try {
+    		//testGeometry.StartEdit();
+    		testGeometry.X = 100;
+    		testGeometry.Y = 20;
+    		//testGeometry = testGeometry.EndEdit();
+    		console.log("Test de géométrie réussi :", testGeometry);
+    	} catch (error) {
+    		console.error("Erreur lors du test de géométrie :", error);
+    	}
+    });
+
+	function openSavedTableau(nom) {
+		// Fonction pour ouvrir un projet sauvegardé
+		console.log("Ouverture du tableau pour le projet :", nom);
+		donnees = localStorage.getItem(`sauvegarde_${nom}`);
+		window.parent.postMessage({
+			url: "http://localhost:8000/custom/formation/tableauProjet.html",
+			donnees: donnees,
+			nom: nom
+		}, "*");
+	}
+	
+	function handleClick(nom) {
+		// Fonction pour gérer le clic sur la croix de suppression
+		if (confirm("Voulez-vous vraiment supprimer ce projet ?")) {
+			// Code à exécuter si l'utilisateur clique sur OK
+			localStorage.removeItem("sauvegarde_"+nom);
+			$(document).on('click', '.croix-projet', function () {
+				$(this).closest('tr').remove();
+			});
+			alert("Le projet a été supprimé avec succès.");
+			// Tu peux remplacer cette ligne par n'importe quel code
+		} else {
+			// Rien ne se passe si l'utilisateur clique sur Annuler
+		}
+	}
+
+
+	function exportExcel(nom) {
+		// Fonction pour exporter les données du projet en fichier Excel
+
+		console.log("Exportation du projet :", nom);
+		const data_ = localStorage.getItem(`sauvegarde_${nom}`);
+
+		if (!data_) {
+			console.error("Aucune donnée trouvée pour le projet :", nom);
+			return;
+		}
+
+		let jsonObject;
+		try {
+			jsonObject = JSON.parse(data_);
+		} catch (e) {
+			console.error("Erreur de parsing JSON :", e);
+			return;
+		}
+
+		const dataSheet = XLSX.utils.json_to_sheet(jsonObject.data || []);
+		const deprecieSheet = XLSX.utils.json_to_sheet(jsonObject.deprecie || []);
+
+		const workbook = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(workbook, dataSheet, "Compteurs dans le périmètre");
+		XLSX.utils.book_append_sheet(workbook, deprecieSheet, "Compteurs exclus du projet");
+
+		XLSX.writeFile(workbook, `${nom}.xlsx`);
+	}
+
+
+
+	Object.keys(localStorage).forEach(function(key) {
+		// Parcourt les clés du localStorage pour trouver les projets sauvegardés
+		// et les afficher dans le tableau
+
+	    if (key.startsWith("sauvegarde_")) {
+			let nb_max_char = 17;
+			nom_original = key.replace("sauvegarde_", "");
+			nom = nom_original.replace(/_/g, " ");
+			nom_coupe = nom.slice(0, nb_max_char);
+			nom = nom_coupe + (nom.length > nb_max_char ? "..." : "");
+	        const tr = `
+	            <tr>
+	                <td style="width: 100%;">
+						<button
+							class="ouvrir-projet"
+							onclick="openSavedTableau('${nom_original}');
+						">
+						${nom}
+						</button>
+					</td>
+					<td>
+	                    <button
+							class="fleche-projet"
+							onclick="exportExcel('${nom_original}')"
+							style="
+								background: none;
+								border: none;
+								cursor: pointer;
+							">
+							&#8682;
+						</button>
+	                </td>
+	                <td>
+	                    <button
+							class="croix-projet"
+							onclick="handleClick('${nom_original}')"
+							style="
+								background: none;
+								border: none;
+								cursor: pointer;
+							">
+							&#128931;
+						</button>
+	                </td>
+	            </tr>
+	        `;
+	        $("#table-projets").append(tr);
+	    }
+	});
+
+	const liste_croix = document.querySelectorAll('.croix-projet');
+	const liste_projets = document.querySelectorAll('.ouvrir-projet');
+	const liste_fleches = document.querySelectorAll('.fleche-projet');
+
+	// Ajoute des classes aux lignes des projets lorsque les croix de suppression et les flèches d'exportation sont survolées
+	// Les classes sont utilisées pour styliser les lignes dans le CSS
+	liste_croix.forEach((croix, index) => {
+		const projet = liste_projets[index];
+		croix.addEventListener('mouseenter', () => {
+			projet.classList.add('supprimer-projet');
+		});
+		croix.addEventListener('mouseleave', () => {
+			projet.classList.remove('supprimer-projet');
+		});
+	});
+	liste_fleches.forEach((fleche, index) => {
+	  	const projet = liste_projets[index];
+	  	fleche.addEventListener('mouseenter', () => {
+	    	projet.classList.add('exporter-projet');
+		});
+		fleche.addEventListener('mouseleave', () => {
+	    	projet.classList.remove('exporter-projet');
+		});
+	});
+
+
+	// Écouteur d'événement pour rafraîchir la page lorsque le message "refresh" est reçu
+	window.addEventListener("message", function (event) {
+		if (event.data.message === "refresh") {
+			console.log("Message de rafraîchissement reçu, rechargement de la page.");
+			location.reload();
+		}
+	});
+
+
+	    /*let sauvMinfos = { x: 0, y: 0 };
+    let i = 20;
+    function OnFrame() {
+      if (modeDeplacer == true) {
+        let minfos = SGWorld.Window.GetMouseInfo();
+        if (minfos != undefined && minfos.X != 0 && minfos.Y != 0) {
+          // Affiche les coordonnées dans le div
+          document.getElementById("mouse-coordinates").innerText =
+            "X: " + minfos.X + ", Y: " + minfos.Y;
+
+          if (sauvMinfos.x != minfos.X || sauvMinfos.y != minfos.Y) {
+            if (i >= 20) {
+            	// refresh each 20 frames
+            	sauvMinfos.x = minfos.X;
+            	sauvMinfos.y = minfos.Y;
+            	let obj = SGWorld.Window.PixelToWorld(minfos.X, minfos.Y, -1);
+            	if (
+            		obj != undefined &&
+            		obj.Position != undefined &&
+            		obj.Position.X != 0 &&
+            		obj.Position.Y != 0
+            	) {
+            		try {
+            		  	if (itemPopup && itemPopup.Geometry) {
+							//console.log("obj:", obj);
+							//console.log("itemPopup.Geometry:", itemPopup.Geometry);
+							//itemPopup.Geometry.StartEdit();
+							//console.log("START EDIT");
+							//console.log("itemPopup.Geometry XY:", itemPopup.Geometry.X, itemPopup.Geometry.Y);
+							//console.log("obj.Position XY:", obj.Position.X, obj.Position.Y);
+							//itemPopup.Geometry.X = 0;
+							//itemPopup.Geometry.Y = 0;
+							console.log("OBJ POS X", parseFloat(obj.Position.X.toString()));
+							console.log("OBJ POS Y", parseFloat(obj.Position.Y.toString()));
+
+							console.log("-------------------------------------------------------------------------");
+							const coordArray = [ 
+								parseFloat(obj.Position.X.toString()), 
+								parseFloat(obj.Position.Y.toString()), 
+								0
+							];
+							console.log("newPosition:", coordArray);
+							const newGeometry = SGWorld.Creator.GeometryCreator.CreatePointGeometry(coordArray);
+							console.log("newGeometry:", newGeometry);
+							itemPopup.Geometry = newGeometry;
+							console.log("itemPopup.Geometry:", itemPopup.Geometry);
+							console.log("-------------------------------------------------------------------------");
+							
+							console.log("LE X ET LE Y:", itemPopup.Geometry.X, itemPopup.Geometry.Y);
+							//console.log("2 itemPopup.Geometry XY:", itemPopup.Geometry.X, itemPopup.Geometry.Y);
+							//console.log("2 obj.Position XY:", obj.Position.X, obj.Position.Y);
+            		  	  	////itemPopup.Geometry = itemPopup.Geometry.EndEdit();
+							//console.log("3 itemPopup.Geometry XY:", itemPopup.Geometry.X, itemPopup.Geometry.Y);
+							//console.log("3 obj.Position XY:", obj.Position.X, obj.Position.Y);
+            		  	} else {
+            		  	  	console.error("itemPopup ou itemPopup.Geometry n'est pas défini.");
+            		  	}
+            		} catch (error) {
+            		  	console.error("Erreur lors de l'édition de la géométrie :", error);
+            		}
+            	}
+            	console.log("itemPopup:", itemPopup);
+            	if (itemPopup) {
+            		console.log("itemPopup.Geometry:", itemPopup.Geometry);
+            		if (itemPopup.Geometry) {
+            		  	console.log("IsEditable:", itemPopup.Geometry.Editable);
+            		  	console.log("point X:", itemPopup.Geometry.X);
+            		  	console.log("point Y:", itemPopup.Geometry.Y);
+						console.log("souris X:", obj.Position.X);
+						console.log("souris Y:", obj.Position.Y);
+            		}
+            	}
+            	i++;
+            } else {
+            	i = 0;
+            }
+          }
+        }
+      }
+    }*/
+  </script>
+</body>
+</html>
+

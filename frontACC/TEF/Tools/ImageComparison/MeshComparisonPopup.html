@@ -1,0 +1,512 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=11" />
+    <title>ToolTitle</title>
+    <script type="text/javascript" src="range.js"></script>
+    <script type="text/javascript" src="timer.js"></script>
+    <script type="text/javascript" src="slider.js"></script>     
+    <script language="javascript" src="../jquery/jquery-3.1.1.min.js"></script>
+    <script language="javascript" src="../ToolsCommon80.js"></script>
+ 
+    <link type="text/css" rel="StyleSheet" href="slider.css" />  
+    <link rel="StyleSheet" href="../Style80.css" type="text/css">
+</head>
+
+<body leftmargin="0.067rem" topmargin="0.067rem" marginwidth="0" marginheight="0" style="border: 0rem;overflow:hidden;" id="Body"  class="hideUntillTranslated"  onunload="exitTool();">
+        <table id="filterTableID" class="tableSpacer" border="0" width="100%" >
+                <tr>
+                    <td>
+                        
+                        <button id="filterID0" class="MenuButtonSmallRoundOutline MenuButtonSmallRoundOutlineChecked i18n" onclick="setFiler(0);" >   Text_Mesh</button>
+                        <button id="filterID1" class="MenuButtonSmallRoundOutline MenuButtonSmallRoundOutlineChecked i18n" onclick="setFiler(1);" >   Text_PointCloud</button>
+                        <button id="filterID2" class="MenuButtonSmallRoundOutline MenuButtonSmallRoundOutlineChecked i18n" onclick="setFiler(2);" >   Text_Imagery</button>
+                    </td>
+                </tr>
+                <tr id="refresh" style="display:none">
+                    <td align="right" >
+                        <span  onclick="RefreshList();" class="i18n s9 link underline" >Text_Refresh</span>
+                    </td>
+                </tr>
+        </table>
+        <div id="topDiv">
+        <table   border="0" width="100%" >
+       
+        <td>
+                <select id="List1ID" class="selectNew"  style="width:calc(50% - 1.2rem); " ></select>
+                <img class="img16"  src=".\images\swipeicon.png" alt="" />
+                <select id="List2ID"  class="selectNew"   style="width:calc(50% - 1.2rem); " >     </select> 
+        </td>
+        </tr>       
+    </table>
+        </div>
+
+        <div id="StartDiv" >
+                <table    class="tableSpacer" width="100%" >
+                    <tr>
+                        <td align="center" class="s9" >
+                                <button id="StartID" class="MenuButtonSmallRoundOutline i18n" onclick="StartSwipe(-1,-1);" >   <span class="i18n">Text_StartSwipe</span></button>
+                        </td>
+                    </tr>
+                </table>
+        </div>
+
+        <div id="SwipeDiv" >
+                <table   width="100%"  >
+                    <tr>
+                            <td style="width:16rem">
+                                    <select id="LayerMode0"  class="selectNew"   style="width:11rem; display:none;" onchange="SetLayerRenderMode(0,-1);">
+                                        <option class="i18n" value=0 >Text_Texture</option>
+                                        <option class="i18n" value=32768 >Text_TextureWire</option>
+                                        <option class="i18n" value=3 >Text_Solid</option>
+                                        <option class="i18n" value=32771 >Text_SolidWire</option>
+                                        <option class="i18n" value=2 >Text_Xray</option>
+                                    </select>
+                                </td>
+                                <td  >
+                                    <select id="LayerMode1"   class="selectNew"  style="width:11rem; display:none;" onchange="SetLayerRenderMode(1,-1);">
+                                        <option class="i18n" value=0 >Text_Texture</option>
+                                        <option class="i18n" value=32768 >Text_TextureWire</option>
+                                        <option class="i18n" value=3 >Text_Solid</option>
+                                        <option class="i18n" value=32771 >Text_SolidWire</option>
+                                        <option class="i18n" value=2 >Text_Xray</option>
+                                    </select>
+                            </td>  
+                            </tr>
+                   
+                    </table>
+                                    
+        <table  width="100%" height="3.33rem" style="background-color: #f5f5f5;">
+        <tr valign="center">
+            <td  style=" width:5.33rem;" align="center"><button id="FreezeID" style="width: 100%;" class="MenuButtonSmallRoundOutline i18n" onclick="Freeze();" >Text_Freeze</button></td>
+            <td id ="sliderTD" style=" width:20rem;" align="left">
+                <input type="range" id="swipeSlider" min="0" max="99" value="50" oninput="SetClipTrans($('#swipeSlider').val(),false);"/>
+            <td style="width:2.33rem;" align="left"> <span id="clipSpan" class="s9"  >100%</span></td>
+            <td style="width:2.33rem;" align="center"  class="SectionText"  onclick="autoPlay(true);" ><img id="clipIcon" src="Images/autoOff.png" alt="" align="absmiddle" class="img16 link"/></td>
+        </tr>
+        </table>
+    </div>
+    
+
+<script language="JavaScript">
+
+var gDebug = true;
+var gStartSwipe = false;
+var gLastLevel = 100;
+var gAutoOnOff = false;
+var gCliptimeout;
+var gClipUpdatetimeout;
+var gClipPosition;
+var gFreeze = false;
+var gInSwipe=false;
+var gCameraPos;
+var gSliderFreezeValue=0;
+var gBaseTerrain = -999;
+var gLayersID = [];
+var gLayersObj = [null,null];
+var gLayersVisibility = [true,true];
+var gLayersRenderMode = [0,0];
+var gLayersType = [];
+var gImageryLayerGeometry = [];
+var gFilters = [true,true,true];
+var gObjectTypes = [38,28,26]; //3D Mesh layer, point cloud, imagery layer
+var gOriginalDrawOrder = [-10,-10];
+var gClient = "";
+var SGWorld=null;
+
+//--------------
+//  Init - called automatically when the SGLang is ready
+function Init() {
+    SGWorld = initSGWorld();
+    if (TEF) {
+        $("#sliderTD").css ('width','13.3rem');
+    }
+    else {
+        $("#refresh").show();
+
+    }
+
+    SGWorld.Window.SetInputMode(1, abspath() + "/cursor_wait.cur");
+
+    var ObjectID = "";
+    $("#StartDiv").show();
+    $("#SwipeDiv").hide();
+    gClient = GetParamValue("client", "");
+
+    RefreshList();
+   
+    gLayersID[0]  = GetParamValue("Layer1ID", "-1");
+    gLayersID[1]  = GetParamValue("Layer2ID", "-1");
+
+    if (gLayersID[0]!="-1" && gLayersID[1]!="-1")
+        StartSwipe(gLayersID[0],gLayersID[1])
+
+    SGWorld.AttachEvent("OnFrame", TEOnFrame);
+    SGWorld.AttachEvent("OnFileSave", OnFileSave);
+    SGWorld.Window.SetInputMode(0);
+
+}
+//-------------------
+function setFiler (filterID) {
+    gFilters[filterID] = !gFilters[filterID];
+    if (gFilters[filterID])
+        $("#filterID"+filterID).addClass ('MenuButtonSmallRoundOutlineChecked')
+    else
+        $("#filterID"+filterID).removeClass ('MenuButtonSmallRoundOutlineChecked')
+    RefreshList();
+}
+//-------------------
+// RefreshList
+function RefreshList() {
+    try {
+
+        var viewedIndex = 0;
+        
+        $("#List1ID").html("");
+        $("#List2ID").html("");
+        var Layers=[];
+        Layers.push (gBaseTerrain);
+        for (var i = 0; i < gFilters.length ; i++){
+            if (gFilters[i]) BuildObjectsList(SGWorld.ProjectTree.RootID, Layers, gObjectTypes[i]); 
+        }
+
+        Layers.forEach (function (val){
+            var layer1Selected="";
+            var layer2Selected="";
+
+            if (checkIntersactionWithCamera (val)  && val != gBaseTerrain)
+            {
+                if (viewedIndex==0)
+                    layer1Selected = " selected='selected' ";
+                if (viewedIndex==1 )
+                    layer2Selected = " selected='selected' ";
+                viewedIndex++;
+            }
+
+            var name ;
+            if (val == gBaseTerrain)
+                name =SGLang.i18n("Text_BaseMap");
+            else{
+                name = SGWorld.ProjectTree.GetItemName (val);
+
+                if (gClient=="PM"){ // if called by PhotoMesh - add the parent name 
+                    var parent = SGWorld.ProjectTree.GetNextItem (val,15);
+                    if (parent != SGWorld.ProjectTree.RootID && parent != SGWorld.ProjectTree.HiddenGroupID) {
+                        var parentName = SGWorld.ProjectTree.GetItemName (parent );
+                        name = parentName +"/"+name;
+                    }
+                }
+            }
+            $("#List1ID").append("<option value=" + val +layer1Selected+ ">" + name + "</option>");
+            $("#List2ID").append("<option value=" + val +layer2Selected+ ">" + name + "</option>");
+        });
+    }
+    catch (err) { if (gDebug) alert (getFuncName(arguments.callee)+": "+err.message); } 
+}   
+//----------
+//    checkIntersactionWithCamera
+function checkIntersactionWithCamera (layerID){
+    try {
+        if (layerID == gBaseTerrain)
+            return true;
+        var Coord0 = SGWorld.Window.PixelToWorld(10, 10, -1 & ~(128|1024));
+        var Coord1 = SGWorld.Window.PixelToWorld(SGWorld.Window.Rect.Width-10, 10, -1 & ~(128|1024));
+        var Coord2 = SGWorld.Window.PixelToWorld(SGWorld.Window.Rect.Width-10, SGWorld.Window.Rect.Height-10, -1 & ~(128|1024));
+        var Coord3 = SGWorld.Window.PixelToWorld(10, SGWorld.Window.Rect.Height-10, -1 & ~(128|1024));
+        var ring = SGWorld.Creator.GeometryCreator.CreateLinearRingGeometry(Array(Coord0.Position.X,Coord0.Position.Y,Coord0.Position.Altitude,Coord1.Position.X,Coord1.Position.Y,Coord1.Position.Altitude,Coord2.Position.X,Coord2.Position.Y,Coord2.Position.Altitude,Coord3.Position.X,Coord3.Position.Y,Coord3.Position.Altitude));
+        var geometry = SGWorld.Creator.GeometryCreator.CreatePolygonGeometry (ring,ring);
+
+        var layerObj = SGWorld.Creator.GetObject(layerID);
+        var BBox;
+        if (layerObj.ObjectType==38)  // 3D Mesh
+            BBox = layerObj.BBox;
+        else
+            BBox = layerObj.Terrain.BBox; // point clud / imagery
+        var layerRing = SGWorld.Creator.GeometryCreator.CreateLinearRingGeometry([BBox.MinX, BBox.MaxY, 0, BBox.MaxX, BBox.MaxY, 0,BBox.MaxX, BBox.MinY, 0, BBox.MinX, BBox.MinY, 0]);
+        layerGeometry = SGWorld.Creator.GeometryCreator.CreatePolygonGeometry (layerRing,layerRing);
+
+        if (layerGeometry.SpatialRelation.Intersects(geometry) == false ) {
+            return false;
+        }
+    }
+    catch (err) { if (gDebug) alert (getFuncName(arguments.callee)+": "+err.message); return false; } 
+
+    return true;
+}
+
+//--------------
+//  StartSwipe
+function StartSwipe(Layer1ID,Layer2ID){
+    try {
+        if (Layer1ID!="-1" ) // If started from another tool - select the correct layers
+            $("#List1ID").val(Layer1ID);
+        if (Layer2ID !="-1")
+            $("#List2ID").val(Layer2ID);
+
+        gLayersID[0] = $("#List1ID").val();
+        gLayersID[1] = $("#List2ID").val();
+
+        if (gLayersID[0]==-1 || gLayersID[1]==-1 || gLayersID[0]==gLayersID[1]) {
+            ////  need to display the error message div
+            TEAlert (SGLang.i18n("Text_AlertCaption"),  SGLang.i18n("Text_NoMeshSelected"));
+           return;
+        }
+
+        if (checkIntersactionWithCamera (gLayersID[0]) == false || checkIntersactionWithCamera (gLayersID[1]) == false){
+            TEAlert (SGLang.i18n("Text_AlertCaption"),  SGLang.i18n("Text_NotIntersect"));
+           return;
+        }
+
+      
+        $("#filterTableID").hide();
+        $("#List1ID").prop("disabled", true);
+        $("#List2ID").prop("disabled", true);
+        $("#StartDiv").hide();
+        $("#SwipeDiv").show();
+        $('#topDiv').attr('disabled', true);
+        
+        gStartSwipe = true;
+        for (var i=0; i<2 ;i++) {
+            if (gLayersID[i] != gBaseTerrain){
+                gLayersObj[i] = SGWorld.Creator.GetObject(gLayersID[i]);
+                gLayersType[i]= gLayersObj[i].ObjectType;
+
+                if (gLayersType[i]==38 && !TEF) // only relevant to 3D Mesh
+                    $("#LayerMode"+i).show();
+                else
+                    $("#LayerMode"+i).hide();
+
+                gLayersVisibility[i] = SGWorld.ProjectTree.GetVisibility (gLayersID[i]);
+                gLayersRenderMode[i] = GetLayerRenderMode(i);
+                SetLayerRenderMode (i,gLayersRenderMode[i]);
+                SGWorld.ProjectTree.SetVisibility (gLayersID[i],true);
+                
+                if (gLayersObj[i].ObjectType==26){
+                    gOriginalDrawOrder[i] = gLayersObj[i].Terrain.DrawOrder;
+                    gLayersObj[i].Terrain.DrawOrder = -3; // to make sure it is above a 3DML Hole On Terrain (floor)
+                    gImageryLayerGeometry[i] = gLayersObj[i].Geometry.Clone();
+                } else {
+                    SGWorld.Analysis.SetCompareGroup(gLayersID[i], i+1);
+                }
+            }
+        }
+        gCameraPos = SGWorld.Navigate.GetPosition ();
+        setTimeout ("SGWorld.Navigate.SetPosition (gCameraPos);",100);  // We need it to overcomae a problem of camera "jump" when we turn on layers
+        SGWorld.SetParam(450, 1);
+        SetClipTrans($('#swipeSlider').val(),false)
+
+        
+    }
+        catch (e) { if (gDebug) alert(getFuncName(arguments.callee)+" : "+SGLang.i18n("Text_MeshError") + e.message); }
+}
+
+//--------------
+function SetClipTrans(level, force) {
+    if (gFreeze) {
+        $('#swipeSlider').val (gSliderFreezeValue)
+        return;
+    }
+    if (level == gLastLevel && force == false )
+        return;
+    gLastLevel = level;
+
+    // Clipping
+    try {
+        document.getElementById("clipSpan").innerHTML = level + "%";
+        
+        gClipPosition = SGWorld.Navigate.GetPosition();
+        var vertices = [];
+        var HeightOffset = 500; // 200 meters
+        var posArray = GetPosArray (false,level);
+        vertices[0] = posArray.LowerLeft.Move(-HeightOffset, 0, 90); 
+        vertices[1] = posArray.UpperLeft.Move(-HeightOffset, 0, 90);
+        vertices[2] = posArray.UpperRight.Move(-HeightOffset, 0, 90);
+        vertices[3] = posArray.LowerRight.Move(-HeightOffset, 0, 90);
+        vertices[4] = posArray.LowerLeft.Move(HeightOffset, 0, 90); 
+        vertices[5] = posArray.UpperLeft.Move(HeightOffset, 0, 90);
+        vertices[6] = posArray.UpperRight.Move(HeightOffset, 0, 90);
+        vertices[7] = posArray.LowerRight.Move(HeightOffset, 0, 90);
+
+        var BoxGeometry = SGWorld.Creator.GeometryCreator.CreateLineStringGeometry(vertices);
+        SGWorld.Analysis.ShowCompareBox(BoxGeometry, false, "#ffffffff");
+        if (gLayersID[0] != gBaseTerrain && gLayersType[0]==26)  SetImageryClip (gLayersObj[0],true,level);
+        if (gLayersID[1] != gBaseTerrain &&gLayersType[1]==26)  SetImageryClip (gLayersObj[1],false,level);
+        gInSwipe=true;
+    }
+    catch (e) { if (gDebug) alert(getFuncName(arguments.callee)+": "+SGLang.i18n("Text3") + e.message); }
+}
+
+//--------------
+function SetImageryClip(ImageryObj,left,level) {
+    try{
+        var posArray = GetPosArray (left,level);
+        var exteriorRing = SGWorld.Creator.GeometryCreator.CreateLinearRingGeometry(Array(posArray.UpperLeft.X, posArray.UpperLeft.Y, 0, posArray.UpperRight.X, posArray.UpperRight.Y, 0, posArray.LowerRight.X, posArray.LowerRight.Y, 0, posArray.LowerLeft.X, posArray.LowerLeft.Y, 0));
+        var PolyGeometry = SGWorld.Creator.GeometryCreator.CreatePolygonGeometry(exteriorRing, null);
+        ImageryObj.Geometry = PolyGeometry;
+    }
+    catch (e) { if (gDebug) alert(getFuncName(arguments.callee)+": "+SGLang.i18n("Text3") + e.message); }
+}
+
+//--------------
+function GetPosArray( left, level) {
+    try {
+            var posArray={};
+            var TypeTerrain = 32; 
+            var TypeAll = 8192+1+4+16+32+64;
+            var bottomBuffer = 100; 
+            var topBuffer = 10; 
+            var RightSide = SGWorld.Window.Rect.Width - 1;
+            var LeftSide = 0;
+            if (left)
+                RightSide = RightSide * (level) / 100.0;
+            else 
+                LeftSide = RightSide * (level) / 100.0;
+            var BottomSide = SGWorld.Window.Rect.Height - 1;
+            var TopSide = 0;
+
+            //Try to find the corners of the current terrain view
+            var upperLeftType = SGWorld.Window.PixelToWorld(LeftSide, TopSide, TypeTerrain).Type;
+            var upperRightType = SGWorld.Window.PixelToWorld(RightSide, TopSide, TypeTerrain).Type;
+            posArray.UpperLeft = SGWorld.Window.PixelToWorld(LeftSide, TopSide, TypeTerrain).Position;
+            posArray.UpperRight = SGWorld.Window.PixelToWorld(RightSide, TopSide, TypeTerrain).Position;
+            posArray.LowerLeft = SGWorld.Window.PixelToWorld(LeftSide, BottomSide, TypeAll).Position;
+            posArray.LowerRight = SGWorld.Window.PixelToWorld(RightSide, BottomSide, TypeAll).Position;
+
+            while (((upperLeftType & 32) > 0 || (upperRightType & 32) > 0) && TopSide < (SGWorld.Window.Rect.Height * 0.8)) {
+                TopSide += SGWorld.Window.Rect.Height / 20;
+                upperLeftType = SGWorld.Window.PixelToWorld(LeftSide, TopSide, TypeTerrain).Type;
+                upperRightType = SGWorld.Window.PixelToWorld(RightSide, TopSide, TypeTerrain).Type;
+                posArray.UpperLeft = SGWorld.Window.PixelToWorld(LeftSide, TopSide, TypeTerrain).Position;
+                posArray.UpperRight = SGWorld.Window.PixelToWorld(RightSide, TopSide, TypeTerrain).Position;
+            }
+            
+            posArray.UpperLeft  = posArray.UpperLeft.Move(topBuffer,gClipPosition.Yaw,0);
+            posArray.UpperRight = posArray.UpperRight.Move(topBuffer,gClipPosition.Yaw,0);
+            posArray.LowerLeft  = posArray.LowerLeft.Move(-bottomBuffer,gClipPosition.Yaw,0);
+            posArray.LowerRight = posArray.LowerRight.Move(-bottomBuffer,gClipPosition.Yaw,0);
+
+            return posArray;
+    }
+    catch (e) { alert(SGLang.i18n("Text3") + e.message); }
+}
+//--------------
+function TEOnFrame()
+{
+    try {
+        if (gInSwipe){
+            var currPosition = SGWorld.Navigate.GetPosition()
+            if (currPosition.IsEqual(gClipPosition) == false) {
+                setTimeout("SetClipTrans(gLastLevel, true)", 2);
+            }
+        }
+    } catch (e) {};
+}
+//--------------
+function OnFileSave() {
+    try {
+        if (gStartSwipe && (GetLayerRenderMode(0) != gLayersRenderMode[0] || GetLayerRenderMode(1) != gLayersRenderMode[1])){
+            if (confirm ( SGLang.i18n ("Text_ExitBeforeSave")))
+                exitTool();
+        }
+    }
+    catch(e) {}
+}
+//--------------
+// 
+function Freeze() {
+    if (gFreeze){
+        gFreeze = !gFreeze;
+        $("#FreezeID").removeClass('MenuButtonSmallRoundOutlineChecked')
+        SetClipTrans($('#swipeSlider').val(), true);
+    }
+    else {
+        $("#FreezeID").addClass('MenuButtonSmallRoundOutlineChecked')
+        gSliderFreezeValue =$('#swipeSlider').val();
+        gFreeze = !gFreeze;
+    }
+}
+//--------------
+// 
+function autoPlay(fromClick) {
+    if (fromClick) {
+        gAutoOnOff = !gAutoOnOff;
+    }
+    if (gAutoOnOff) {
+        document.getElementById("clipIcon").src = "Images/autoOn.png";
+        var a = 1.0*$('#swipeSlider').val();
+        a = (a + 2) % 101;
+        $('#swipeSlider').val(a);
+        SetClipTrans($('#swipeSlider').val(),false)
+
+        gCliptimeout = setTimeout("autoPlay(false)", 50);
+
+    }
+    else {
+        document.getElementById("clipIcon").src = "Images/autoOff.png";
+        clearTimeout(gCliptimeout);
+    }
+}
+
+//--------------
+//  GetLayerRenderMode
+function GetLayerRenderMode (index){
+    if (gLayersID[index]==gBaseTerrain)  return 0;
+
+    var obj = gLayersObj[index];
+    if (obj.ObjectType==38) // only relevant to 3D Mesh
+        return obj.DisplayStyle;
+    else    
+        return 0;
+}
+//--------------
+//  SetLayerRenderMode
+function SetLayerRenderMode (index,forceValue){
+    if (gLayersID[index] == gBaseTerrain) return;
+    
+    var modeID = $("#LayerMode"+index);
+    var obj = gLayersObj[index];
+    if (obj.ObjectType!=38)  return; // only relevant to 3D Mesh
+
+    var renderMode ;
+    if (forceValue==-1)
+        renderMode = $("#LayerMode"+index).val();
+    else{
+        renderMode=forceValue;
+        modeID.val(renderMode).change();
+    }
+    obj.DisplayStyle=renderMode;
+}
+//--------------
+//  exitTool
+function exitTool() {
+    try {
+            if (gStartSwipe){
+                for (var i=0; i<2 ;i++) {
+                    if (gLayersID[i] != gBaseTerrain) {
+                        SGWorld.ProjectTree.SetVisibility (gLayersID[i],gLayersVisibility[i]);
+                        SetLayerRenderMode (i,gLayersRenderMode[i]);
+                        SGWorld.Analysis.SetCompareGroup(gLayersID[i], 0);
+                        if (gLayersObj[i].ObjectType==26){
+                             gLayersObj[i].Geometry = gImageryLayerGeometry[i] ;
+                             gLayersObj[i].Terrain.DrawOrder = gOriginalDrawOrder[i] ;
+                        }
+                    }
+                }
+                
+                SGWorld.Analysis.HideCompareBox();
+                SGWorld.SetParam(450, 0);
+                SGWorld.DetachEvent("OnFrame", TEOnFrame);
+
+            }
+            SGWorld.Window.RemovePopupByCaption(SGLang.i18n("Text8"));
+    }
+    catch (e) { if (gDebug)  alert(getFuncName(arguments.callee)+": "+SGLang.i18n("Text3") + e.message);}
+}
+      
+    </script>
+
+</body>
+</html>
+
+

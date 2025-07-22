@@ -1,0 +1,11 @@
+<svg id="Delete" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_1174" data-name="Rectangle 1174" width="32" height="32" fill="none"/>
+    </clipPath>
+  </defs>
+  <g id="Group_2168" data-name="Group 2168" clip-path="url(#clip-path)">
+    <path id="Path_1329" data-name="Path 1329" d="M25.02,4.679H20.951L19.733,3.461a.673.673,0,0,0-.476-.2H12.746a.672.672,0,0,0-.475.2L11.053,4.679H6.981A.882.882,0,0,0,6.1,5.56V6.627a.882.882,0,0,0,.882.882H25.02a.881.881,0,0,0,.881-.882V5.56a.881.881,0,0,0-.881-.881" fill="#646871"/>
+    <path id="Path_1330" data-name="Path 1330" d="M7.514,8.921V25.9a2.837,2.837,0,0,0,2.83,2.841H21.659a2.838,2.838,0,0,0,2.83-2.829V8.921Zm6.344,16.307H12V11.55h1.857Zm6.143,0H18.144V11.55H20Z" fill="#646871"/>
+  </g>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="39.025" height="39.025" viewBox="0 0 39.025 39.025">
+  <g id="Fly_To" data-name="Fly To" transform="translate(690.813 493.414)">
+    <path id="Path_23" data-name="Path 23" d="M27.542,10.556,7.227,19.932a2.369,2.369,0,0,0,.938,4.532h8.594v8.594A2.368,2.368,0,0,0,21.291,34l9.377-20.315a2.439,2.439,0,0,0-3.126-3.126" transform="translate(-690.8 -495.183)" fill="#3d3d3d"/>
+    <g id="Group_1471" data-name="Group 1471" transform="translate(-690.813 -493.414)">
+      <path id="Path_25" data-name="Path 25" d="M2.729,16.7V8.095a.783.783,0,0,1,.78-.776H13.922V4.586H3.12A3.115,3.115,0,0,0,0,7.7v9Z" transform="translate(0 -4.586)" fill="#3d3d3d"/>
+      <path id="Path_862" data-name="Path 862" d="M11.193,16.7V8.095a.783.783,0,0,0-.78-.776H0V4.586H10.8A3.115,3.115,0,0,1,13.922,7.7v9Z" transform="translate(25.103 -4.586)" fill="#3d3d3d"/>
+    </g>
+    <g id="Group_1472" data-name="Group 1472" transform="translate(-690.813 -466.503)">
+      <path id="Path_25-2" data-name="Path 25" d="M2.729,4.586v8.605a.783.783,0,0,0,.78.776H13.922V16.7H3.12A3.115,3.115,0,0,1,0,13.587v-9Z" transform="translate(0 -4.586)" fill="#3d3d3d"/>
+      <path id="Path_862-2" data-name="Path 862" d="M11.193,4.586v8.605a.783.783,0,0,1-.78.776H0V16.7H10.8a3.115,3.115,0,0,0,3.12-3.113v-9Z" transform="translate(25.103 -4.586)" fill="#3d3d3d"/>
+    </g>
+  </g>
+</svg>

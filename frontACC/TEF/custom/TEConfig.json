@@ -1,0 +1,46 @@
+{
+  "DemoProjects": [
+		{
+			"projectName": "Features Demo",
+			"projectDescription": "Explore the power of TerraExplorer through our demo project, featuring a series of dynamic presentations. ",
+			"projectImageURL": "./custom/images/DefaultDemo.png",
+			"projectUrl": "https://cloud.skylineglobe.com/SG/demos/projects/TEF_Demo_Project&presentation=%20Auburn%20-%20Dynamic%20Objects%20and%20Water%20Bodies"
+		},
+		{
+			"projectName": "Inspection Project",
+			"projectDescription": "Explore this TerraExplorer demo, highlighting a water tower inspection project with the Photo Inspector tool.",
+			"projectImageURL": "./custom/images/PhotoInspection.png",
+			"projectUrl": "https://cloud.skylineglobe.com/SG/Demos/projects/PhotoInspection&presentation=%20Photo Inspection"
+		},
+		{
+			"projectName": "Palacio de Bellas Artes",
+			"projectDescription": "Explore a highly detailed 3D model of the Palacio de Bellas Artes (Palace of Fine Arts) in Mexico City, created by utilizing multiple ground and drone collection systems",
+			"projectImageURL": "./custom/images/PalacioDe BellasArtes.png",
+			"projectUrl": "https://cloud.skylineglobe.com/sg/demos/projects/nationalmuseumofart-mexicocity"
+		},
+		{
+			"projectName": "Disaster Management - Mexico Beach",
+			"projectDescription": "Demo TerraExplorer with a weather disaster project, featuring a hurricane storm over Mexico beaches. Witness effective disaster management in action",
+			"projectImageURL": "./custom/images/MexicoBeach.png",
+			"projectUrl": "https://cloud.skylineglobe.com/SG/demos/projects/Mexico_Beach_Emergency_Response&presentation=Presentation%5C%20Mexico%20Beach"
+		}
+    ],
+	"HelpPanels": [
+		{
+			"icon": "./images/icons/addLocation.svg",
+			"text": "${Lang.startPage.howToShareLocations}",
+			"URL":"https://support.skylinesoft.com/hc/en-us/articles/6825836998940-Save-Favorite-Locations"
+		},
+		{
+			"icon": "./images/icons/distanceMeasurement.svg",
+			"text": "${Lang.startPage.howToMeasure}",
+			"URL":"https://support.skylinesoft.com/hc/en-us/articles/6946818592796-Distance-and-Area"
+		},
+		{
+			"icon": "./images/toolboxIcons/navigate.svg",
+			"text": "${Lang.startPage.howToNavigate}",
+			"URL":"https://support.skylinesoft.com/hc/en-us/articles/6824423870492-Navigate-in-the-3D-World"
+		}
+    ],
+	"HelpLink": "https://support.skylinesoft.com/hc/en-us/categories/7556878990492-TerraExplorer-Fusion"
+}

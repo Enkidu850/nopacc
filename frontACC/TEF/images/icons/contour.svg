@@ -1,0 +1,10 @@
+<svg id="Contour_Map" data-name="Contour Map" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_1143" data-name="Rectangle 1143" width="32" height="32" fill="none"/>
+    </clipPath>
+  </defs>
+  <g id="Group_2132" data-name="Group 2132" clip-path="url(#clip-path)">
+    <path id="Path_1274" data-name="Path 1274" d="M16.01,1.919l-.011,0-.012,0A14.21,14.21,0,0,0,4.969,25.091a.78.78,0,0,0,.59.664A14.208,14.208,0,1,0,16.01,1.919M6.317,24.193a12.566,12.566,0,0,1-1.781-2.83H15.2v2.83ZM3.426,16.934H15.2v2.83H3.946a12.6,12.6,0,0,1-.52-2.83M15.2,3.558V6.473h-7.3a12.54,12.54,0,0,1,7.3-2.915M6.373,7.991a.791.791,0,0,0,.339.081H15.2V10.9H4.532A12.629,12.629,0,0,1,6.373,7.991M3.922,12.5H15.2v2.833H3.426a12.662,12.662,0,0,1,.5-2.833M7.91,25.793H15.2v2.914a12.546,12.546,0,0,1-7.29-2.914m8.89,2.914V3.559a12.6,12.6,0,0,1,0,25.148" fill="#646871"/>
+  </g>
+</svg>

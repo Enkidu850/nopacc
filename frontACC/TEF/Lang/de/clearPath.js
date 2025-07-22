@@ -1,0 +1,38 @@
+﻿SGLang.lang = $.extend(SGLang.lang,{
+    ToolTitle:                  "SkylineGlobe – Skyline Software Systems, Inc.",
+    ToolName:                   "Pfad löschen",
+    clearPath:                  "Pfad löschen",
+    help:                       "Helfen",
+    searchFor:                  "Suchen nach",
+    HeliPad:                    "Hubschrauberlandezone",
+    TankPath:                   "Wegstrecke für große Fahrzeuge",
+    VehiclePath:                "Fahrzeugweg",
+    Custom:                     "Benutzerdefiniert",
+    MinWidth:                   "Mindestbreite",
+    MaxSlope:                   "Maximale Steigung",
+    SearchRadius:               "Suchradius",
+    setLocation:                "Ort festlegen",
+    Meter:                      "M",
+    degrees:                    "Grad.",
+    ClickToSet:                 "Klicken Sie mit der linken Maustaste auf das 3D-Fenster, um die Mitte des Suchbereichs zu platzieren. Klicken Sie mit der rechten Maustaste, um den Vorgang abzubrechen.",
+    Working:                    "Dieser Vorgang kann einige Minuten dauern. Um den Vorgang abzubrechen, klicken Sie oben im Dialog auf das 'X' oder den Zurück-Pfeil.",
+    QueryCompleted:             "Oberflächenanalyse abgeschlossen.",
+    PointCreated:               "Punkte erstellt:",
+    GeneratingElevationsTerrain:"Berechnung der Höhenkarte des Geländes.",
+    GeneratingElevationsModel:  "Berechnung der Höhenkarte von Modellen.",
+    FindClearPoints:            "Suche nach passenden Standorten.",
+    DrawPoints:                 "Übereinstimmende Punkte zeichnen",
+    Disclaimer:                 "Das Clear-Path-Tool bietet vorläufige Hinweise auf Standorte, die den Suchkriterien entsprechen. Für eine fundiertere Entscheidung sehen Sie sich bitte das Modell an",
+
+    highLowHelp:                "Das Werkzeug 'Hoch und Tief' identifiziert Höhenunterschiede in einem ausgewählten Interessengebiet. Es färbt die höchsten und niedrigsten Regionen basierend auf den eingestellten Prozentwerten ein.",
+    displayMode:                "Hervorhebungs-Modus",
+    heighLowAreas:              "Hoch- und Tiefbereiche",
+    heighAreas:                 "Hohe Gebiete",
+    lowAreas:                   "Niedrige Gebiete",
+    topPresentage:              "Oberster Prozentsatz",
+    bottomPresentage:           "Unterster Prozentsatz",
+    
+    Close:                      "Schließen",
+
+    Text999:                    ""
+});

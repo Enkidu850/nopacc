@@ -1,0 +1,861 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <title>ToolTitle</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=11" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="StyleSheet" href="../Style80.css" type="text/css">
+	<script language="javascript" src="../jquery/jquery-3.1.1.min.js"></script>
+    <script language="javascript" src="../ToolsCommon80.js"></script>
+    <script src="../TeTypes.js"></script>
+    <style>
+    </style>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" style="border: 0px" id="Body" class="hideUntillTranslated" onunload="Reset()">
+    <!--oncontextmenu="return false;">  onclick="bHide=true;HideOptionsNow()" > -->
+    <div id="content" style="display:none">
+    <table border="0" width="100%" cellspacing="0" cellpadding="2" id="TopAreaTbl"  >
+        <tr >
+            <td class="ToolTopArea" id="TopAreaTD" width="100%" valign="middle" >
+                <table border="0" width="100%" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td width="55px"><img style="margin-left:5px;" src="ToolIcon.png" alt="" /></td>
+                        <td id="TitleTD" align="center" class="s12w i18n">ToolName</td>
+                        <td align="right" id="CloseHelpTd"><img style="margin-right:5px;" alt="" src="../CommonImg/help.png" border="0" class="i18n" alt="help" title="help" onclick="DisplayHelpPopup6(SGLang.i18nFile('help.html'),SGLang.i18n('help'))" style="cursor: pointer;"></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td  class="ToolTopSeperator"></td>
+        </tr>       
+    </table>
+
+    <table id="PropertiesSheetTbl" class="PropertiesSheet s8" cellspacing="0" cellpadding="2" >
+        <tr id="helpText"> 
+            <td colspan="2">
+                <span class="i18n">drawPolygon</span>
+
+            </td>
+        </tr>
+        <tr id="compareList" >
+            <td class=" " >
+                <label for="Mode"  class="i18n">compare</label>
+            </td>
+            <td align="left">
+                &nbsp;<select id="CompareModeID" onchange="ChangeMode();" style="width:13rem;">
+                    <option class="i18n" value="3" selected="selected">aboveSurface</option>
+                    <option class="i18n" value="1" >modifyNew</option>
+                    <option class="i18n" value="0" >modifySelect</option>
+                    <!-- <option class="i18n" value="2" >elevationLayer</option> -->
+                    
+                </select>
+            </td>     
+        </tr>
+
+        <tr id="modifyListDiv">
+                <td class=" ">
+                 <label for="Mode"  class="i18n">select</label>
+                </td>
+                <td>
+                <!--          DO NOT REMOVE THE FOCUS CALL IN THE LIST BELOW!!
+              This focus call  minimize the effect of a very strange bug. When you select an entry from the Viewshed list, click on the terrain and then ctrl-click on other list entry the HTML list control do not really recieve this additional selection (although you do see the new line highlighted).
+-->
+                <!-- <span class="i18n">selectModifyFromlist</span> -->
+                &nbsp;<select id="ModifyID" size='5' multiple onmouseover="this.focus()" ondblclick="flyToSelected('ModifyID');" style="width:100%;" >  </select> </br>
+                &nbsp;&nbsp;<span id="refresh" onclick="RefreshList('ModifyID',30);" style="text-decoration:underline;cursor:pointer;" class="i18n">refresh</span>             
+
+                </td>
+        </tr>
+<!--     
+        <tr id="elevationListDiv">
+            <td class=" ">
+             <label for="Mode"  class="i18n">select</label>
+            </td>
+            <td>    -->
+            <!--          DO NOT REMOVE THE FOCUS CALL IN THE LIST BELOW!!
+          This focus call  minimize the effect of a very strange bug. When you select an entry from the Viewshed list, click on the terrain and then ctrl-click on other list entry the HTML list control do not really recieve this additional selection (although you do see the new line highlighted).-->
+            <!-- <span class="i18n">selectElevationFromlist</span>
+             <span  class="i18n" style="text-decoration:underline;cursor:pointer;" onclick="RefreshList('ElevationsID',38);">refresh</span> <br />
+            &nbsp;<select id="ElevationsID" size="5" ondblclick="flyToSelected('ElevationsID');" onmouseover="this.focus()" style="width:100%;" >
+            </select>
+           
+            </td>
+        </tr>
+  -->
+        <!-- <tr id="qualityListDiv">
+            <td class=" ">
+                <label for="Mode"  class="i18n">quality</label>
+            </td>
+            <td align="left">
+                &nbsp;<select id="DensityID" style="width:13rem;">
+                    <option class="i18n" value="0" >low</option>
+                    <option class="i18n" value="1" selected="selected">medium</option>
+                    <option class="i18n" value="2" >high</option>
+                </select>
+            </td>     
+        </tr> -->
+        <tr id="saveLayerID">
+            <td class=" ">
+                <label for="Mode"  class="i18n">drawObjects</label>
+            </td>
+            <td align="left">
+                <label class="switch">
+					<input type="checkbox" id="showObjectsID">
+					<span class="slider round"></span>
+				</label>		                
+                <!-- &nbsp; <input type="checkbox" id="showObjectsID" /> -->
+            </td>     
+        </tr>       
+       
+        <tr class="s8">
+            <td colspan="2"  align="center" class="ToolButtonsArea">
+            <div id="selectModifyDiv">
+                <button id="selectModifyBtn" class="MenuButton " onclick="startCalculate();">  <img src="./img/Calculate.png" /><br /><span class="i18n">startCalculate</span></button>
+            </div>
+            
+            <div id="ModifyDiv"  style="display:none">
+                <button id="DrawModifyBtn" class="MenuButton " onclick="startCalculate();">  <img src="./img/ModifyTerrain.png" /><br /><span class="i18n">createModify</span></button>
+            </div>
+
+            <div id="SurfaceDiv" style="display:none">
+                <button id="DrawPlaneBtn" class="MenuButton" onclick="startCalculate();">               <img  src="../commonImg/polygon.png" /><br />         <span class="i18n">drawArea</span></button>
+                <button id="clipboardButton" class="MenuButton " onclick="SelectClipboardObjects()" >    <img src="../commonImg/Clipboard.png" /><br />   <span class="i18n">fromClipboard</span></button>
+            </div>
+
+            </td>
+        </tr>
+    </table>
+   
+    <table id="progressTbl" class="s9 w100" cellspacing="0" cellpadding="10" style="display: none">
+        <tr>
+            <td align="center">
+                <img src="img/loading.gif" style="width: 10rem; height: 10rem;"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="progress" class="progressBarBlue"><div ></div></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span id='progressText' class="i18n"></span><br><br>
+                <span class="i18n">Text_CalculateTakesTime</span>
+            </td>
+            <td>
+                <!-- <button class="MenuButton MenuButtonLast" onclick="parent.analysis.closeViewshedQueryTool(true,gPointLayerID)"><img src="img/properties.png" /><br /><span class="i18n">Text42</span></button> -->
+            </td>
+        </tr>
+    </table>
+
+    </div>
+
+
+<script language="JavaScript">
+    //** this is a global variables for the polyline/polygon drawings
+var gDebug = true;
+var gPopupCaption = "";
+var gFoundPolygon = false;
+var gAbort = false;
+
+var gObjectsList = [];
+var gGeometryList = [];
+var gObjectCalculatedIndex = 0;
+var gVolumeResultHTML = "";
+var gResultHTML="";
+var gMeshlayersQuality=[];
+var gSettingQuality;
+var gSetModelsQuality = false;
+var gModifyVisibilityState;
+var gModifyCalculateState;
+
+var gTotalVolumeAdded = 0;
+var gTotalVolumeRemoved = 0;
+var gDrawObjectType = 0; // 0= feature layer , 1=points (polyline)
+var gLayer;
+var gRedArray = [];
+var gGreenArray = [];
+var gBlackArray = [];
+
+var gCreateModifyMode = false;
+var gElevationBuffer;
+var gQuaryResolution = 1024;
+var gGridInPixels = 4;
+var gOnTerrainMessageDisplayed = false;
+var gRootFolder = "";
+var SGWorld = null;
+
+Date.prototype.stdTimezoneOffset = function () {
+    var jan = new Date(this.getFullYear(), 0, 1);
+    var jul = new Date(this.getFullYear(), 6, 1);
+    return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+}
+
+Date.prototype.dst = function () {
+    return this.getTimezoneOffset() < this.stdTimezoneOffset();
+}
+
+//--------------
+// Init - called automatically when SGLang is ready
+function Init() {
+    SGWorld = initSGWorld();
+    if (TEF){
+        $("#compareList").hide();
+        $("#TopAreaTbl").hide();
+        $("#clipboardButton").hide();
+        $("#saveLayerID").hide();
+        gDrawObjectType = 1;
+    }
+    else {
+        $("#helpText").hide();
+        gDrawObjectType = 0;
+    }
+    $("#content").fadeIn(100);
+    window.ondragstart = function() { return false; } 
+
+    ChangeMode();
+    gRootFolder = GetParamValue("root", "");
+    gPolyObj = null;
+
+    if (SGWorld.Version.Type == 2)  // if TE Viewer remove the "Add New Modify Terrain" option because it is not available even via the API
+        $("#CompareModeID option[value='1']").detach();
+    Reset();
+}
+//------------------
+// Reset
+//------------------
+function Reset() {
+    SGWorld.Window.SetInputMode(0);
+    
+    GroupID = null;
+    gCreateModifyMode = false;
+    bDontAskme = false;
+    gObjectsList = [];
+    gGeometryList = [];
+    gRedArray = [];
+    gGreenArray = [];
+    gBlackArray = [];
+
+    gTotalVolumeAdded = 0;
+    gTotalVolumeRemoved = 0;
+    gOnTerrainMessageDisplayed = false;
+    gVolumeResultHTML = "";
+    gAbort = false;
+    resetButtons();
+
+    $("#PropertiesSheetTbl").show();
+    $("#progressTbl").hide();
+
+    SGWorld.ProjectTree.EnableRedraw(1);
+    SGWorld.Window.HideMessageBarText();
+
+    if (gSetModelsQuality)
+        setModelsQuality(false);
+   
+}
+//-------------------
+function resetButtons() {
+    $("#DrawModifyBtn").removeClass("MenuButtonHighlight");
+    $("#DrawPlaneBtn").removeClass("MenuButtonHighlight");
+}
+
+//-------------------
+// ChangeMode
+function ChangeMode() {
+
+    $("#modifyListDiv").hide();
+    $("#elevationListDiv").hide();
+    $("#selectModifyDiv").hide();
+    $("#ModifyDiv").hide();
+    $("#SurfaceDiv").hide();
+
+    var CompareMode = $("#CompareModeID").val();
+
+    if (CompareMode == "0") { // Modify list
+        $("#selectModifyDiv").show();
+        $("#modifyListDiv").show();
+        RefreshList("ModifyID", 30);
+    }
+    if (CompareMode == "1") { // Modify new
+        $("#ModifyDiv").show();
+    }
+
+    if (CompareMode == "3") { // Polygon Surface
+        $("#SurfaceDiv").show();
+    }
+}
+//-------------------
+// RefreshList
+function RefreshList(list, objectType) {
+    var ModifyObjects=[];
+
+    $("#"+list).html("");
+   // BuildList(SGWorld.ProjectTree.RootID, list, objectType);
+   BuildObjectsList(SGWorld.ProjectTree.RootID, ModifyObjects, objectType);
+
+    ModifyObjects.forEach (function (val){
+        var name = SGWorld.ProjectTree.GetItemName (val);
+        $("#"+list).append("<option value=" + val + ">" + name + "</option>");
+    });
+}
+
+//---------------
+// flyToSelected
+function flyToSelected(list) {
+    $("#"+list+" option:selected").each(function () {
+        var ElevationID = ($(this).val());
+        SGWorld.Navigate.FlyTo(ElevationID, 10);
+    });
+}
+
+//--------------
+// startCalculate
+//--------------
+function startCalculate() {
+    var compareMode = $("#CompareModeID").val();
+
+    if (compareMode == 0) {   // Select existing Modify Terrain object(s)
+            if ($("#ModifyID option:selected").length == 0) {
+                TEAlert (SGLang.i18n("Text_AlertCaption"),SGLang.i18n("selectModify"));
+                return;
+            }
+            $("#ModifyID option:selected").each(function () {
+                gObjectsList.push ($(this).val());
+                gGeometryList.push(null);
+            });
+            CalculateList(1);
+            // Reset();
+    }
+
+    if (compareMode == 1) {   // create new Modify Terrain
+        gCreateModifyMode = true;
+        SGWorld.Command.Execute(1012, 15);
+        $("#DrawModifyBtn").addClass("MenuButtonHighlight");
+        SGWorld.AttachEvent("OnObjectAction", OnObjectAction);
+    }
+
+    if ( compareMode == 3) {   // Draw polygon (for volume above plane)
+        if (drawing.drawingEditMode !=-1) {   // already in drawing . Reset everyting
+            drawing.abort();
+            resetButtons();
+        }
+        else {
+            SGWorld.Window.ShowMessageBarText(SGLang.i18n("drawPolygon"));
+            $("#DrawPlaneBtn").addClass("MenuButtonHighlight");
+            drawing.drawPolygon ({
+                style: {    
+                    lineColor:"#ffffff",
+                    lineWidth: 3,
+                    fillColor: "#FFD800",
+                    fillOpacity: 0.1 // fill opacity (0-1). Default = 0
+                },
+                horizontal: true,
+                altitudeMethod:3,   // altitudeMethod - use 2 of "OnTerrain" (drape on terrain) and 3 for "Absolute" (above mean sea level). Currently other methods are not supported
+                deleteWhenExit: true, // 
+                //parentGoupID: volumeGroup,
+                saveOnExit: false,  // save the polyline/polygon when exiting the project. Default = false
+                onFinish: endDrawPolygon,
+                onAbort: resetButtons
+            });
+        }
+
+    }
+}
+//-------------
+// OnObjectAction
+function OnObjectAction(ObjID, action) {
+    
+    if (gCreateModifyMode && action.Code == 16) {   // Push  the new Modify Terrain object to the list and calculate the volume
+        try {
+            gCreateModifyMode = false;
+            gObjectsList.push(ObjID);
+            gGeometryList.push(null);
+            CalculateList(1);
+        }
+        catch (err) { if (gDebug) alert(err.message); } 
+        // Reset();
+    }
+    return false;
+}
+
+//-----------
+// SelectClipboardObjects
+function SelectClipboardObjects() {
+    var compareMode = $("#CompareModeID").val();
+    gFoundPolygon = false;
+
+    searchGeometriesClipboard(addPolygon);
+    if (!gFoundPolygon)
+        TEAlert (SGLang.i18n("Text_AlertCaption"),SGLang.i18n("noPolygon"));
+    else {
+        if (compareMode==3)
+            CalculateList(0);
+    }   
+
+    // Reset();
+}
+//-------------
+// endDrawPolygon
+function endDrawPolygon(geometry, type, altitudeType,ObjID) {
+    SGWorld.Window.SetInputMode(0);
+    var compareMode = $("#CompareModeID").val();
+    try {
+        if (addPolygon(geometry, type, altitudeType)){
+            if (compareMode==3)
+                CalculateList(0);
+        }    
+       
+    }
+    catch (err) { if (gDebug) alert(err.message); } 
+
+}
+//-------------
+// addPolygon
+function addPolygon(geometry, type, altitudeType) {
+    var compareMode = $("#CompareModeID").val();
+
+    if (type != 2)
+        return true;
+    gFoundPolygon = true;
+  
+    if (compareMode==3){  // compare surface polygon
+        if (altitudeType==2){  // Ignore OnTerrain polygons
+            if (!gOnTerrainMessageDisplayed)
+                TEAlert (SGLang.i18n("Text_AlertCaption"),SGLang.i18n("OnTerrainIgnore"));
+            gOnTerrainMessageDisplayed = true;
+
+        }
+        else {
+            gObjectsList.push(altitudeType);
+            gGeometryList.push(geometry);
+        }
+    }
+    return true;
+}
+
+//-------------------
+// Calculate multiple volume above flat surface 
+function CalculateList (type ) {
+try {
+        setUnits();
+        setModelsQuality(true);
+        gResultHTML="";
+        gObjectCalculatedIndex = 0;
+        gModifyCalculateState = 0;
+        $("#PropertiesSheetTbl").hide();
+        $("#progressTbl").show();
+        updateProgressBar (0);
+        if (type==0)
+            setTimeout (function(){ CalculateSurface ();},1);
+        else             
+            setTimeout (function(){ CalculateModify ();},1);
+    }
+    catch (err) { if (gDebug) alert(err.message); } 
+}
+
+//----------------------
+function CalculateSurface ( ) {
+try {
+       
+        var polygon = gGeometryList[gObjectCalculatedIndex];
+        var pos;
+        //multipolygon
+        if(polygon.GeometryType == 6)
+            pos = SGWorld.Creator.CreatePosition(polygon.Geometry(0).Rings.Item(0).Points.Item(0).X,polygon.Geometry(0).Rings.Item(0).Points.Item(0).Y,polygon.Geometry(0).Rings.Item(0).Points.Item(0).Z,gObjectsList[gObjectCalculatedIndex],0,0,0,0);
+        else  //polygon
+            pos = SGWorld.Creator.CreatePosition(polygon.Rings.Item(0).Points.Item(0).X,polygon.Rings.Item(0).Points.Item(0).Y,polygon.Rings.Item(0).Points.Item(0).Z,gObjectsList[gObjectCalculatedIndex],0,0,0,0);
+        var absPos = pos.ToAbsolute(2);
+        $("#progressText").text(SGLang.i18n("calculatingVolume")+(gObjectCalculatedIndex+1));
+
+        rectangleGeometryToMultipleElevationParams(polygon, 
+            function (bufferParams) {
+                if (calculateVolume(polygon,bufferParams, SGLang.i18n("Area")+(gObjectCalculatedIndex+1),null,absPos.Altitude)==false){
+                    Reset();
+                    return false; 
+                }
+                gResultHTML += gVolumeResultHTML;
+                updateProgressBar (Math.floor(100*((gObjectCalculatedIndex+1)/gGeometryList.length) ));
+
+                if(!gAbort)
+                    AddResultPolygon (polygon,absPos.Altitude,gVolumeResultHTML);
+                if(!gAbort && gObjectCalculatedIndex < gGeometryList.length-1){
+                    gObjectCalculatedIndex++;
+                    CalculateSurface();
+                }
+                else{
+                    showResultPopup (gResultHTML);                        
+                    Reset();
+                }
+            },
+            function (progress) {
+                updateProgressBar (Math.floor(100*((gObjectCalculatedIndex)/gGeometryList.length) + 0.9*progress*(1/gGeometryList.length)));
+            },
+            function(error){
+                if (gDebug) alert("Volume.html -> getModelElevation OnReject: " + err.message);
+            }
+        );
+      
+    }
+    catch (err) { if (gDebug) alert(err.message);  } 
+}
+
+//-------------------
+function CalculateModify(){
+    try {
+
+        var objectID = gObjectsList[gObjectCalculatedIndex]
+        var MeasuredObject = SGWorld.ProjectTree.GetObject(objectID);
+        var objectAltitude = MeasuredObject.Position.Altitude
+        var polygon = MeasuredObject.Geometry;
+        $("#progressText").text(SGLang.i18n("calculatingVolume")+(gObjectCalculatedIndex+1));
+
+        if (gModifyCalculateState == 0){
+            gModifyVisibilityState = SGWorld.ProjectTree.GetVisibility(objectID);
+            SGWorld.ProjectTree.SetVisibility(objectID, true);
+            gModifyCalculateState = 1;
+            rectangleGeometryToMultipleElevationParams(polygon, 
+                function (bufferParams) {
+                    gElevationBuffer = bufferParams.buffer;
+                    CalculateModify ();
+                },
+                function (progress) {
+                    updateProgressBar (Math.floor(100*((gObjectCalculatedIndex)/gGeometryList.length) + progress*(0.5/gGeometryList.length)));
+                },
+                function(error){
+                    if (gDebug) alert("Volume.html -> getModelElevation OnReject: " + err.message);
+                }
+           );
+        } else {
+            SGWorld.ProjectTree.SetVisibility(objectID, false);
+            rectangleGeometryToMultipleElevationParams(polygon, 
+                function (bufferParams) {
+                    if (calculateVolume(polygon,bufferParams, SGLang.i18n("Area")+(gObjectCalculatedIndex+1),gElevationBuffer,0)==false){
+                        Reset();
+                        return false; 
+                    }
+                    gResultHTML += gVolumeResultHTML;
+                    gElevationBuffer = [];
+                    if(!gAbort)
+                        AddResultPolygon (polygon,objectAltitude,gVolumeResultHTML);
+                    if(!gAbort && gObjectCalculatedIndex < gGeometryList.length-1){
+                        gObjectCalculatedIndex++;
+                        gModifyCalculateState = 0;
+                        CalculateModify();
+                    }
+                    else{
+                        showResultPopup (gResultHTML);                        
+                        Reset();
+                    }
+                    SGWorld.ProjectTree.SetVisibility(objectID, gModifyVisibilityState);
+                },
+                function (progress) {
+                    updateProgressBar (Math.floor(100*((gObjectCalculatedIndex+0.5)/gGeometryList.length) + progress*(0.5/gGeometryList.length)));
+                },
+                function(error){
+                    if (gDebug) alert("Volume.html -> getModelElevation OnReject: " + err.message);
+                }
+            );
+        }
+    }
+    catch (err) { if (gDebug) alert(err.message);  } 
+}
+//-------------
+// calculateVolume
+function calculateVolume(geometry, bufferParams,  ObjName, elevationBuffer1, flatAltitude) {
+    try{
+
+        var polygonGeometry = geometry.Clone(); // to enable edit geometry (ref) when geometry type is RelativeToPivot. Navon.
+        var envelope = polygonGeometry.Envelope; // Multi polygon evnelope (min/max)
+        // calculate cell 2D size
+        var cellPos0= SGWorld.Creator.CreatePosition(bufferParams.minX, bufferParams.maxY, 0, 3, 0, 0, 0, 1);
+        var cellPos1 = SGWorld.Creator.CreatePosition(bufferParams.minX , bufferParams.maxY - bufferParams.resY, 0, 3, 0, 0, 0, 1);
+        var cellPos2 = SGWorld.Creator.CreatePosition(bufferParams.minX + bufferParams.resX, bufferParams.maxY, 0, 3, 0, 0, 0, 1);
+        var cellHeight = cellPos0.DistanceTo(cellPos1) * gGridInPixels;
+        var cellWidth = cellPos0.DistanceTo(cellPos2) * gGridInPixels;
+        var cellArea =  cellWidth * cellHeight * gAreaUnitFactor;
+
+        //var startDate = new Date();
+        var drawObjects =  $("#showObjectsID").is(':checked') ? true : false;
+        if (drawObjects && gDrawObjectType==0) {
+            CreateLayer(cellWidth * 100, ObjName);
+            var result = featureLayerStyles["ImageLabel"](cellWidth/40, abspath() + "/img/point.png"); // ,"[Color]");
+        }
+        var VolumeAdded = 0;
+        var VolumeRemoved = 0;
+        var MessageBarIndex = 0;
+        var GeoIntersect= [];
+        var x,y;
+
+        for (var i = gGridInPixels/2; i < (bufferParams.dimensionXInPixels*bufferParams.numOfXQuerysNeeded)-gGridInPixels; i = i + gGridInPixels) {
+            if(SGWorld.GetParam(9901)){ // user click on the ESC button in TE
+                if (drawObjects && gDrawObjectType == 0)
+                    SGWorld.ProjectTree.DeleteItem(gLayer.ID);
+                return false;
+            }
+
+            // Build line geometry WKT
+            var WKT = "";
+            for (var j = gGridInPixels / 2; j < (bufferParams.dimensionYInPixels*bufferParams.numOfYQuerysNeeded)-gGridInPixels; j = j + gGridInPixels){
+                x = bufferParams.minX + i * bufferParams.resX;
+                y = bufferParams.maxY - j * bufferParams.resY;
+                WKT += "("+x+" "+y+"), ";
+            }
+            var fullWKT = "MULTIPOINT ("+ WKT.substr(0,WKT.length -2)+")";
+            var pointGeometryArry =  SGWorld.Creator.GeometryCreator.CreateGeometryFromWKT (fullWKT); // "MULTIPOINT ((10 40), (40 30), (20 20), (30 10))");
+            var GeoIntersectTmp;
+            try{
+                GeoIntersectTmp = polygonGeometry.SpatialOperator.Intersection(pointGeometryArry);
+            }
+            catch(e){
+                //polygon intersects itself in a way that breaks the Intersection API
+                gAbort = true;
+                TEAlert(SGLang.i18n("Text_AlertCaption"),SGLang.i18n("PolygonNotSuported"));
+                return false;
+            }
+            var GeoIntersectCount = GeoIntersectTmp.Count;
+            if (GeoIntersectTmp.GeometryType == 0) // single point
+                GeoIntersectCount = 1;
+            else  // Multiple Points
+                GeoIntersect = GeoIntersectTmp;
+
+            for (var jj = 0; jj < GeoIntersectCount; jj++){
+                if (GeoIntersectCount==1){
+                    x = GeoIntersectTmp.X;
+                    y = GeoIntersectTmp.Y;
+                }
+                else{
+                    x = GeoIntersect.Item(jj).X;
+                    y = GeoIntersect.Item(jj).Y;
+                }
+                var objColor = "#000000";
+                var volumeType = 0;
+
+                var j = Math.round((bufferParams.maxY-y)/bufferParams.resY);
+                var altitude0 = (elevationBuffer1 != null)?  elevationBuffer1[j * bufferParams.dimensionXInPixels*bufferParams.numOfXQuerysNeeded + i] : flatAltitude;
+                var altitude1 = bufferParams.buffer[j * bufferParams.dimensionXInPixels*bufferParams.numOfXQuerysNeeded + i]             
+                var elevationDiff = altitude0 - altitude1;
+                var volumeDiff = cellArea * elevationDiff * gDistanceUnitFactor;
+                if (altitude0 > -9999 && altitude1 > -9999){ // null values
+                    if (elevationDiff > 0) { // Added
+                        volumeType = 1;
+                        VolumeAdded += Math.abs(volumeDiff);
+                        if (drawObjects && gDrawObjectType == 1)
+                            gGreenArray.push(x, y, altitude1);
+
+                        objColor = 65280; //  "#00ff00"; // green
+                    }
+                    else if (elevationDiff < 0) { // Removed
+                            volumeType = 2;
+                            VolumeRemoved += Math.abs(volumeDiff);
+                            if (drawObjects && gDrawObjectType == 1)
+                                gRedArray.push(x, y, altitude1);
+                            objColor = 255; //  "#ff0000";    // red
+                    }
+                    else {
+                            if (drawObjects && gDrawObjectType == 1)
+                                gBlackArray.push(x, y, altitude1);
+                            volumeType = 0;
+                            objColor = 0; //  "#000000"; // black
+                    }
+                    if (drawObjects && gDrawObjectType == 0) { 
+                        var altitude0 = (elevationBuffer1 != null)?  elevationBuffer1[j * gQuaryResolution + i] : flatAltitude;
+                        var pos = SGWorld.Creator.CreatePosition(x, y, altitude0, 3, 0, 0, 0, 1);
+                        gLayer.FeatureGroups.Point.CreateFeature([pos.X, pos.Y, pos.Altitude0], volumeType + ";" + cellArea.toFixed(3) + ";" + volumeDiff.toFixed(3) + ";" + objColor);
+                    }
+                }
+            } // for jj
+        } // for i
+        $("#progressText").text(SGLang.i18n("calculatingFinished"));
+    }
+    catch (err) { if (gDebug) debugger; alert(err.message); return false; } 
+
+    //alert ((new Date() - startDate)/1000);
+    SGWorld.Window.HideMessageBarText();
+    gVolumeResultHTML = "<br/><u>" + ObjName + " ("+(polygonGeometry.Area).toFixed(3)+" "+ gAreaUnit+") :</u><br/>" + SGLang.i18n("objectVolumeAdded") + "<b>" + VolumeAdded.toFixed(3) + "</b> " + gVolumeUnit + "  <br/> " + SGLang.i18n("objectVolumeRemoved") + "<b>" + VolumeRemoved.toFixed(3) + "</b> " + gVolumeUnit + "<br/>";
+    gTotalVolumeAdded += VolumeAdded;
+    gTotalVolumeRemoved += VolumeRemoved;
+
+    if (drawObjects )
+        if(gDrawObjectType == 0)
+            gLayer.Save();
+        else
+            drawResultPolylines();
+
+    return true;
+}
+
+//--------------
+function updateProgressBar(progress) {
+    $('#progress div').css('width', progress + '%').text(progress.toFixed(0) + '%');
+  }
+
+//------------------
+function showResultPopup (resultHTML){
+    try {
+        var netStr = (gTotalVolumeAdded>gTotalVolumeRemoved)?SGLang.i18n("fill"):SGLang.i18n("cut");
+        resultHTML += "<br/>" + SGLang.i18n("totalNetVolume") + "<b>" + (Math.abs(gTotalVolumeAdded-gTotalVolumeRemoved)).toFixed(3) + "</b> "+ netStr+" " + gVolumeUnit + "<br/>";
+        if (gGeometryList.length > 0) 
+            DisplayMessagePopup(SGLang.i18n("ToolName"), SGLang.i18n("resultHeader"), abspath() + "/img/volumeblack.png", resultHTML, 100, 100, 400, 300, true);
+    }
+    catch (err) { if (gDebug) alert(err.message);  } 
+}
+//----------
+//    AddResultPolygon
+function AddResultPolygon(geometry,flatAltitude,resultHTML) {
+    try {
+        // Clear altitude values from geomerty and set it as "Relative to Pivot" with Altitude=flatAltitude
+        var WKB = geometry.Wks.ExportToWKB(false);
+        var geometryFlat = SGWorld.Creator.GeometryCreator.CreateGeometryFromWKB (WKB);
+
+        var volumeGroup = getVolumeGroup();
+
+        var PlaneObj = SGWorld.Creator.CreatePolygon(geometryFlat, SGWorld.Creator.CreateColor(255, 255, 255, 1), SGWorld.Creator.CreateColor(255, 255, 0, 128),3, getVolumeGroup(), SGLang.i18n("volumePlane"));
+        PlaneObj.Position.Altitude = flatAltitude;
+        PlaneObj.Visibility.ShowThroughDistance = 100; // 100m
+
+        var popupMsg = SGWorld.Creator.CreatePopupMessage(SGLang.i18n("volume"), "", 0,0, 400, 200, -1);
+        popupMsg.Flags = 2 + 32;
+        popupMsg.InnerText = "<html><body>"+resultHTML;
+        PlaneObj.Message.MessageID = popupMsg.ID;
+    }
+    catch (err) { if (gDebug) alert(err.message);  } 
+}
+//----------
+function getVolumeGroup() {
+    try {
+        var rootName = ''
+        if (gRootFolder != '')
+             rootName = SGWorld.ProjectTree.GetItemName (gRootFolder);
+
+        var volumeGroup= SGWorld.ProjectTree.FindItem(rootName+'\\'+SGLang.i18n("volumeResult"));
+        if (volumeGroup =='') 
+            volumeGroup = SGWorld.ProjectTree.CreateGroup (SGLang.i18n("volumeResult"),gRootFolder);
+
+        return volumeGroup;
+    } catch (err) { return SGWorld.ProjectTree.RootID;  } 
+}
+//-------------------
+function drawResultPolylines() {
+    try {
+        var pointLine = objectTypeCreators["PointPolyline"];
+        if (gGreenArray.length>3){
+            var greenGeometry = SGWorld.Creator.GeometryCreator.CreateLineStringGeometry(gGreenArray);
+            pointLine(greenGeometry, SGLang.i18n("volumeAdded"), SGWorld.Creator.CreateColor (0,255,0,0), getVolumeGroup());
+        }
+        if (gRedArray.length>3){
+            var redGeometry = SGWorld.Creator.GeometryCreator.CreateLineStringGeometry(gRedArray);
+            pointLine(redGeometry, SGLang.i18n("volumeRemoved"), SGWorld.Creator.CreateColor (255,0,0,0), getVolumeGroup());
+        }
+        if (gBlackArray.length>3){
+            var blackGeometry = SGWorld.Creator.GeometryCreator.CreateLineStringGeometry(gBlackArray);
+            pointLine(blackGeometry, SGLang.i18n("volumeEqual"), SGWorld.Creator.CreateColor (0,0,0,0),getVolumeGroup());
+        }
+
+    
+    
+    }    catch (err) { return SGWorld.ProjectTree.RootID;  } 
+}
+
+//----------
+//    CreateLayer
+function CreateLayer(blockWidth, ObjName) {
+    try {
+        var postfix = new Date().getMilliseconds();
+        var LayerName = SGLang.i18n("volume")+"-"+ObjName+"-"+ postfix;
+
+        gLayer = SGWorld.Creator.CreateNewFeatureLayer(LayerName, LayerGeometryType.LGT_POINT, "FileName=VolumeAnalysis" + postfix + ".shp;TEPlugName=OGR;", getVolumeGroup());
+        gLayer.Streaming = true;
+        gLayer.BlockWidth = blockWidth;
+        gLayer.Refresh();
+
+        gLayer.DataSourceInfo.Attributes.CreateAttribute(SGLang.i18n("volumeType"), 1, 10, 0);          // Integer (0=no change, 1=Added, 2=Removed)
+        gLayer.DataSourceInfo.Attributes.CreateAttribute(SGLang.i18n("volumeArea"), 2, 20, 2);          // Double
+        gLayer.DataSourceInfo.Attributes.CreateAttribute(SGLang.i18n("volumeDiff"), 2, 20, 2);          // Double
+        gLayer.DataSourceInfo.Attributes.CreateAttribute(SGLang.i18n("color"), 1, 20, 0);               // Integer (color)
+
+        gLayer.DataSourceInfo.Attributes.ImportAll = true;
+        gLayer.Visibility.MaxVisibilityDistance = blockWidth*50;
+        gLayer.FeatureGroups.Point.DisplayAs = ObjectTypeCode.OT_LABEL; 
+    }
+    catch (err) { if (gDebug) alert(err.message); } 
+
+}
+var featureLayerStyles = {
+
+    "ImageLabel": function (size, icon) {
+        gLayer.FeatureGroups.Point.DisplayAs = ObjectTypeCode.OT_IMAGE_LABEL;
+        gLayer.FeatureGroups.Point.SetProperty("Image file", icon)
+        gLayer.FeatureGroups.Point.SetProperty("Image Color", "[" + SGLang.i18n("color") + "]")
+        gLayer.FeatureGroups.Point.SetProperty("Scale", size);
+        gLayer.FeatureGroups.Point.SetProperty("Lock Mode", 1);
+        gLayer.FeatureGroups.Point.SetProperty("Altitude Method", 1);
+        gLayer.FeatureGroups.Point.SetProperty("Limit growth", false);
+        gLayer.FeatureGroups.Point.SetProperty("Smallest Visible Size", 1);
+        gLayer.FeatureGroups.Point.SetProperty("Tool Tip", SGLang.i18n("volumeAreaTitle") + ": [" + SGLang.i18n("volumeArea") + "] " + gAreaUnit + ", " + SGLang.i18n("volumeChange") + ": [" + SGLang.i18n("volumeDiff") + "] " + gVolumeUnit);
+    }
+}
+var objectTypeCreators = {
+    "PointPolyline": function (geometry, name, param, groupID)
+    {
+        TEObj = SGWorld.Creator.CreatePolyline(geometry, param, 3, groupID, name);
+        TEObj.LineStyle.Width = -1007; // new way to show only the waypoints
+        // TEObj.SaveInFlyFile = false;
+        TEObj.Visibility.MaxVisibilityDistance = 5000;
+        TEObj.LineStyle.Color.SetAlpha(0.4);
+    },
+}
+var gAreaUnitFactor = 1;
+var gDistanceUnitFactor = 1;
+var gAreaUnit = "";
+var gVolumeUnit = "";
+//--------------
+//setUnits
+function setUnits() {
+    if (SGWorld.GetOptionParam("AltitudeAndDistance") == 0) {
+        gAreaUnitFactor = 1;
+        gDistanceUnitFactor = 1;
+        gAreaUnit = SGLang.i18n("sqm"); ;
+        gVolumeUnit = SGLang.i18n("cubicm");
+    }
+    else {
+        gDistanceUnitFactor = 3.28084;
+        gAreaUnitFactor = gDistanceUnitFactor*gDistanceUnitFactor;
+        gAreaUnit = SGLang.i18n("sqft"); ;
+        gVolumeUnit = SGLang.i18n("cubicf");
+    }
+
+}
+//----------
+function setModelsQuality(high) {
+    try {
+        if (high){       // Upscale quality of all mesh layers in the project
+            var meshLayers=[];
+            BuildObjectsList(SGWorld.ProjectTree.RootID, meshLayers, 38); 
+            meshLayers.forEach(function(element) {
+                var meshObj = SGWorld.Creator.GetObject (element);
+
+                gMeshlayersQuality.push ([element,meshObj.Oversampling]);
+                meshObj.Oversampling = 150; // Best
+            });
+            gSettingQuality = SGWorld.GetOptionParam ("TerrainModelQuality"  );
+            SGWorld.SetOptionParam ('TerrainModelQuality',2);
+            gSetModelsQuality = true;
+        } else {
+            SGWorld.SetOptionParam ('TerrainModelQuality',gSettingQuality);
+            gMeshlayersQuality.forEach(function(element) {
+                var meshObj = SGWorld.Creator.GetObject (element[0]);
+                meshObj.Oversampling = element[1]; 
+             });
+             gSetModelsQuality = false;
+        }
+    }
+    catch (err) { if (gDebug) alert(err.message); } 
+
+}
+ 
+</script>
+
+</body>
+</html>

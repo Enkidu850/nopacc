@@ -1,0 +1,1013 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <title>Presentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--<meta http-equiv="Content-Type" content="text/html; charset=utf-8">-->
+    <link rel="StyleSheet" href="../Style80.css" type="text/css">
+    <script src="../jquery/jquery-3.1.1.min.js" type="text/javascript"></script>
+    <!--<script language="javascript" src="../ToolsCommon80.js"></script>-->
+    <script language="javascript" src="../TeTypes.js"></script>
+    <script language="javascript" src="../ToolsCommon80.js"></script>
+    <script language="javascript" src="PresentationCommon.js"></script>
+
+
+</head>
+
+<body id="Body" class="floatingPanel box disable-selection controlBody" onload="init()" onunload="uninit()">
+
+ 
+    <div class="div1">
+        
+        <div id='bodyOverlap' class="bodyOverlap" ></div>
+
+        <div class="wrapperDiv">
+            
+            <!--panel buttons-->
+            <div id="mainPanel" class="mainPanel" >
+                <div id="panelButtons" style="visibility: visible; display: flex; justify-items: center; height: 100%; width: 100%;">
+                    <svg class="svg-panel-button btnShadow" id="btnBackward" onclick="pcp.prevStep()">
+                        <image class="svg-normal" href="./images/step_backward.svg" x="25%" y="30%" width="40%" height="40%" style="margin: 10%;" />
+                        <image class="svg-hover" href="./images/step_backward_hover.svg" x="25%" y="30%" width="40%" height="40%" style="margin: 10%;" />
+                        <image class="svg-disabled" href="./images/step_backward_disabled.svg" x="25%" y="30%" width="40%" height="40%" style="margin: 10%;" />
+                    </svg>
+                    <svg class="svg-panel-button btnShadow" id="btnStop" onclick="pcp.stop()">
+                        <image class="svg-normal" href="./images/stop.svg" x="30%" y="30%" width="40%" height="40%" style="margin: 10%;" />
+                        <image class="svg-hover" href="./images/stop_hover.svg" x="30%" y="30%" width="40%" height="40%" style="margin: 10%;" />
+                        <image class="svg-disabled" href="./images/stop_disabled.svg" x="30%" y="30%" width="40%" height="40%" style="margin: 10%;" />
+                    </svg>
+                    <div class="imgWithCanvasContainer " id="playDiv" onclick="pcp.play();">
+                        <svg class="svg-panel-button btnShadow" id="btnPlay" style="pointer-events: all; position:absolute; left: 0; top:0; width: 100%; height: 100%; margin: 0;">
+                            <image class="svg-normal" href="./images/play.svg" x="31%" y="29%" width="45%" height="45%" style="margin: 10%; pointer-events: none;" />
+                            <image class="svg-hover" href="./images/play_hover.svg" x="31%" y="29%" width="45%" height="45%" style="margin: 10; pointer-events: none;" />
+                            <image class="svg-disabled" href="./images/play_disabled.svg" x="31%" y="29%" width="45%" height="45%" style="margin: 10%; pointer-events: none;" />
+                        </svg>
+                        <canvas class="actionProgressCanvas" id="waitCanvas2" width="100%" height="100%" style="position:absolute; left: 0rem; top:0rem; z-index: 4;"></canvas>
+                    </div>
+                    <svg class="svg-panel-button btnShadow" id="btnSkip" style="position: relative;" onclick="pcp.skipForward()">
+                        <image class="svg-normal" href="./images/skip.svg" x="30%" y="30%" width="40%" height="40%" style="margin: 10%;" />
+                        <image class="svg-hover" href="./images/skip_hover.svg" x="30%" y="30%" width="40%" height="40%" style="margin: 10%;" />
+                        <image class="svg-disabled" href="./images/skip_disabled.svg" x="30%" y="30%" width="40%" height="40%" style="margin: 10%;" />
+                    </svg>
+                    <svg class="svg-panel-button btnShadow" id="btnForward" onclick="pcp.nextStep()">
+                        <image class="svg-normal" href="./images/step_forward.svg" x="30%" y="30%" width="40%" height="40%" style="margin: 10%;" />
+                        <image class="svg-hover" href="./images/step_forward_hover.svg" x="30%" y="30%" width="40%" height="40%" style="margin: 10%;" />
+                        <image class="svg-disabled" href="./images/step_forward_disabled.svg" x="30%" y="30%" width="40%" height="40%" style="margin: 10%;" />
+                    </svg>
+                    <span style="flex-grow: 1"></span>
+                    <!-- <canvas id="speedFactorCanvas" class="svg-panel-button btnShadow" width="33" height="33"  onclick="pcp.toggleSpeedFactor();"></canvas> -->
+                    <div id="speedFactorDiv" onMouseDown="pcp.toggleSpeedFactor();" class="svg-panel-button btnShadow link">
+                        <span id="speedFactorCanvas" class="speedNum"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!--Progress bar-->
+            <div class="progressBar">
+                <div class="div2"></div>
+                <div id="presentationProgress" class="presentationProgress"></div>
+            </div>
+            <!--Action list-->
+            <ol class="hideScroll" id="actionList">
+                <!--<li>test</li>-->
+            </ol>
+            <!-- <img id="btnOpenSidePanel" class="panelButton btnShadow" style="position:absolute; bottom: 7px; right: 0rem; height: 20px; width: 26px; margin: 14px 8px 0rem 10px; padding: 6px; border-radius: 4px;"
+                 src="./images/openSidePanel.png" onclick="pcp.openEditor();"> -->
+
+                <svg class="svg-panel-button btnShadow btnOpenSidePanel" id="btnOpenSidePanel" onclick="pcp.openEditor()" >
+                    <image class="svg-normal" href="./images/open_panel.svg" width="100%" height="100%" />                 
+                    <image class="svg-hover" href="./images/open_panel_hover.svg" width="100%" height="100%" />                 
+                </svg>
+
+        </div>
+            <!--open presentation panel-->
+            <!--<div style="width: 4px; height: 100%; margin-left: 4px; background-color: white;">
+        <img id="btnOpenSidePanel" class="panelButton" style="border-radius: 0%;" src="./images/openSidePanel.png" onClick="pcp.openEditor()">
+    </div>-->
+
+    </div>
+    
+    <!--<object id="SGWorld" classid="CLSID:3a4f91a0-65a8-11d5-85c1-0001023952c1"></object>-->
+    <script language="JavaScript">
+
+        var pcp = null;
+        var scrollTargetPos = 0;
+        var SGWorld=null;
+
+        function init() {
+
+            try {
+                SGWorld =  initSGWorld();
+                if (TEF){
+                     $("#btnOpenSidePanel").hide();
+                }
+                pcp = new PresentationControlPanel();
+                
+
+                pcp.update();
+                pcp.enableDisableButtons();
+
+                if (pcp.status == "Playing") {
+                    pcp.setActionList(pcp.PlayingPresentationJSON());
+                }
+
+            }
+            catch (e) {
+                //alert(e.message);
+                log(e.message);
+            }
+        }
+
+        function uninit() {
+            if (pcp) {
+                if (pcp.getPresentation())
+                    pcp.getPresentation().Stop();
+
+                pcp.closeEditor();
+            }
+        }
+
+        function addEvent(obj, evt, fn) {
+            if (obj.addEventListener) {
+                obj.addEventListener(evt, fn, false);
+            }
+            else if (obj.attachEvent) {
+                obj.attachEvent("on" + evt, fn);
+            }
+        }
+
+        function log(text) {
+            // if (TEF)
+            //     parent.application.errorHandling(text,0);
+            
+        }
+
+
+        // This is the main "class"
+        function PresentationControlPanel() {
+
+            var self = new Object();
+
+            self.presentationId = "";
+            self.status = "Stopped";
+            self.actionsList = [];
+            self.currentPlayingActionId = "";
+            self.numSteps = 0;
+            self.speedFactor = 1;
+            self.panelId = "";
+
+            //Handler for moving mouse outside the browser window
+            addEvent(document, "keypress", function (e) {
+                if (e.charCode == 32) {
+                    self.simulateUserContinueOrSkip()
+                }
+            });      
+
+            // Handler for long press on images
+            self.pressTimer = undefined;
+            self.inLongPress = false;
+            $("img").mouseup(function () {
+                clearTimeout(self.pressTimer);
+                self.pressTimer = undefined;
+                if (self.inLongPress == true) {
+                    self.onLongPress($(this).get(0), false);
+                }
+                setTimeout(function () { self.inLongPress = false; }, 10); // we delay the reset of the flag so we will have oportunaty to check its status in the onClick.
+                // Clear timeout
+                return false;
+            }).mousedown(function () {
+                // Set timeout
+                var t = $(this);
+                self.pressTimer = window.setTimeout(function () {
+                    self.onLongPress(t.get(0), true);
+                    self.inLongPress = true;
+                }, 500);
+                return false;
+            });
+
+            $('#speedFactorDiv').hover(function() { self.drawSpeedFactor(); }, function() { self.drawSpeedFactor(); });
+            /////////////////////////////////////////////////////////////////////////////////////////
+
+            self.toogleLoopMode = function (activate) {                
+
+                self.getPresentation().LoopMode = !self.getPresentation().LoopMode;
+
+                if (self.getPresentation().LoopMode) {
+                    $('#btnRepeat').addClass('panelButtonActive');
+                }
+                else {
+                    $('#btnRepeat').removeClass('panelButtonActive');
+                }
+
+            }
+
+            self.isEmptyPresentation = function () {
+                try {
+                    var pres = self.getPresentation();
+                    if (pres) {
+                        var steps = JSON.parse(pres.PresentationJSON).presentation.steps;
+                        if (steps && steps.length == 0) { //} && steps[0].actions.length == 0) {
+                            return true;
+                        }
+                    }
+                }
+                catch (e) {
+                    log(e.message);
+                    return true;
+                }
+
+                return false;
+            }
+            // Handling the actuall button that was long pressed
+            self.onLongPress = function (element, isStart) {
+                //if (element.id == "btnForward") {
+                //    self.getPresentation().SpeedFactor = isStart ? 5 : 1;
+                //}
+                //else if (element.id == "btnBackward") {
+                //    self.getPresentation().SpeedFactor = isStart ? -5 : 1;
+                //}
+            }
+
+            self.enableSvgButton = function(id, enable) {
+
+                if (enable) {
+                    $('#' + id).removeClass('svg-disabled');
+                    $('#' + id).addClass('svg-normal');
+                }
+                else {
+                    $('#' + id).removeClass('svg-normal');
+                    $('#' + id).addClass('svg-disabled');
+                }
+
+            }
+            self.skipEnabled = false;
+            self.enableSkip = function (bEnable) {
+                self.skipEnabled = bEnable == undefined ? true : bEnable;
+                self.enableSvgButton('btnSkip', self.skipEnabled);
+            }
+
+            self.skipForward = function () {
+
+                
+                try {
+                    if (self.currentPlayingActionId != "") {                       
+                        self.getPresentation().SkipAction();
+                        self.enableSkip(false);
+                    }
+                    else {
+                        if (self.status == "Paused")
+                            self.getPresentation().Pause(); // In this case it will actually resume since we are already in pause.
+                    }
+                    
+                }
+                catch(e) {
+                    log(e.message);
+                }
+
+            }
+
+            self.nextStep = function () {
+                if (self.inLongPress == false)
+                    self.getPresentation().NextStep();
+            }
+
+            self.prevStep = function () {
+                if (self.inLongPress == false)
+                    self.getPresentation().PreviousStep();
+            }
+
+            self.continue = function () {
+
+                self.pause();
+            }
+
+            self.pasue = function () {
+
+                try {
+                    self.getPresentation().Pause();
+                }
+                catch (e) {
+                    log(e.message);
+                }
+            }
+
+            self.setProgress = function (progress) {
+                const progressBar = document.getElementById('presentationProgress');
+                if(progressBar)
+                    progressBar.style.width = progress.toString() + '%';
+            }
+
+
+            self.getWaitProgressForAction = function (actionId) {
+                try {
+                    var wait = $("#waitProgress_" + actionId);
+                    return wait[0];
+                }
+                catch (e) {
+                    //  alert(e.message);
+                    log(e.message);
+                }
+
+                return undefined;
+
+            }
+
+
+
+            self._prevProgress = 1;
+            
+            self.setWaitProgress2 = function (actionId, progress) {
+
+                actionId = 1
+                var lineWidth = 10;
+                const canvas = document.getElementById("waitCanvas2")
+                if (canvas.getContext) {
+                    const ctx = canvas.getContext("2d")
+                  
+                    var h = canvas.height - lineWidth;
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    if (progress == undefined)
+                        progress = self._prevProgress;
+
+                    var r = h / 2;
+
+                    if (progress > 0 && progress < 1) {
+
+                        ctx.lineWidth = lineWidth;
+
+                        ctx.beginPath();                        
+                        ctx.strokeStyle = 'rgba(0,200,255,0.5)'
+                        ctx.arc(canvas.width / 2, canvas.height / 2,  r, 0 * Math.PI - Math.PI / 2, progress * 2 * Math.PI - Math.PI / 2)
+                        ctx.stroke()
+
+                    }                    
+
+                    self._prevProgress = progress
+                }
+
+
+                
+
+                //   const progressBar = self.getWaitProgressForAction(actionId);
+                // progressBar.style.width = (progress == 0 ? 0 : 100 - progress).toString() + '%';
+            }
+
+            // handler response to presentation playing status changes
+            self.applyStatusChanges = function (oldStatus, newStatus) {
+
+                self.status = newStatus;
+
+                if (newStatus == 'Stopped') {
+
+                    self.setSpeedFactor(1);
+                    self.clearActionList();
+                    self.setProgress(0);
+                    if (self.animationTimer)
+                        clearInterval(self.animationTimer);
+
+                    self.enableDisableButtons();
+                    $('#bodyOverlap').css('display', 'none');
+                }
+
+                else if (newStatus == 'FastForwarding') {
+                
+                }
+                else if (newStatus == 'FastRewinding') {
+                
+                }
+                else if (newStatus == 'NextStepping') {
+
+
+                }
+                else if (newStatus == 'PrevStepping') {
+
+                }
+                
+            }
+
+            self.setPlayPauseIcon = function () {
+
+                var name = 'play';                
+                if (self.status == 'Playing') {
+                    name = 'pause';
+                }
+
+
+                $('#btnPlay .svg-normal').attr("href", "./images/" + name + ".svg");
+                $('#btnPlay .svg-hover').attr("href", "./images/" + name + "_hover.svg");
+
+                $('#btnPlay .svg-normal').attr("x", name == 'play' ? "31%" : "29%");
+                $('#btnPlay .svg-hover').attr("x", name == 'play' ? "31%" : "29%");
+            }
+
+
+            self.clearActionList = function () {
+                const actionList = document.getElementById('actionList');
+                while (actionList.firstChild) {
+                    actionList.removeChild(actionList.lastChild);
+                }
+            }
+
+
+
+            // Handler when clicikng on item on the list
+            self.actionItemClicked = function () {
+
+                // disable drop down
+                return;
+
+              
+
+            }
+
+            // Build the list of actions that where recieved when the presentation started
+            self.setActionList = function (flatPresentation) {
+
+                if (flatPresentation)
+                    self.presentation = flatPresentation;
+
+                var newActionList = [];
+
+                for (var i = 0; i < self.presentation.steps.length; i++) {
+                    var step = self.presentation.steps[i];
+                    for (var j = 0; j < step.actions.length; j++) {
+                        step.actions[j].order = (i + 1) + "." + (j + 1);
+                        newActionList.push(step.actions[j]);                        
+                    }
+                }
+
+
+                self.numSteps = self.presentation.steps.length;
+
+
+                //$("#btnBackward").css('opacity', '0.4');
+                //if (self.numSteps > 0) {
+                //    $("#btnBackward").css('opacity', 1);
+                //}
+
+                var speedFactor = self.getPresentation().SpeedFactor;
+
+                self.clearActionList();
+                const actionList = document.getElementById('actionList');
+
+                for (let i = 0; i < newActionList.length; i++) {
+
+                    action = self.getPresentation().GetItem(newActionList[i].id);
+                    if (action) {
+
+                        var jsonAction = JSON.parse(action.ItemJSON);                        
+                        var entry = presentationCommon.getDescriptionFor(jsonAction, speedFactor);
+
+                        var li = document.createElement('li');
+
+
+                        $(li).html("<b>" + entry[0] + "</b>" + entry[1]);
+
+                        if (li.textContent == "")
+                            li.textContent = "Play next step";
+                        li.id = "actionItem_" + newActionList[i].id;
+                        // li.setAttribute('data-order', newActionList[i].order);
+                                              
+
+                        $(li).addClass("font-scroll");
+
+                        if (jsonAction.actionType == "Click") {
+                            $(li).addClass("click-entry btnShadow");
+                            $(li).click(function () { self.play(); });
+                            // $(li).css("background", "#f0f0f0");
+                            $(li).html("<b>" + SGLang.i18n("Click") + "</b>");
+                            // li.setAttribute('data-order', "");
+                        }
+                         else if (jsonAction.actionType == "Wait") {                             
+                             $(li).addClass("click-entry btnShadow");                             
+                            //  $(li).css("background", "#f4f4f4");
+                            //  li.setAttribute('data-order', "");
+                             $(li).click(function () { self.skipForward(); });
+                             $(li).html("<b>" + entry[0] + " " + entry[1] + "</b>");
+
+                         }
+
+                        actionList.appendChild(li);
+                    }
+                }
+            }
+
+            self.play = function () {
+
+
+                var selected = SGWorld.ProjectTree.GetNextItem("", ItemCode.SELECTED);
+                if (selected) {
+                    var teObj = SGWorld.Creator.GetObject(selected);
+                    if (teObj && teObj.ObjectType == ObjectTypeCode.OT_PRESENTATION) {
+                        self.presentationId = selected;
+                    }
+                }
+
+                if (self.presentationId != "") {
+                                            
+                                                                        
+                    self.drawSpeedFactor();
+                    if (self.status == 'Playing' || self.status == 'Paused') {
+                        self.getPresentation().Pause(); // This can also resume
+                    }
+                    else if (self.status == 'Stopped') {
+
+                        self.getPresentation().SpeedFactor = self.speedFactor;
+                        self.getPresentation().Play();
+                    }
+                         
+                    
+                }
+
+                
+                
+            }
+
+            self.stop = function () {
+
+                try {
+                    self.setSpeedFactor(1);
+                    self.getPresentation().LoopMode = false;
+                    self.getPresentation().Stop();                   
+                    self.enableDisableButtons();
+                }
+                catch(e) {
+                    log(e.message);
+                }
+            }
+
+            self.simulateUserContinueOrSkip = function () {
+
+
+                $('#btnOpenSidePanel').css("visibility", "hidden");
+                $('#btnOpenSidePanel').parent().css("background", "#00D8FF");
+                setTimeout(function () {
+                    $('#btnOpenSidePanel').css("visibility", "visible");
+                    $('#btnOpenSidePanel').parent().css("background", "#F2F2F2");
+                }, 100);                
+                
+            }
+
+            self.onKeyboardEvent = function (Message, Char, KeyState) {
+                try {
+                    
+                    if (Message == 0x0101 && Char == 32) { // WM_KEYUP
+                        self.simulateUserContinueOrSkip();
+                    }
+                }
+                catch (e) {
+                    log(e.message);
+                }
+            }
+
+            self.updateCaption = function(name) {
+			
+				if (TEF) {
+				}
+				else {
+	                var popups = (new VBArray(SGWorld.Window.GetPopups())).toArray();
+	                for (var i = 0; i < popups.length; i++) {
+	                    var popup = SGWorld.Window.GetPopupByCaption(popups[i]);
+	                    var captionInitial = SGLang.i18n("presentationCaptionStart");
+	                    if (popup.Caption.lastIndexOf(captionInitial, 0) === 0) {
+	                        popup.Caption = captionInitial + name;
+	                        popup.ShowCaption = true;
+	                    }
+	                }
+				}
+				
+            }
+            self.update = function () {
+
+                self.drawSpeedFactor();
+
+                try {
+                    var selected = SGWorld.ProjectTree.GetNextItem("", ItemCode.SELECTED);
+                    if (selected) {
+                        var teObj = SGWorld.Creator.GetObject(selected);
+                        if (teObj.ObjectType == ObjectTypeCode.OT_PRESENTATION) {
+
+                            self.presentationId = selected;
+                            self.status = teObj.Status;
+                            // Update caption
+                            //$('#panelTitle')[0].textContent = teObj.TreeItem.Name;
+                            self.updateCaption(teObj.TreeItem.Name);
+
+                            if (self.isEmptyPresentation()) {
+                                self.openEditor();
+                            }
+                        }
+                    }
+                }
+                catch (e) {
+                    // We were unable to establish that the selected item is a presentation.
+                    log(e.message);
+                }
+
+                if (self.presentationId == "")
+                    self.updateCaption(SGLang.i18n("selectPresentation"));
+            }
+
+            self.closePanel = function () {
+                
+                self.stop();
+                self.closeEditor();
+                if (TEF)
+                    parent.navigate.showHidePresentation(false);
+                else
+                    SGWorld.Window.RemovePopupByCaption("Presentation Control Panel");                
+            }
+
+            // Responding to tree messages
+            self.onProjectTreeAction = function (id, action) {
+                try {
+                    if (action.Code == ActionCode.AC_SELCHANGED) {                        
+
+                        var mouseInfo = SGWorld.Window.GetMouseInfo();
+                        var isDragging = (mouseInfo.Flags & 0x1) != 0;  //0x1 is lbutton
+                        if (isDragging)
+                            return;
+                        
+                        var presentationObj = SGWorld.ProjectTree.GetObject (id);
+                        if (presentationObj == null || presentationObj.ObjectType != ObjectTypeCode.OT_PRESENTATION){
+                            //self.closePanel();
+                            return;
+                        }
+
+                        if (id != self.presentationId) {
+
+                            if (self.status != "Stopped") {
+                                self.stop();
+                            }
+
+                            // Wait for the stop (if we initiated one) to complete and then update the current presentation
+                            setTimeout(function () {
+                                self.update();
+                                self.enableDisableButtons();
+                            }, 100);
+
+                           
+                        }
+                     
+                    }
+                }
+                catch (e) {
+                   // log(e.message);
+                }
+            }
+
+            self.animationTimer = undefined;
+            self.startAnimateActionList = function () {
+                scrollTargetPos = 0;
+                if (self.animationTimer)
+                    clearInterval(self.animationTimer);
+
+                self.animationTimer = setInterval(function () {                    
+
+                    var dtScroll = 10;
+                    const actionList = document.getElementById('actionList');
+                    if (actionList.scrollTop != scrollTargetPos) {
+
+                        if (Math.abs(actionList.scrollTop - scrollTargetPos) > 200) {
+                            actionList.scrollTop = scrollTargetPos;
+                        }
+                        else {
+                            if (actionList.scrollTop < scrollTargetPos) {
+                                actionList.scrollTop += dtScroll;
+                                if (actionList.scrollTop > scrollTargetPos)
+                                    actionList.scrollTop = scrollTargetPos;
+                            }
+                            else {
+                                actionList.scrollTop -= dtScroll;
+                                if (actionList.scrollTop < scrollTargetPos)
+                                    actionList.scrollTop = scrollTargetPos;
+                            }
+                        }
+                    }
+                }, 33);
+
+            }
+
+            self.enableDisableButtons = function () {
+
+                try {
+
+                    var currentPresentation = self.getPresentation();
+                    if (currentPresentation)
+                        self.status = currentPresentation.Status;
+
+                    self.setPlayPauseIcon();
+
+
+                    if (self.status == "Stopped" || self.presentationId == "") {
+
+                        self.enableSvgButton('btnStop', false);
+                        self.enableSvgButton('btnBackward', false);
+                        self.enableSvgButton('btnForward', false);
+                        self.enableSvgButton('speedFactorDiv', false);
+
+                        self.enableSvgButton('btnPlay', self.presentationId != "");
+
+                        self.enableSkip(false);
+                    }
+                    else {
+
+                        self.enableSvgButton('btnPlay', true);
+                        self.enableSvgButton('btnStop', true);
+                        self.enableSvgButton('btnBackward', true);
+                        self.enableSvgButton('speedFactorDiv', true);
+                        var hasForward = true;
+                        //try {
+                        //    var currentPlaying = self.getPresentation().GetItem(self.currentPlayingActionId);
+                        //    if (currentPlaying && currentPlaying.Parent.NextSibiling)
+                        //        hasForward = true;
+                        //}
+                        //catch (e) { }
+
+                        self.enableSvgButton('btnForward', hasForward);
+                        self.enableSkip(self.skipEnabled);
+                    }
+
+
+                    self.drawSpeedFactor();
+                }
+                catch (e) {
+
+                }
+            }
+
+            self.toggleSpeedFactor = function () {
+
+                if (self.status == "Stopped")
+                    return;
+
+                self.speedFactor *= 2;
+                if (self.speedFactor > 4)
+                    self.speedFactor = 0.5;
+
+                self.getPresentation().SpeedFactor = self.speedFactor;
+                self.drawSpeedFactor();
+
+                try {
+                    var currentPlaying = self.getPresentation().GetItem(self.currentPlayingActionId);
+                    if (currentPlaying.Type == 1 || currentPlaying.Type == 5)
+                        self.skipForward();
+                }
+                catch (e) {
+                    log(e.message);
+                }
+
+                
+                self.setActionList();
+
+            }
+
+            self.setSpeedFactor = function (newFactor) {
+
+                if (newFactor != undefined) {
+                    self.speedFactor = newFactor;
+                }
+                else {
+                    self.speedFactor = 1;
+                }
+
+                self.getPresentation().SpeedFactor = self.speedFactor;
+                self.drawSpeedFactor();
+            }
+
+            
+            // self.drawSpeedFactor = function () {
+            //     try {
+            //         const canvas = document.getElementById("speedFactorCanvas");
+            //         if (canvas.getContext) {
+            //             const ctx = canvas.getContext("2d");
+            //             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            //             var fontSize = canvas.height / 30;
+            //             ctx.font = "bold " + fontSize.toString() + 'rem Arial';
+            //             var c = self.speedFactor;
+            //             var fontOffset = 0;
+            //             if (c == 0.5) {
+            //                 c = "\u00BD";
+            //                 fontOffset = 1;
+            //             }
+
+            //             ctx.fillStyle = self.status == "Stopped" ? "#c0c0c0" : ($('#speedFactorCanvas').is(":hover") ? "#00D8FF" : "#000000");
+            //             //ctx.fillStyle = textColor ? textColor : "#000000";
+
+            //             var scaleFactor = 0.8;
+            //             ctx.scale(scaleFactor, scaleFactor);
+            //             ctx.fillText('x', (canvas.width / 2 - fontSize / 2 - fontOffset) / scaleFactor, (canvas.height / 2 + fontSize / 4 + 1) / scaleFactor);
+
+            //             ctx.scale(1 / scaleFactor, 1 / scaleFactor);
+            //             ctx.fillText(c, canvas.width / 2 - fontSize / 2 + 8 - fontOffset, canvas.height / 2 + fontSize / 4 + 1 + fontOffset);
+            //         }
+            //     }
+            //     catch (e) {
+            //         //Silient FireFox error 
+            //     }
+            // }
+            self.drawSpeedFactor = function () {
+                try {
+                        var color =  ($('#speedFactorDiv').is(":hover") ? "#00D8FF" : "#000000");
+                        var speedTex = (self.speedFactor==0.5)?'\u00BD' : self.speedFactor;
+                        $('#speedFactorCanvas').text ("x"+speedTex);
+                        $("#speedFactorCanvas").css("color",color);
+                    }
+                catch (e) {
+                }
+            }
+
+            // This were presentation events are being handled.
+            self.onPresentationEvent = function (eventParams) {
+                try {
+
+                    // Prepare the usual objects that we need during an event.
+                    var event = JSON.parse(eventParams);    // The events are being sent as a
+
+                    var presentation;
+                    var action;
+
+                    try {
+                        presentation = self.getPresentation();
+                        action = presentation != null && event.itemId && event.itemId != "" ? presentation.GetItem(event.itemId) : null;
+                    }
+                    catch (e) {
+                        log(e.message);
+                    }
+
+                    // check what step is currently plaing. We actually search it in thelist of steps.
+                    // This is not that efficient but also works when we have presentation in presentation playing.
+
+                  //  if (self.status != "Stopped" && event.eventName != 'WaitProgress') {
+                        
+                        self.enableDisableButtons();
+                   // }                        
+
+                    
+
+                    switch (event.eventName) {
+
+                        // Presentation started playing
+                        case 'Started':
+
+                          
+                            self.presentationId = event.presentationId;
+                            if (self.presentationId == undefined)
+                                self.presentationId = "";
+                            self.setActionList(event.flatPresentation);
+                            self.startAnimateActionList();
+
+                            
+                            if (event.creatingMovie) {
+                                $('#bodyOverlap').css('display', 'block');
+                            }
+                            
+                            break;
+
+                        case 'Stopped':
+                           
+                            break;
+                        // Item started playing
+                        case 'ActionStarting':
+                            if (action != null) {
+                                self.currentPlayingActionId = action.ID;
+                                self.enableSkip(true);
+                                var actionItem = document.getElementById('actionItem_' + action.ID);
+                                if (actionItem)
+                                    scrollTargetPos = actionItem.offsetTop - 84;
+
+                                var jsonAction = JSON.parse(action.ItemJSON);
+                                if (jsonAction.actionType == PresentationAction.Click) {
+                                    if (self.status == 'FastForwarding' || self.status == 'FastRewinding') {
+                                        self.continue();
+                                    }                    
+                                }
+
+                            }
+                            break;
+
+                        case 'ActionFinished':
+                            self.setWaitProgress2(action.ID, 1);
+//                            self.drawProgressNotch(event.progress);
+                            var p = event.progress * 100; // the |0 simply removes the fraction after the decimal point.
+                            self.setProgress(p);
+                          
+                            self.currentPlayingActionId = "";                            
+
+                            break;
+
+                        case 'WaitProgress':
+                            
+                            self.setWaitProgress2(action.ID, event.progress);
+
+                            break;
+
+                        case 'StatusChanged':
+                            self.applyStatusChanges(event.oldStatus, event.newStatus);
+                            break;                                                    
+
+                        case 'OpenEditor':
+                            self.openEditor();                            
+                            break; 
+                    }
+                }
+                catch (e) {
+                    log(e.message);
+                }
+
+                return true;
+            }
+
+            self.getPresentation = function (id) {
+
+                try {
+                    var teObj = SGWorld.Creator.GetObject(id != undefined ? id : self.presentationId);
+                    if (teObj.ObjectType == ObjectTypeCode.OT_PRESENTATION) {
+                        return teObj;
+                    }
+                    else {
+                        return null;
+                    }
+                }
+                catch(e) {
+                    return null;
+                }
+            }
+
+            self.closeEditor = function () {
+                
+                var toolName = SGLang.i18n("ToolName");
+
+                var editorIndex = self.getEditorContainerIndex();
+                if (editorIndex >= 0) {
+                    SGWorld.Application.Containers.RemoveContainer(editorIndex);
+                }
+
+            }
+
+            self.getEditorContainerIndex = function () {
+
+                var url = abspath() + "/PresentationEditor.html?lang=" + SGLang.getCode();
+                var toolName = SGLang.i18n("ToolName");
+
+
+                for (var i = 0; i < SGWorld.Application.Containers.Count; i++) {
+
+                    var container = SGWorld.Application.Containers.Item(i);
+                    //alert(container.ItemID);
+                    if (container.Name.indexOf(toolName) >= 0) {
+                        return i;
+                    }
+                }
+
+                return -1;
+            }
+
+            self.openEditor = function () {
+
+                var url = abspath() + "/PresentationEditor.html?lang=" + SGLang.getCode();
+                var toolName = SGLang.i18n("ToolName");
+
+                if (TEF) {
+                    parent.toolbox.selectTool ('layers',true);
+                    parent.projectTree.openTool(null,toolName,1,url);
+
+                } else {
+                     var editorIndex = self.getEditorContainerIndex();
+                    if (editorIndex >= 0) {
+                        SGWorld.Application.Containers.Item(editorIndex).URL = "file://" + url;
+                    }
+                    else {
+                        if (self.presentationId != "")
+                            SGWorld.Application.Containers.AddContainer(toolName, "file://" + url, 1);
+                    }
+                }
+            }
+
+
+            SGWorld.AttachEvent("OnProjectTreeAction", self.onProjectTreeAction);
+            SGWorld.AttachEvent("OnPresentationEvent", self.onPresentationEvent);
+            SGWorld.AttachEvent("OnKeyboard", self.onKeyboardEvent);
+
+            return self;
+        }
+
+
+
+
+        self.ShowHudMessage = function (message) {
+
+        }
+
+
+
+
+    </script>
+
+</body>
+
+</html>

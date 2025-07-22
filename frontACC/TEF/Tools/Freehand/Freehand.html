@@ -1,0 +1,129 @@
+<HTML>
+<HEAD>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=11" />
+    <link rel="StyleSheet" href="../Style80.css" type="text/css">
+	<script language="javascript" src="../jquery/jquery-3.1.1.min.js"></script>
+    <script language="javascript" src="../ToolsCommon80.js"></script>
+
+</HEAD>
+
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" style="border:0;overflow:auto;" id="Body"  onunload="exit(true)" >
+    <div class="ML5 MR5">
+        <span class="i18n s9">instructions</span>
+    </div>
+</body>
+
+<SCRIPT Language="JavaScript">
+    var drawMode = 0;
+    var drawObj = null;
+    var lastPos = null;
+    var minDistanceForWaypoint = 1; // 1 meter
+    var SGWorld = null;
+    var exitDone = false;
+
+//--------------------------------------
+function Init()
+{
+    SGWorld = initSGWorld();
+    SGWorld.AttachEvent("OnInputModeChanged", OnInputModeChanged);
+    SGWorld.AttachEvent("OnLButtonDown", OnLButtonDown);
+    SGWorld.AttachEvent("OnLButtonUp", OnLButtonUp);
+    SGWorld.AttachEvent("OnRButtonUp", OnRButtonUp);
+    SGWorld.AttachEvent("OnFrame", OnFrame);
+
+    SGWorld.Window.SetInputMode(1, abspath() + "/cursor_m.cur",false);
+    drawMode = 1;
+    // SGWorld.Window.ShowMessageBarText(SGLang.i18n("insructions"));
+}
+//-----------------------
+function exit(fromUnload) {
+    if (exitDone) // prevent multiple exit calls
+        return; 
+    exitDone = true;
+    SGWorld.Window.SetInputMode(0);
+    if (fromUnload)
+        return;
+    if (TEF){
+        if (drawObj != null)
+            parent.addContent.state.freehandObjectID = drawObj.ID;
+        parent.panel.back();
+    } 
+    else {
+        sgworld.Window.RemovePopupByCaption(toolName);   
+    }
+}
+//-------------------
+function OnLButtonDown (Flags, X, Y, bHandled)
+    {
+
+    if (drawMode != 1 ||  drawObj != null)
+        return;
+
+	try {
+        var color;
+        var parentGroup;
+        var name;
+        var lineWidth = -2;
+
+        if (TEF){
+            color = parent.projectTree.state.defaultValues['LineStyle.Color'];
+            lineWidth = parent.projectTree.state.defaultValues['LineStyle.Width'];
+            parentGroup = parent.projectTree.getDrawingObjectsGroup();
+        }else {
+            color = SGWorld.Creator.CreateColor(0, 255, 0, 1);
+            parentGroup = SGWorld.ProjectTree.RootID;
+        }
+        var cursor = SGWorld.Window.GetMouseInfo();
+        var cursorPos = SGWorld.Window.PixelToWorld(cursor.X, cursor.Y, -1 & ~(128 | 1024)).Position;
+        var geometry = SGWorld.Creator.GeometryCreator.CreateLineStringGeometry(new Array(cursorPos.X, cursorPos.Y, cursorPos.Altitude, cursorPos.X, cursorPos.Y, cursorPos.Altitude))
+        drawObj = SGWorld.Creator.CreatePolyline(geometry, color, 3, parentGroup, SGLang.i18n("freehandName"));
+        drawObj.LineStyle.Width = lineWidth;
+        drawObj.Geometry.StartEdit();
+        lastPos = cursorPos;
+        drawMode = 2;
+    } catch (e) {    }
+}
+var counter=0;
+//-------------------
+function OnFrame ()
+{
+    if (drawMode != 2 )
+        return;
+    addWaypoint (false);
+
+}
+//-------------------
+function OnLButtonUp (Flags, X, Y, bHandled)
+{
+    if (drawMode != 2 )
+        return;
+   addWaypoint (true);
+   drawMode = 3;
+   exit(false);
+}
+//-------------------
+function addWaypoint (force) {
+    try {
+        var cursor = SGWorld.Window.GetMouseInfo();
+        var cursorPos = SGWorld.Window.PixelToWorld(cursor.X, cursor.Y, -1 & ~(128 | 1024)).Position;
+        if (cursorPos.DistanceTo(lastPos) > minDistanceForWaypoint  || force) {
+            drawObj.Geometry.Points.AddPoint( cursorPos.X, cursorPos.Y, cursorPos.Altitude)
+            lastPos = cursorPos;
+        }
+
+    } catch (e) {    }
+}
+
+//-----------------------
+function OnRButtonUp (Flags, X, Y, bHandled)
+{
+    if (drawMode > 1 )
+        exit(false);
+}
+//-----------------------
+function OnInputModeChanged(NewMode)
+{
+        exit(false);
+}
+</script>

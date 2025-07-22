@@ -1,0 +1,31 @@
+﻿SGLang.lang = $.extend(SGLang.lang,{
+    ToolTitle:                      "SkylineGlobe - Skyline Software Systems, Inc.",
+    ToolName:                       "Distance",
+    help:                           "Help",
+	Text6:                          "Create Measurement Objects",
+	Text7:                          "Snapping",
+	Text17:                         "Units",	
+    Text18:                         "Delete the measurement.",
+	Text19:                         "Delete the last measurement point.",
+	Text20:                         "Snap the measurement points to edges, objects, and vertices.",
+	Text23:                         "Display the terrain elevation profile along an aerial line.",
+	Text24:                         "Show Aerial Distance",
+	Text25:                         "Show Horizontal Distance",
+	Text26:                         "Show Vertical Distance",
+
+    Text_TotalAerialDistance:       "Total Aerial Distance",
+    Text_TotalHorizontalDistance:   "Total Horizontal Distance",
+    Text_TotalVerticalDistance:     "Total Vertical Distance",
+    Text_Slope:                     "Slope",
+    Text_Firstpointtolastpoint:     "First point to last",
+	Text_in:                        "in",
+	Text_ft:                        "ft",
+	Text_mile:                      "mile",
+	Text_mm:                        "mm",
+	Text_cm:                        "cm",
+	Text_meter:                     "m",
+	Text_km:                        "km",
+    Text14:                         "TerrainProfile",
+
+    dummy: ""
+});

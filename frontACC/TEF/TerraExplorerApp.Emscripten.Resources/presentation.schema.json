@@ -1,0 +1,1152 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/Presentation",
+    "definitions": {
+        "Presentation": {
+            "type": "object",
+            "required": [
+                "presentation"
+            ],
+            "title": "Presentation",
+            "additionalProperties": false,
+            "properties": {
+                "presentation": {
+                    "$ref": "#/definitions/PresentationClass"
+                },
+                "events": {
+                    "type": "array",
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/eventPresentationStarted"
+                        },
+                        {
+                            "$ref": "#/definitions/eventActionStarted"
+                        },
+                        {
+                            "$ref": "#/definitions/eventActionFinished"
+                        },
+                        {
+                            "$ref": "#/definitions/eventWaitProgress"
+                        },
+                        {
+                            "$ref": "#/definitions/eventError"
+                        },
+                        {
+                            "$ref": "#/definitions/eventStatusChanged"
+                        }
+                    ]
+                }
+            }
+        },
+        "stepsArray": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/PresentationStep"
+            }
+        },
+        "actionsArray": {
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    {
+                        "$ref": "#/definitions/ClickAction"
+                    },
+                    {
+                        "$ref": "#/definitions/MenuAction"
+                    },
+                    {
+                        "$ref": "#/definitions/DynamicObjectAction"
+                    },
+                    {
+                        "$ref": "#/definitions/ShowAction"
+                    },
+                    {
+                        "$ref": "#/definitions/HideAction"
+                    },
+                    {
+                        "$ref": "#/definitions/FlyToAction"
+                    },
+                    {
+                        "$ref": "#/definitions/CaptionAction"
+                    },
+                    {
+                        "$ref": "#/definitions/WaitAction"
+                    },
+                    {
+                        "$ref": "#/definitions/MessageAction"
+                    },
+                    {
+                        "$ref": "#/definitions/UndergroundModeAction"
+                    },
+                    {
+                        "$ref": "#/definitions/SetTimeAction"
+                    },
+                    {
+                        "$ref": "#/definitions/PlayAnotherPresentationAction"
+                    },
+                    {
+                        "$ref": "#/definitions/PlayTimeAnimationAction"
+                    },
+                    {
+                        "$ref": "#/definitions/TimeSliderAction"
+                    }
+                ]
+            }
+        },
+        "PresentationClass": {
+            "type": "object",
+            "required": [
+                "description",
+                "steps"
+            ],
+            "title": "PresentationClass",
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "title": "Description"
+                },
+                "id": {
+                    "type": "string",
+                    "title": "ID"
+                },
+                "steps": {
+                    "$ref": "#/definitions/stepsArray"
+                },
+                "settings": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "loopPresentation": {
+                            "type": "boolean",
+                            "title": "Loop Presentation",
+                            "default": false
+                        },
+                        "chainedflightModel": {
+                            "type": "boolean",
+                            "title": "Use Spline Play Algorithm",
+                            "default": false
+                        },
+                        "unattendedPlayMode": {
+                            "type": "boolean",
+                            "title": "Auto-Play",
+                            "default": false
+                        },
+                        "playSpeedFactor": {
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 8,
+                            "title": "Play Speed Factor",
+                            "default": 1
+                        }
+                    }
+                },
+                "movieSettings": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "frameSize": {
+                            "type": "string",
+                            "enum": [
+                                "Current Size",
+                                "640x480 (NTSC Online)",
+                                "768x576 (PAL Online)",
+                                "720x480 (SD 480p)",
+                                "1280x720 (HD 720p)",
+                                "1920x1080 (HD 1080p)",
+                                "2560X1440 (QHD 1440p)"
+                            ],
+                            "title": "Frame Size"
+                        },
+                        "framesPerSec": {
+                            "type": "number",
+                            "minimum": 10,
+                            "maximum": 60,
+                            "title": "Frames per Second",
+                            "default": 25
+                        },
+                        "hideOverlay": {
+                            "type": "boolean",
+                            "title": "Hide Screen Overlays",
+                            "default": false
+                        }
+                    }
+                }
+            }
+        },
+        "PresentationStep": {
+            "type": "object",
+            "required": [
+                "actions"
+            ],
+            "title": "Step",
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "title": "Name"
+                },
+                "id": {
+                    "type": "string",
+                    "title": "ID"
+                },
+                "RequireClick": {
+                    "type": "boolean",
+                    "title": "Requires click",
+                    "default": true
+                },
+                "bookmark": {
+                    "description": "A Boolean that determines whether the step is a bookmark. The default value is False.",
+                    "type": "boolean",
+                    "default": false,
+                    "title": "Bookmark"
+                },
+                "actions": {
+                    "$ref": "#/definitions/actionsArray"
+                }
+            }
+        },
+        "ClickAction": {
+            "type": "object",
+            "required": [
+                "actionType"
+            ],
+            "title": "Click",
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "title": "Description"
+                },
+                "id": {
+                    "type": "string",
+                    "title": "ID"
+                },
+                "actionType": {
+                    "type": "string",
+                    "enum": [
+                        "Click"
+                    ],
+                    "title": "Action Type"
+                }
+            }
+        },
+        "MenuAction": {
+            "type": "object",
+            "required": [
+                "actionType"
+            ],
+            "title": "Click menu item",
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "title": "Description"
+                },
+                "id": {
+                    "type": "string",
+                    "title": "ID"
+                },
+                "actionType": {
+                    "type": "string",
+                    "enum": [
+                        "MenuCommand"
+                    ],
+                    "title": "Action Type"
+                },
+                "options": {
+                    "type": "object",
+                    "required": [
+                        "teCommandId",
+                        "checked"
+                    ],
+                    "title": "Options",
+                    "additionalProperties": false,
+                    "properties": {
+                        "teCommandId": {
+                            "type": "integer",
+                            "title": "Command ID"
+                        },
+                        "checked": {
+                            "type": "boolean",
+                            "title": "Display",
+                            "default": true
+                        }
+                    }
+                }
+            }
+        },
+        "DynamicObjectAction": {
+            "type": "object",
+            "required": [
+                "actionType"
+            ],
+            "title": "Dynamic Object",
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "title": "Description"
+                },
+                "id": {
+                    "type": "string",
+                    "title": "ID"
+                },
+                "actionType": {
+                    "type": "string",
+                    "enum": [
+                        "DynamicObject"
+                    ],
+                    "title": "Action Type"
+                },
+                "options": {
+                    "type": "object",
+                    "required": [
+                        "TeObjectId"
+                    ],
+                    "title": "Options",
+                    "additionalProperties": false,
+                    "properties": {
+                        "TeObjectId": {
+                            "type": "string",
+                            "title": "TerraExplorer Object ID"
+                        },
+                        "operation": {
+                            "type": "string",
+                            "enum": [
+                                "Restart",
+                                "Follow"
+                            ],
+                            "title": "Operation"
+                        },
+                        "duration": {
+                            "type": "number",
+                            "title": "Follow time (Seconds)",
+                            "default": 3
+                        }
+                    }
+                }
+            }
+        },
+        "ShowAction": {
+            "type": "object",
+            "required": [
+                "actionType"
+            ],
+            "title": "Show Group/Object",
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "title": "Description"
+                },
+                "id": {
+                    "type": "string",
+                    "title": "ID"
+                },
+                "actionType": {
+                    "type": "string",
+                    "enum": [
+                        "Show"
+                    ],
+                    "title": "Action Type"
+                },
+                "options": {
+                    "type": "object",
+                    "oneOf": [
+                        {
+                            "required": [
+                                "TeObjectId"
+                            ]
+                        },
+                        {
+                            "required": [
+                                "pathToGroup"
+                            ]
+                        }
+                    ],
+                    "title": "Options",
+                    "additionalProperties": false,
+                    "properties": {
+                        "TeObjectId": {
+                            "type": "string",
+                            "title": "TerraExplorer Object ID"
+                        },
+                        "pathToGroup": {
+                            "type": "string",
+                            "title": "Path to a Group"
+                        }
+                    }
+                }
+            }
+        },
+        "HideAction": {
+            "type": "object",
+            "required": [
+                "actionType"
+            ],
+            "title": "Hide Group/Object",
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "title": "Description"
+                },
+                "id": {
+                    "type": "string",
+                    "title": "ID"
+                },
+                "actionType": {
+                    "type": "string",
+                    "enum": [
+                        "Hide"
+                    ],
+                    "title": "Action Type"
+                },
+                "options": {
+                    "type": "object",
+                    "oneOf": [
+                        {
+                            "required": [
+                                "TeObjectId"
+                            ]
+                        },
+                        {
+                            "required": [
+                                "pathToGroup"
+                            ]
+                        }
+                    ],
+                    "title": "Options",
+                    "additionalProperties": false,
+                    "properties": {
+                        "TeObjectId": {
+                            "type": "string",
+                            "title": "TerraExplorer Object ID"
+                        },
+                        "pathToGroup": {
+                            "type": "string",
+                            "title": "Path to a Group"
+                        }
+                    }
+                }
+            }
+        },
+        "FlyToAction": {
+            "type": "object",
+            "required": [
+                "actionType",
+                "options"
+            ],
+            "title": "Fly To",
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "title": "Description"
+                },
+                "id": {
+                    "type": "string",
+                    "title": "ID"
+                },
+                "actionType": {
+                    "type": "string",
+                    "enum": [
+                        "FlyTo"
+                    ],
+                    "title": "Action Type"
+                },
+                "options": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "poi": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "x": {
+                                    "type": "number"
+                                },
+                                "y": {
+                                    "type": "number"
+                                },
+                                "altitude": {
+                                    "type": "number"
+                                },
+                                "viewerYaw": {
+                                    "type": "number"
+                                },
+                                "viewerPitch": {
+                                    "type": "number"
+                                },
+                                "distance": {
+                                    "type": "number"
+                                },
+                                "isRelative": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [
+                                "x",
+                                "y",
+                                "altitude",
+                                "viewerYaw",
+                                "viewerPitch",
+                                "distance",
+                                "isRelative"
+                            ]
+                        },
+                        "TeObjectId": {
+                            "type": "string",
+                            "title": "TerraExplorer Object ID"
+                        },
+                        "duration": {
+                            "type": "number",
+                            "title": "Flight time (Seconds)",
+                            "default": 3
+                        },
+                        "activationAction": {
+                            "type": "string",
+                            "enum": [
+                                "Fly To",
+                                "Circle pattern",
+                                "Oval pattern",
+                                "Line pattern",
+                                "Arc pattern",
+                                "Jump To"
+                            ],
+                            "title": "Activation Action"
+                        },
+                        "splineSpeedFunction": {
+                            "type": "integer",
+                            "title": "Spline Speed Easeing Function"
+                        },
+                        "splineTurnSpeedFunction": {
+                            "type": "integer",
+                            "title": "Spline Turn Speed Easeing Function"
+                        }
+                    }
+                }
+            }
+        },
+        "CaptionAction": {
+            "type": "object",
+            "required": [
+                "actionType",
+                "options"
+            ],
+            "additionalProperties": false,
+            "title": "Caption",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "title": "Description"
+                },
+                "id": {
+                    "type": "string",
+                    "title": "ID"
+                },
+                "actionType": {
+                    "type": "string",
+                    "enum": [
+                        "Caption"
+                    ],
+                    "title": "Action Type"
+                },
+                "options": {
+                    "type": "object",
+                    "required": [
+                        "captionText"
+                    ],
+                    "title": "Options",
+                    "properties": {
+                        "captionText": {
+                            "type": "string",
+                            "title": "Caption",
+                            "default": "New caption"
+                        },
+                        "lifespan": {
+                            "type": "string",
+                            "enum": [
+                                "Step",
+                                "Time",
+                                "Until replaced"
+                            ],
+                            "title": "Lifespan"
+                        },
+                        "timeOutInterval": {
+                            "type": "number",
+                            "title": "Duration (Seconds)"
+                        },
+                        "RTL": {
+                            "type": "boolean",
+                            "title": "Use Right to Left"
+                        }
+                    }
+                }
+            }
+        },
+        "WaitAction": {
+            "type": "object",
+            "required": [
+                "actionType"
+            ],
+            "title": "Wait",
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "title": "Description"
+                },
+                "id": {
+                    "type": "string",
+                    "title": "ID"
+                },
+                "actionType": {
+                    "type": "string",
+                    "enum": [
+                        "Wait"
+                    ],
+                    "title": "Action Type"
+                },
+                "options": {
+                    "type": "object",
+                    "required": [],
+                    "title": "Options",
+                    "additionalProperties": false,
+                    "properties": {
+                        "duration": {
+                            "type": "number",
+                            "title": "Wait (Seconds)",
+                            "minimum": 0.1,
+                            "default": 5
+                        }
+                    }
+                }
+            }
+        },
+        "MessageAction": {
+            "type": "object",
+            "required": [
+                "actionType",
+                "description",
+                "options"
+            ],
+            "title": "Message",
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "title": "Description"
+                },
+                "id": {
+                    "type": "string",
+                    "title": "ID"
+                },
+                "actionType": {
+                    "type": "string",
+                    "enum": [
+                        "Message"
+                    ],
+                    "title": "Action Type"
+                },
+                "options": {
+                    "type": "object",
+                    "required": [
+                        "TeObjectId"
+                    ],
+                    "title": "Options",
+                    "properties": {
+                        "TeObjectId": {
+                            "type": "string",
+                            "title": "TerraExplorer Object ID"
+                        }
+                    }
+                }
+            }
+        },
+        "UndergroundModeAction": {
+            "type": "object",
+            "required": [
+                "actionType",
+                "options"
+            ],
+            "title": "Underground Mode",
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "title": "Description"
+                },
+                "id": {
+                    "type": "string",
+                    "title": "ID"
+                },
+                "actionType": {
+                    "type": "string",
+                    "enum": [
+                        "UndergroundMode"
+                    ],
+                    "title": "Action Type"
+                },
+                "options": {
+                    "type": "object",
+                    "required": [
+                        "showUnderground"
+                    ],
+                    "title": "options",
+                    "additionalProperties": false,
+                    "properties": {
+                        "showUnderground": {
+                            "type": "boolean",
+                            "title": "Underground mode"
+                        }
+                    }
+                }
+            }
+        },
+        "RouteWaypoint": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "x": {
+                    "type": "number"
+                },
+                "y": {
+                    "type": "number"
+                },
+                "altitude": {
+                    "type": "number"
+                },
+                "yaw": {
+                    "type": "number"
+                },
+                "pitch": {
+                    "type": "number"
+                },
+                "dis": {
+                    "type": "number"
+                },
+                "cameraYaw": {
+                    "type": "number"
+                },
+                "cameraPitch": {
+                    "type": "number"
+                },
+                "timeFromPrevWaypoint": {
+                    "type": "number"
+                }
+            },
+            "required": [],
+            "title": "Route Waypoint"
+        },
+        "PlayRouteAction": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "actionType": {
+                    "type": "string",
+                    "enum": [
+                        "PlayRoute"
+                    ]
+                },
+                "options": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "waypoints": {
+                            "type": "array",
+                            "minItems": 2,
+                            "waypoints": {
+                                "$ref": "#/definitions/RouteWaypoint"
+                            }
+                        }
+                    }
+                }
+            },
+            "required": [
+                "actionType",
+                "options"
+            ],
+            "title": "PlayRouteAction"
+        },
+        "SetTimeAction": {
+            "type": "object",
+            "required": [
+                "actionType",
+                "options"
+            ],
+            "title": "Set Time",
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "title": "Description"
+                },
+                "id": {
+                    "type": "string",
+                    "title": "ID"
+                },
+                "actionType": {
+                    "type": "string",
+                    "enum": [
+                        "SetTime"
+                    ],
+                    "title": "Action Type"
+                },
+                "options": {
+                    "type": "object",
+                    "required": [
+                        "year",
+                        "month",
+                        "day",
+                        "hour",
+                        "minute",
+                        "second"
+                    ],
+                    "title": "Options",
+                    "additionalProperties": false,
+                    "properties": {
+                        "year": {
+                            "type": "integer",
+                            "title": "Year"
+                        },
+                        "month": {
+                            "type": "integer",
+                            "title": "Month"
+                        },
+                        "day": {
+                            "type": "integer",
+                            "title": "Day"
+                        },
+                        "hour": {
+                            "type": "integer",
+                            "title": "Hour"
+                        },
+                        "minute": {
+                            "type": "integer",
+                            "title": "Minute"
+                        },
+                        "second": {
+                            "type": "integer",
+                            "title": "Second"
+                        }
+                    }
+                }
+            }
+        },
+        "PlayAnotherPresentationAction": {
+            "type": "object",
+            "required": [
+                "actionType",
+                "options"
+            ],
+            "title": "Play Another Presentation",
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "title": "Description"
+                },
+                "id": {
+                    "type": "string",
+                    "title": "ID"
+                },
+                "actionType": {
+                    "type": "string",
+                    "enum": [
+                        "PlayAnotherPresentation"
+                    ],
+                    "title": "Action Type"
+                },
+                "options": {
+                    "type": "object",
+                    "required": [
+                        "TeObjectId"
+                    ],
+                    "title": "Options",
+                    "additionalProperties": false,
+                    "properties": {
+                        "TeObjectId": {
+                            "type": "string",
+                            "title": "TerraExplorer Presentation ID"
+                        }
+                    }
+                }
+            }
+        },
+        "PlayTimeAnimationAction": {
+            "type": "object",
+            "required": [
+                "actionType",
+                "options"
+            ],
+            "title": "Play Time Animation",
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "title": "Description"
+                },
+                "id": {
+                    "type": "string",
+                    "title": "ID"
+                },
+                "actionType": {
+                    "type": "string",
+                    "enum": [
+                        "PlayTimeAnimation"
+                    ],
+                    "title": "Action Type"
+                },
+                "options": {
+                    "type": "object",
+                    "required": [
+                        "TeObjectId",
+                        "Range"
+                    ],
+                    "title": "Options",
+                    "additionalProperties": false,
+                    "properties": {
+                        "Range": {
+                            "type": "string",
+                            "enum": [
+                                "Project",
+                                "Custom",
+                                "Group"
+                            ],
+                            "title": "Time Range"
+                        },
+                        "duration": {
+                            "type": "number",
+                            "title": "Duration (Seconds)",
+                            "default": 3
+                        },
+                        "startyear": {
+                            "type": "integer",
+                            "title": "Start Year"
+                        },
+                        "startmonth": {
+                            "type": "integer",
+                            "title": "Start Month"
+                        },
+                        "startday": {
+                            "type": "integer",
+                            "title": "Start Day"
+                        },
+                        "starthour": {
+                            "type": "integer",
+                            "title": "Start Hour"
+                        },
+                        "startminute": {
+                            "type": "integer",
+                            "title": "Start Minute"
+                        },
+                        "startsecond": {
+                            "type": "integer",
+                            "title": "Start Second"
+                        },
+                        "endyear": {
+                            "type": "integer",
+                            "title": "end Year"
+                        },
+                        "endmonth": {
+                            "type": "integer",
+                            "title": "endMonth"
+                        },
+                        "endday": {
+                            "type": "integer",
+                            "title": "End Day"
+                        },
+                        "endhour": {
+                            "type": "integer",
+                            "title": "End Hour"
+                        },
+                        "endminute": {
+                            "type": "integer",
+                            "title": "End Minute"
+                        },
+                        "endsecond": {
+                            "type": "integer",
+                            "title": "End Second"
+                        },
+                        "pathToGroup": {
+                            "type": "string",
+                            "title": "Path to a Group"
+                        }
+                    }
+                }
+            }
+        },
+        "TimeSliderAction": {
+            "type": "object",
+            "required": [
+                "actionType",
+                "options"
+            ],
+            "title": "Time Slider",
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "title": "Description"
+                },
+                "id": {
+                    "type": "string",
+                    "title": "ID"
+                },
+                "actionType": {
+                    "type": "string",
+                    "enum": [
+                        "TimeSlider"
+                    ],
+                    "title": "Action Type"
+                },
+                "options": {
+                    "type": "object",
+                    "required": [
+                        "TeObjectId"
+                    ],
+                    "title": "Options",
+                    "additionalProperties": false,
+                    "properties": {
+                        "pathToGroup": {
+                            "type": "string",
+                            "title": "Path to a Group"
+                        }
+                    }
+                }
+            }
+        },
+        "eventPresentationStarted": {
+            "type": "object",
+            "properties": {
+                "eventName": {
+                    "const": "Started"
+                },
+                "presentationId": {
+                    "type": "string"
+                },
+                "flatPresentation": {
+                    "type": "object",
+                    "properties": {
+                        "steps": {
+                            "$ref": "#/definitions/PresentationStep"
+                        }
+                    }
+                },
+                "creatingMovie": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "eventActionStarted": {
+            "eventName": {
+                "const": "ActionStarting"
+            },
+            "itemId": {
+                "type": "string"
+            },
+            "presentationId": {
+                "type": "string"
+            }
+        },
+        "eventActionFinished": {
+            "eventName": {
+                "const": "ActionFinished"
+            },
+            "itemId": {
+                "type": "string"
+            },
+            "presentationId": {
+                "type": "string"
+            },
+            "progress": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+            }
+        },
+        "eventWaitProgress": {
+            "type": "object",
+            "properties": {
+                "eventName": {
+                    "const": "WaitProgress"
+                },
+                "itemId": {
+                    "type": "string"
+                },
+                "presentationId": {
+                    "type": "string"
+                },
+                "progress": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "totalWaitTime": {
+                    "type": "number"
+                }
+            }
+        },
+        "eventError": {
+            "type": "object",
+            "properties": {
+                "eventName": {
+                    "const": "Error"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "eventEditorOpening": {
+            "type": "object",
+            "properties": {
+                "eventName": {
+                    "const": "OpenEditor"
+                },
+                "presentationId": {
+                    "type": "string"
+                }
+            }
+        },
+        "eventStatusChanged": {
+            "type": "object",
+            "properties": {
+                "eventName": {
+                    "const": "StatusChanged"
+                },
+                "presentationId": {
+                    "type": "string"
+                },
+                "oldStatus": {
+                    "$ref": "#/definitions/presentationStatus"
+                },
+                "newStatus": {
+                    "$ref": "#/definitions/presentationStatus"
+                }
+            }
+        },
+        "presentationStatus": {
+            "enum": [
+                "FastRewinding",
+                "PrevStepping",
+                "Playing",
+                "NextStepping",
+                "FastForwarding",
+                "Paused",
+                "Stopped"
+            ]
+        }
+    }
+}

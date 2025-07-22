@@ -1,0 +1,90 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=11" />
+    <title>ToolTitle</title>
+    <link rel="StyleSheet" href="../Style80.css" type="text/css">
+	<script language="javascript" src="../jquery/jquery-3.1.1.min.js"></script>
+	<script language="javascript" src="../ToolsCommon80.js"></script>
+
+    <style>
+    </style>
+</head> 
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" style="border: 0; overflow: hidden;" id="Body"  >
+		<table border=0 cellPadding=0 CELLSPACING=0 class="s9" width=100%>
+		<tr><td class="s9" align=center>
+			<div id="LoadingDiv" style="display:inline"><span class="i18n s9" >Text32</span>
+            </div>
+
+            <div id="CompareDiv" style="display:none">
+			<span class="i18n s9" >Text33</span><br />
+            <br />
+            <button onclick="LoadSnapshotPopup();" class=" i18n" >Text14</button>
+            </div>
+		</td></tr>
+		<tr><td>
+			</td></tr>
+		</table>
+
+<script language="JavaScript">
+
+var SGWorld = new ActiveXObject("TerraExplorerX.SGWorld73");
+     
+var snapshotAImg;
+var gStartPosition;
+var gWidth;
+var gHeight;
+//--------------
+// Init - called when SGLang is ready
+function Init() {
+
+    gStartPosition = SGWorld.Navigate.GetPosition(3);
+
+    window.setTimeout("CaptureA();", 100);
+    SGWorld.AttachEvent("OnFrame", onFrame);
+
+ }
+//--------------
+// CaptureA
+ function CaptureA() {
+    // try {
+        var ratio = SGWorld.Window.Rect.Width / SGWorld.Window.Rect.Height;
+         gWidth = Math.min(SGWorld.Window.Rect.Width, 1499);
+         gHeight = Math.min(gWidth / ratio, 1499);
+         snapshotAImg = SGWorld.Window.GetSnapShot(true, gWidth, gHeight, "JPeg75", 1);
+   //  }
+   //  catch (err) { alert(err); }
+
+     document.getElementById("LoadingDiv").style.display = "none";
+     document.getElementById("CompareDiv").style.display = "inline";
+ }
+ //---------------
+//
+ function onFrame() {
+     try {
+         SGWorld.Navigate.SetPosition(gStartPosition);
+     }
+     catch (err) { }
+ }
+//--------------
+// LoadSnapshotPopup
+function LoadSnapshotPopup()
+{
+    snapshotAImg = snapshotAImg.replace(".jpg", "#jpg");
+    snapshotAImg = snapshotAImg.replace(".tif", "#tif");
+    var url = abspath() + "/SnapshotDetectionPopup.html?A=" + encodeURI(snapshotAImg) + "&lang=" + SGLang.getCode();
+
+    var popupMsg1 = SGWorld.Creator.CreatePopupMessage(SGLang.i18n("Text7"), url, 15, 15, gWidth+18 , gHeight+65 , -1);
+
+    popupMsg1.Flags = 2 + 64 + 128;
+    SGWorld.Window.ShowPopup(popupMsg1);
+
+
+}
+</script>
+</body>
+
+
+
+
+</html>

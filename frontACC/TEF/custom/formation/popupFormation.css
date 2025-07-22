@@ -1,0 +1,214 @@
+table {
+  width: 100%;
+  border-collapse: collapse;
+
+}
+
+td {
+  /*border: solid 1.5px black;*/
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 0.75rem;
+}
+
+.value {
+  text-align: center;
+  padding: 5px;
+  font-weight: bold;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #eaf8e6;
+}
+
+.htitre {
+  background-color: #5d0f6d;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  padding: 5px;
+}
+
+.bouton {
+    /*background-color: #5d0f6d;*/
+    background: linear-gradient(to right, #5d0f6d 50%, #ffffff 50%);
+    background-size: 210% 100%;
+    background-position: left bottom;
+    transition: background-position 0.5s ease-out, color 0.5s ease-out;
+    color: #fff;
+    border: solid 1px #5d0f6d;
+    border-radius: 25px;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 0.80rem;
+    margin: 4px 2px;
+    margin-top: 5%;
+    cursor: pointer;
+}
+
+.bouton:hover {
+    background-position: right bottom;
+    color: #5d0f6d;
+}
+
+#fermer {
+    position: fixed;
+    bottom: 10px; 
+    left: 10px;
+    padding: 5px 10px;
+}
+
+#details {
+    font-size: 0.70rem;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-style: italic;
+
+    position: fixed;
+    bottom: 10px; 
+    right: 10px;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 0px;
+    /*background-color: #5d0f6d;*/
+    padding: 10px 0;
+    /*border-radius: 50% / 50% 50% 0 0;*/
+    /* box-shadow: inset 0 -3.5em 2.5em -0.1em white; */
+}
+
+#div-projets {
+  margin-top: 5px;
+  width: 100%;
+  height: 70cqh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.ouvrir-projet {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.ouvrir-projet:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-decoration-color: #5d0f6d;
+}
+
+.croix-projet {
+  transform: rotate(45deg);
+}
+
+.fleche-projet {
+}
+
+.croix-projet:hover {
+  color: red;
+  transform: rotate(45deg) scale(1.2);
+}
+
+.fleche-projet:hover {
+  color: #006100;
+  transform: scale(1.2);
+}
+
+.supprimer-projet {
+  text-decoration:line-through;
+  text-decoration-thickness: 3px;
+  text-decoration-color: red;
+}
+
+.exporter-projet::after {
+  content: "⯁";
+  color: #006100;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 0.7rem;
+}
+
+
+.tabs {
+  margin-bottom: 10px;
+}
+
+.tablinks {
+  background: linear-gradient(to right, #5d0f6d 50%, #ffffff 50%);
+  background-size: 210% 100%;
+  background-position: left bottom;
+  transition: background-position 0.5s ease-out, color 0.5s ease-out;
+  color: white;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  border: 1px solid #5d0f6d;
+  border-radius: 25px 25px 0 0;
+  border-bottom: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  outline: none;
+}
+
+.tablinks.active {
+  background: white;
+  border: 1px solid #5d0f6d;
+  border-bottom: none;
+  color: #5d0f6d;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  /* font-weight: bold; */
+  cursor: default;
+}
+
+.tabcontent {
+  /*border: 1px solid red;*/
+  padding: 10px;
+  /* background: yellow; */
+}
+
+h2 {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 20px;
+  text-align: center;
+  color: #5d0f6d;
+}
+
+#titreFonctions {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 1rem;
+  /* text-align: center; */
+  color: #5d0f6d;
+  margin: 0;
+  font-weight: bold;
+}
+
+.fonctions {
+  list-style-position: inside;
+  padding-left: 0;
+}
+
+.fonctions li {
+  display: block;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 0.8rem;
+  list-style-type: none;
+  margin: 5px 0;
+}
+
+.fonctions li input.bouton {
+  padding: 5px 10px;
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+
+.fonctions li p {
+  margin-bottom: 7.5px;
+}
+
+#div-fonctions {
+  width: 100%;
+  height: 70cqh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}

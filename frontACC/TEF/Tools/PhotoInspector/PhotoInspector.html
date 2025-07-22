@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=11" />
+    <title>ToolTitle</title>
+    <link rel="StyleSheet" href="../Style80.css" type="text/css">
+    <link rel="StyleSheet" href="photo.css" type="text/css">
+    <style>
+    </style>
+</head>
+<body class="hideUntilTranslated" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" style="border: 0px;overflow: hidden;" id="Body" oncontextmenu="return false;" hidden>
+    <!-- onclick="bHide=true;HideOptionsNow()" > -->
+	<table id= "SelectLayersTableID" border=0 width="100%" cellspacing=0 cellpadding=8 class = "s9">
+          <tr>
+            <td colspan=2 class="s9" >
+                <span class="i18n s9">TextStartToolDescription</span> <br>
+                <span class="i18n s9">TextStartToolDescription2</span> <br>
+            </td>
+        </tr>
+        <tr><!-- Select photos layer -->
+            <td class="s8b s9">
+                <label for="selectPhotos"  class="i18n">TextSelectPhotos</label>
+            </td>
+            <td >
+                <select id="PhotosListID" class="select100"   >               </select> 
+            </td>            
+        </tr>   
+        <!-- Select inspection layer -->
+        <tr class="hideInViewerMode">
+            <td class="s8b s9">
+                <label  class="i18n">TextSelectInspection</label>
+            </td>
+            <td align="left">
+                <select id="InspectionListID" class="select100" >               </select> 
+            </td>            
+        </tr>   
+        
+        <tr class="s8">
+            <td colspan="2" align="center">
+            <button id="showAllID" class="MenuButtonSmallRound i18n" onclick=" application.startPhotoInspector($('#PhotosListID').val(),$('#InspectionListID').val());">TextStart</button>
+            </td>
+        </tr>
+    </table>
+
+    <table id= "NoPhotosID" border=0 width="100%" cellspacing=0 cellpadding=10 class = "s9" style="display:none;">
+        <tr>
+          <td colspan=2 class="s9" >
+              <img src='images/error-large.png'> <br>
+              <span class="i18n s9">TextStartToolNoLayers</span> <br>
+              <br>
+          </td>
+      </tr>
+      
+      <tr class="s8">
+          <td colspan="2" align="center">
+          <button id="showAllID" class="MenuButtonSmallRound i18n" onclick=" application.closePhotoInspectorPopup();">TextClose</button>
+          </td>
+      </tr>
+  </table>
+    
+
+<script src="../jquery/jquery-3.1.1.min.js"  type="text/javascript"></script>
+<script src="../TeTypes.js"></script>
+<script language="javascript" src="../ToolsCommon80.js"></script>
+<script language="javascript" src="inspections.js"></script>
+<script language="javascript" src="Application.js"></script>
+<script>
+var gDebug = false;
+var SGWorld = null;
+
+//--------------
+function Init() {
+    SGWorld = initSGWorld();
+    window.ondragstart = function() { return false; } 
+    application.UIToViewerMode();
+
+    var foundLayer = application.refreshPhotosLayerList ($("#PhotosListID"),true);
+    inspections.populateInspectionLayerList($("#InspectionListID"),true);
+
+    if (!foundLayer){
+        $("#SelectLayersTableID").hide();
+        $("#NoPhotosID").show();
+    }
+}
+
+</script>
+</body>
+</html>

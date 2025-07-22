@@ -1,0 +1,31 @@
+﻿SGLang.lang = $.extend(SGLang.lang,{
+    ToolTitle:                      "SkylineGlobe - Skyline Software Systems, Inc.",
+    ToolName:                       "距離計測",
+    help:                           "ヘルプ",
+	Text6:                          "測定オブジェクトの作成",
+	Text7:                          "スナップ",
+	Text17:                         "単位",	
+    Text18:                         "測定値を削除",
+	Text19:                         "最後の測定点を削除",
+	Text20:                         "測定点をエッジ、オブジェクト、および頂点にスナップします。",
+	Text23:                         "地形の断面図をラインに沿って表示します。",
+	Text24:                         "空間距離の表示",
+	Text25:                         "水平距離の表示",
+	Text26:                         "垂直距離の表示",
+
+    Text_TotalAerialDistance:       "空間距離の合計",
+    Text_TotalHorizontalDistance:   "水平距離の合計",
+    Text_TotalVerticalDistance:     "垂直距離の合計",
+    Text_Slope:                     "傾斜",
+    Text_Firstpointtolastpoint:     "最初の点から最後の点",
+	Text_in:                        "インチ",
+	Text_ft:                        "フィート",
+	Text_mile:                      "マイル",
+	Text_mm:                        "mm",
+	Text_cm:                        "cm",
+	Text_meter:                     "m",
+	Text_km:                        "km",
+    Text14:                         "断面図",
+
+    dummy: ""
+});

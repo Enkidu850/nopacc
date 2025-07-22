@@ -1,0 +1,283 @@
+﻿<html>
+    <head>
+        <meta name="viewport" content="initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=9" />
+        <title>Image Comparison Tool</title>
+<script type="text/javascript" src="range.js"></script>
+<script type="text/javascript" src="timer.js"></script>
+<script type="text/javascript" src="slider.js"></script>     
+ 
+<link type="text/css" rel="StyleSheet" href="slider.css" />  
+<link rel="StyleSheet" href="../Style80.css" type="text/css">
+<style>
+    </style> 
+    </head>
+    <body onload="Init();" onunload="exitTool();" style="overflow:hidden; border:0;background-color: #151515"  leftmargin='0' topmargin="0" marginwidth="0" marginheight="0"> <!-- oncontextmenu="return false;" >-->
+
+        <div id="mainDiv"  style="position:absolute; left:0px; top:0px; overflow:hidden; height:100%;">
+    
+            <table  cellpadding ="2" cellspacing = "1" border="0" width="100%" height="100%" >
+            <tr >
+            <td colspan="4"  >
+                <span class="i18n NormalText s8w" >Text17</span>
+                <span class="i18n LayerHeader s8w" id="LayerNameSpan"></span>
+            </td>
+            </tr>       
+           
+            <tr>
+            <td style="width:140px;" align="center">
+                <!-- <span class="i18n NormalText" >Text22</span> -->
+                <select class="directionSelect NormalText SelectDark" style="vertical-align:middle; width:120px;" id="clipDirectionID" onchange="SetClipTrans(gLastLevel,true);">
+                    <option value="0" class="i18n">Text23</option>
+                    <option value="1" class="i18n">Text24</option>
+                    <option value="2" class="i18n">Text25</option>
+                    <option value="3" class="i18n">Text26</option>
+                    <option value="4" class="i18n">Text21</option>
+                </select>
+            </td>
+            <td style=" width:250px;" align="left"><span id="gSliderClip" style="display:inline-block;width: 250px;"><input type="text" id="gSliderClipID" /></span></td>
+    
+            <td style="width:35px;" align="left"> <span id="clipSpan" class="NormalText s8w" >100%</span></td>
+    
+            <td style="width:35px;" align="center"  class="SectionText"  onclick="autoPlay(true);" style="cursor:pointer;"><img id="clipIcon" src="Images/autoOff.png" alt="" align="absmiddle"/> </td>
+    
+            </tr>
+            </table>
+        </div>
+        
+         <div id="alertDiv"  style="position:absolute; left:0px; top:0px; overflow:hidden; height:100%; width: 100%">
+                 <table cellpadding ="2" cellspacing = "1" border="0" width="100%" style="height:100%;" >
+            <tr >
+            <td valign="middle" align="center" class="s10b" style="width: 100%">
+                    <span class="i18n s9w" >Text_CouldNotDetect</span><br/>
+                    <span class="i18n s9w" style="text-decoration: underline; cursor: pointer;" onclick="DetectLayer();" >Text_TryAgain</span>
+                </td>
+            </tr>       
+            </table>
+         </div>
+         <object id="SGWorld" classid="CLSID:3a4f9197-65a8-11d5-85c1-0001023952c1">
+            </object>
+        
+
+<script src="../jquery/jquery-1.10.2.js"  type="text/javascript"></script>
+<script language="javascript" src="../ToolsCommon71.js"></script>
+<script language="JavaScript">
+
+//var SGWorld = new ActiveXObject("TerraExplorerX.SGWorld70");
+
+var gDebug = true;
+         
+var gLastLevel = 100;
+var gLayerObj = null;
+var gImageryLayerGeometry;
+var gAutoOnOff = false;
+var gClipTimeout;
+var gClipUpdatetimeout;
+var gclipPosition;
+var gSliderClip;
+var gImageryLayerAlpha;
+
+
+//--------------
+// Init
+function Init() {
+    DetectLayer();
+
+}
+//--------------
+// DetectLayer
+function DetectLayer(){
+    try {
+        $("#alertDiv").hide();
+        $("#mainDiv").hide();
+
+        var ObjectID = "";
+        ObjectID = FindImageryLayer();
+        if (ObjectID == "") {
+            $("#alertDiv").show();
+            return;
+        }
+
+        $("#mainDiv").show();
+        gLayerObj = SGWorld.Creator.GetObject(ObjectID);
+        document.getElementById("LayerNameSpan").innerHTML = gLayerObj.TreeItem.Name + " " + gLayerObj.ID;
+
+        gImageryLayerGeometry = gLayerObj.Geometry.Clone();
+        gImageryLayerAlpha = gLayerObj.FillStyle.Color.GetAlpha();
+
+        gSliderClip = new Slider(document.getElementById("gSliderClip"), document.getElementById("gSliderClipID"));
+        gSliderClip.setValue(100);
+        gSliderClip.setMinimum(0);
+        gSliderClip.setMaximum(100);
+        gSliderClip.onchange = function () {
+            SetClipTrans(gSliderClip.getValue(), false);
+        };
+
+        SGWorld.SetParam(450, 1);
+    }
+        catch (e) { alert(SGLang.i18n("Text20") + e.message); }
+}
+
+//------------
+// FindImageryLayer
+function FindImageryLayer() {
+
+    var ObjectID = "";
+    var TEObj;
+    try {
+        // Try to detect if center of the screen points to a valid imagery layer
+        for (var i=0; i<200; i++){
+            ObjectID = DetectImageryLayer((SGWorld.Window.Rect.Width-1) * Math.random(), (SGWorld.Window.Rect.Height-1) * Math.random());
+            if (ObjectID != "")
+                return ObjectID;
+        }
+    }
+    catch (e) {alert(e.message); }
+    return "";
+}
+//--------------
+// DetectImageryLayer
+function DetectImageryLayer(x, y) 
+{
+
+    var ObjectType =26
+    var filter = 4;
+    
+    var WorldPoint = SGWorld.Window.PixelToWorld(x,y, filter);
+    if (WorldPoint.Type == filter) {
+        try {
+            var TEObj = SGWorld.Creator.GetObject(WorldPoint.ObjectID);
+            if (TEObj.ObjectType == ObjectType) {
+                return TEObj.ID;
+            }
+         }
+        catch (e) { }
+    }
+    return "";
+}
+
+//--------------
+// 
+function SetClipTrans(level, force) {
+    if (level == gLastLevel && force == false)
+        return;
+    gLastLevel = level;
+
+    try {
+
+            // Transparency
+            if (document.getElementById("clipDirectionID").value == "4") {
+                gLayerObj.Geometry = gImageryLayerGeometry;
+                gLayerObj.FillStyle.Color.SetAlpha(level / 100.0);
+                document.getElementById("clipSpan").innerHTML = level + "%";
+                return;
+            }
+
+            // Clipping
+            gLayerObj.FillStyle.Color.SetAlpha(gImageryLayerAlpha);
+
+            if (level == 100) {
+                gLayerObj.Geometry = gImageryLayerGeometry;
+                document.getElementById("clipSpan").innerHTML = level + "%";
+                return;
+            }
+            var RightSide = SGWorld.Window.Rect.Width - 1;
+            if (document.getElementById("clipDirectionID").value == "0")  // Right 2 Left
+                RightSide = RightSide * (level) / 100.0;
+            var LeftSide = 0;
+            if (document.getElementById("clipDirectionID").value == "1")  // Left 2 Right
+                LeftSide = RightSide * (100-level) / 100.0;
+            var BottomSide = SGWorld.Window.Rect.Height - 1;
+            if (document.getElementById("clipDirectionID").value == "3")  // Bottom 2 Top
+                BottomSide = BottomSide * (level) / 100.0;
+            var TopSide = 0;
+            if (document.getElementById("clipDirectionID").value == "2")  // Top 2 botton
+                TopSide = BottomSide * (100 - level) / 100.0;
+
+            //Try to find the corners of the current terrain view
+            var UppLeft = SGWorld.Window.PixelToWorld(LeftSide, TopSide, 0);
+            var UppRight = SGWorld.Window.PixelToWorld(RightSide, TopSide, 0);
+            var LowerLeft = SGWorld.Window.PixelToWorld(LeftSide, BottomSide, 0);
+            var LowerRight = SGWorld.Window.PixelToWorld(RightSide, BottomSide, 0);
+
+            while ((UppLeft.Type & 32) > 0 || (UppRight.Type & 32) > 0) {
+                TopSide += SGWorld.Window.Rect.Height / 20;
+                if (TopSide > (SGWorld.Window.Rect.Height * 0.9))
+                    return;
+                UppLeft = SGWorld.Window.PixelToWorld(LeftSide, TopSide, 0);
+                UppRight = SGWorld.Window.PixelToWorld(RightSide, TopSide, 0);
+            }
+
+            var exteriorRing = SGWorld.Creator.GeometryCreator.CreateLinearRingGeometry(Array(UppLeft.Position.X, UppLeft.Position.Y, 0, UppRight.Position.X, UppRight.Position.Y, 0, LowerRight.Position.X, LowerRight.Position.Y, 0, LowerLeft.Position.X, LowerLeft.Position.Y, 0));
+            var PolyGeometry = SGWorld.Creator.GeometryCreator.CreatePolygonGeometry(exteriorRing, null);
+
+            gLayerObj.Geometry = PolyGeometry;
+        document.getElementById("clipSpan").innerHTML = level + "%";
+
+        gclipPosition = SGWorld.Navigate.GetPosition();
+        clearTimeout(gClipUpdatetimeout);
+        gClipUpdatetimeout = setTimeout("checkClipUpdate()", 1000);
+
+      
+    }
+    catch (e) { alert(SGLang.i18n("Text3") + e.message); }
+
+
+}
+//--------------
+// 
+function checkClipUpdate() {
+    var currPosition = SGWorld.Navigate.GetPosition()
+    if (currPosition.IsEqual(gclipPosition) == false) {
+        SetClipTrans(gLastLevel, true);
+    }
+    else {
+        clearTimeout(gClipUpdatetimeout);
+        gClipUpdatetimeout = setTimeout("checkClipUpdate()", 1000);
+    }
+}
+//--------------
+// 
+function autoPlay(fromClick) {
+    if (fromClick) {
+        gAutoOnOff = !gAutoOnOff;
+    }
+
+    if (gAutoOnOff) {
+        document.getElementById("clipIcon").src = "Images/autoOn.png";
+        var a = gSliderClip.getValue();
+        a = (a + 2) % 101;
+        gSliderClip.setValue(a);
+
+        gClipTimeout = setTimeout("autoPlay(false)", 200);
+
+    }
+    else {
+        document.getElementById("clipIcon").src = "Images/autoOff.png";
+        clearTimeout(gClipTimeout);
+    }
+}
+
+//--------------
+// 
+function exitTool() {
+    try {
+
+        SGWorld.SetParam(450, 0);
+        if (gLayerObj != null) {
+            gLayerObj.FillStyle.Color.SetAlpha(gImageryLayerAlpha);
+            gLayerObj.Geometry = gImageryLayerGeometry;
+        }
+        SGWorld.Window.RemovePopupByCaption(SGLang.i18n("Text15"));
+    }
+    catch (e) { }
+
+}
+      
+    </script>
+    
+    
+    </body>
+</html>
+
+

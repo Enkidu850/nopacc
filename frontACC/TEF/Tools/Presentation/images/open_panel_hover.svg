@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16.789" height="16.789" viewBox="0 0 16.789 16.789">
+  <g id="Group_13" data-name="Group 13" transform="translate(0.5 0.5)">
+    <g id="Icon_feather-sidebar" data-name="Icon feather-sidebar" transform="translate(0)">
+      <path id="Path_1" data-name="Path 1" d="M6.254,4.5h12.28a1.754,1.754,0,0,1,1.754,1.754v12.28a1.754,1.754,0,0,1-1.754,1.754H6.254A1.754,1.754,0,0,1,4.5,18.535V6.254A1.754,1.754,0,0,1,6.254,4.5Z" transform="translate(-4.5 -4.5)" fill="none" stroke="#00d8ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <path id="Path_2" data-name="Path 2" d="M13.5,4.5V20.289" transform="translate(-8.237 -4.5)" fill="none" stroke="#00d8ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+    </g>
+    <line id="Line_1" data-name="Line 1" x2="6.123" transform="translate(7.845 3.302)" fill="none" stroke="#00d8ff" stroke-linecap="round" stroke-width="1"/>
+    <line id="Line_3" data-name="Line 3" x2="6.123" transform="translate(7.845 7.129)" fill="none" stroke="#00d8ff" stroke-linecap="round" stroke-width="1"/>
+    <line id="Line_2" data-name="Line 2" x2="3.827" transform="translate(10.141 5.216)" fill="none" stroke="#00d8ff" stroke-linecap="round" stroke-width="1"/>
+  </g>
+</svg>

@@ -1,0 +1,31 @@
+﻿SGLang.lang = $.extend(SGLang.lang,{
+    ToolTitle:                      "SkylineGlobe – Skyline Software Systems, Inc.",
+    ToolName:                       "Distanz",
+    help:                           "Helfen",
+	Text6:                          "Messobjekte erstellen",
+	Text7:                          "Einrasten",
+	Text17:                         "Einheiten",
+    Text18:                         "Messung löschen.",
+	Text19:                         "Löschen Sie den letzten Messpunkt.",
+	Text20:                         "Maßpunkte an Kanten, Objekten und Scheitelpunkten ausrichten.",
+	Text23:                         "Zeigt das Geländehöhenprofil entlang einer Luftlinie an.",
+	Text24:                         "Luftentfernung anzeigen",
+	Text25:                         "Horizontale Entfernung anzeigen",
+	Text26:                         "Vertikale Entfernung anzeigen",
+
+    Text_TotalAerialDistance:       "Gesamtflugdistanz",
+    Text_TotalHorizontalDistance:   "Gesamthorizontale Entfernung",
+    Text_TotalVerticalDistance:     "Gesamtvertikale Entfernung",
+    Text_Slope:                     "Neigung",
+    Text_Firstpointtolastpoint:     "Vom ersten Punkt bis zum letzten",
+	Text_in:                        "In",
+	Text_ft:                        "ft",
+	Text_mile:                      "Meile",
+	Text_mm:                        "mm",
+	Text_cm:                        "cm",
+	Text_meter:                     "M",
+	Text_km:                        "km",
+    Text14:                         "Geländeprofile",
+
+    dummy: ""
+});

@@ -1,0 +1,11 @@
+<svg id="Slope_Map" data-name="Slope Map" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_1144" data-name="Rectangle 1144" width="32" height="32" fill="none"/>
+    </clipPath>
+  </defs>
+  <g id="Group_2134" data-name="Group 2134" clip-path="url(#clip-path)">
+    <path id="Path_1275" data-name="Path 1275" d="M27.426,28.933H4.147A1.149,1.149,0,0,1,3,27.786V11.156a1.147,1.147,0,0,1,1.814-.933l23.278,16.63a1.146,1.146,0,0,1-.666,2.08M5.294,26.639H23.848L5.294,13.385Z" fill="#646871"/>
+    <path id="Path_1276" data-name="Path 1276" d="M28.324,15.558l.314-.381a.6.6,0,0,0-.111-.867L16.077,5.284l3.289-.523a.6.6,0,0,0,.5-.687l-.077-.481a.6.6,0,0,0-.687-.5l-5.314.847a.845.845,0,0,0-.7.966l.848,5.314a.6.6,0,0,0,.687.5l.482-.077a.6.6,0,0,0,.5-.686l-.521-3.3,12.43,9.006a.6.6,0,0,0,.815-.1" fill="#646871"/>
+  </g>
+</svg>

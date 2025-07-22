@@ -1,0 +1,590 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>ToolTitle</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=11" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="StyleSheet" href="../Style80.css" type="text/css">
+	<script language="javascript" src="../jquery/jquery-3.1.1.min.js"></script>
+    <script language="javascript" src="../ToolsCommon80.js"></script>
+    <style>
+        .inputWidth {width:6.67rem}
+    </style>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" style="border: 0rem" id="Body"  class="hideUntillTranslated" onunload="Reset(false,false,false);" >
+    <!--oncontextmenu="return false;">  onclick="bHide=true;HideOptionsNow()" > -->
+
+     <!-- Clear Path properties  -->
+    <table id="PropertiesSheetTbl" class="PropertiesSheet" cellspacing="0" cellpadding="2" >
+        <tr id="desclaimer" style="display: none">
+            <td colspan="2">
+                <span class="i18n" >Disclaimer</span>
+            </td>
+        </tr>
+        <tr id="clearPathModeTR" style="display: none"> <!-- select preset-->
+            <td class="s8b ">
+                <span class="i18n">searchFor</span>
+            </td>
+            <td align="left">
+                    <select id="searchFor" onchange="searchForChange()" >
+                    <option class="i18n" value=0 >Custom</option>
+                    <option class="i18n" value=1 selected="selected">HeliPad</option>
+                    <option class="i18n" value=2 >TankPath</option>
+                    <option class="i18n" value=3 >VehiclePath</option>
+                </select>
+            </td>
+        </tr>
+        <tr id="minWidthTR" style="display: none"> <!-- Minimum width -->
+            <td class="s8b ">
+                <span class="i18n">MinWidth</span>
+            </td>
+            <td align="left">
+                <input id="minWidth" type="number" value="10" size="5" class="inputWidth"  onchange="CheckNumberEx(minWidth,10,1,100);" >
+                <span class="i18n">Meter</span>
+            </td>
+        </tr>   
+        <tr id="maxSlopeTR" style="display: none"> <!-- Max slope -->
+            <td class="s8b ">
+                <span class="i18n">MaxSlope</span>
+            </td>
+            <td align="left">
+                <input id="maxSlope" type="number" value="10" size="5" class="inputWidth"  onchange="CheckNumberEx(maxSlope,10,0,40);">
+                <span class="i18n">degrees</span>
+            </td>
+        </tr>     
+<!-- High & Low         -->
+        <tr id="heighLowHelpTR" style="display: none"> <!-- High & low display mode-->
+            <td class="s8b " colspan="2">
+                <span class="i18n">highLowHelp</span>
+            </td>
+           
+        </tr>
+
+        <tr id="heighLowModeTR" style="display: none"> <!-- High & low display mode-->
+            <td class="s8b ">
+                <span class="i18n">displayMode</span>
+            </td>
+            <td align="left">
+                    <select id="heighLowDisplayMode" onchange="heighLowDisplayModeChange()" >
+                    <option class="i18n" value=0 >heighLowAreas</option>
+                    <option class="i18n" value=1 >heighAreas</option>
+                    <option class="i18n" value=2 >lowAreas</option>
+                </select>
+            </td>
+        </tr>
+        
+        <tr id="heighAreasTR" style="display: none"> <!-- Top precentage -->
+            <td class="s8b ">
+                <span class="i18n">topPresentage</span>
+            </td>
+            <td align="left">
+                <input id="topPresentage" type="number" value="30" size="3" class="inputWidth"  onchange="CheckNumberEx(topPresentage,30,1,50);" >
+                <span >%</span>
+            </td>
+        </tr>   
+        <tr id="lowAreasTR" style="display: none"> <!-- Bottom Precentage -->
+            <td class="s8b ">
+                <span class="i18n">bottomPresentage</span>
+            </td>
+            <td align="left">
+                <input id="bottomPresentage" type="number" value="30" size="3" class="inputWidth"  onchange="CheckNumberEx(bottomPresentage,30,1,50);" >
+                <span >%</span>
+            </td>
+        </tr>   
+   
+            <tr > <!-- search Radius -->
+            <td class="s8b ">
+                <span class="i18n">SearchRadius</span>
+            </td>
+            <td align="left">
+               <input id="SearchRadius" type="number" value="500" size="5" class="inputWidth" onchange="CheckNumberEx(SearchRadius,100,10,2000);">
+                <span class="i18n">Meter</span>
+            </td>
+        </tr>      
+        <tr class="s8" >
+            <td colspan="2" align="center"  class="ToolButtonsArea">
+                <button id="setLocationBtn" class="MenuButton " onclick="setLocation()"><img src="img/setLocation.png" /><br /><span class="i18n">setLocation</span></button>
+            </td>
+        </tr>
+    </table>
+
+    <!-- progress -->
+    <table id="progressTbl" class="s9 w100" cellspacing="0" cellpadding="10" style="display: none">
+        <tr>
+            <td align="center">
+                <img src="img/loading.gif" style="width: 10rem; height: 10rem;"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="progress" class="progressBarBlue"><div ></div></div>
+            </td>
+        </tr>
+        <tr>
+            <td >
+                <span id='progressText' class="i18n"></span><br><br>
+                <span class="i18n">Working</span>
+            </td>
+        </tr>
+    </table>
+    <!-- Finish message -->
+    <table id="queryCompleteTbl" class="s9" cellspacing="0" cellpadding="2" style="display: none">
+        <tr>
+            <td >
+                <span class="i18n">QueryCompleted</span><br>
+            </td>
+        </tr>
+        <tr id = "PointCreatedTR" style="display: none">
+            <td >
+                <span class="i18n">PointCreated</span><span id="pointsCreatedID"></span><br>
+            </td>
+        </tr>
+        <tr id="closeTR" style="display: none">
+            <td>
+                <button class="MenuButton " onclick="Close()"><img src="img/close.png" /><br /><span class="i18n">Close</span></button>
+            </td>
+        </tr>
+    </table>
+
+<script language="JavaScript">
+var gDebug = false;
+var gQueryType=0;
+var gPresets = [[10,10],[20,6],[5,25],[3,35]];
+var gRectObj = null;
+var gDistance = 10;
+var gSetLocationActivate = false;
+var gElevationBufferTerrain = null;
+var gCalcStarted=false;
+var gCalcFinished = false;
+var gForceOutOfRange;
+var SGWorld = null;
+var gPointsIndex = 0;
+var gPositionsArray = [];
+var gGreenArray;
+var gMeshlayersQuality=[];
+var gSettingQuality;
+var TEObj;
+var gSlopeRadians;
+var searchSpacingXAxisPixels;
+var searchSpacingYAxisPixels;
+var patchSearchSpacingPixels;
+var widthPixels;
+
+//--------------
+function Init() {
+    SGWorld = initSGWorld();
+    searchForChange();
+    SGWorld.AttachEvent("OnInputModeChanged", OnInputModeChanged);
+
+    gQueryType = GetParamValue("type", 0);
+    if (gQueryType==0){
+        $("#desclaimer").show();
+        $("#clearPathModeTR").show();
+        $("#minWidthTR").show();
+        $("#maxSlopeTR").show();
+        $("#PointCreatedTR").show();
+    }
+    else {
+        $("#heighLowHelpTR").show();
+        $("#heighLowModeTR").show();
+        $("#heighAreasTR").show();
+        $("#lowAreasTR").show();
+    }
+
+    if(TEF)
+        $("#closeTR").show();
+}
+//--------------
+function Reset(FirstTime, FromMouseInputMode,forceDelete) {
+    try {
+        if (gRectObj != null && !gCalcFinished ) 
+            SGWorld.Creator.DeleteObject(gRectObj.ID);
+     }
+    catch (err) { if (gDebug) alert("ClearPath.html -> Reset: " + err.message); }
+
+    try {
+        if (gCalcStarted ){
+            SGWorld.SetOptionParam ('TerrainModelQuality',gSettingQuality);
+            gMeshlayersQuality.forEach(function(element) {
+                var meshObj = SGWorld.Creator.GetObject (element[0]);
+                meshObj.Oversampling = element[1]; 
+            });
+        }
+        gRectObj = null;
+        $("#setLocationBtn").removeClass("MenuButtonHighlight");
+
+        SGWorld.ProjectTree.EnableRedraw(1);
+        SGWorld.Window.HideMessageBarText();
+
+        gSetLocationActivate = false;
+        gCalcStarted = false;
+
+        if (FirstTime != 1 && FromMouseInputMode == 0)
+            SGWorld.Window.SetInputMode(0);
+    } 
+    catch (err) { if (gDebug) alert("ClearPath.html -> Reset: " + err.message); }
+}
+//---------------------
+function searchForChange(){
+    var type = $("#searchFor").val();
+    var readOnly = (type==0)?false:true;
+    $("#minWidth").prop("readonly", readOnly);
+    $("#maxSlope").prop("readonly", readOnly);
+    $("#minWidth").val(gPresets[type][0]);
+    $("#maxSlope").val(gPresets[type][1]);
+}
+//---------------------
+function heighLowDisplayModeChange(){
+    var type = $("#heighLowDisplayMode").val();
+    if (type==0 || type==1)
+        $("#heighAreasTR").show();
+    else 
+        $("#heighAreasTR").hide();
+    if (type==0 || type==2)
+        $("#lowAreasTR").show();
+    else 
+        $("#lowAreasTR").hide();
+}
+//-----------
+function setLocation() {
+    if (!gSetLocationActivate) {
+        gDistance = $("#SearchRadius").val();
+        gSetLocationActivate = true;
+
+        SGWorld.AttachEvent("OnLButtonClicked", OnLButtonClicked);
+        SGWorld.AttachEvent("OnRButtonUp", OnRButtonUp);
+        SGWorld.AttachEvent("OnFrame", OnFrame);
+
+        SGWorld.Window.SetInputMode(1, abspath() + "/cursor_m.cur",true);
+        SGWorld.Window.ShowMessageBarText(SGLang.i18n("ClickToSet"));
+
+        $("#setLocationBtn").addClass("MenuButtonHighlight");
+    }
+    else {
+        SGWorld.DetachEvent("OnLButtonClicked", OnLButtonClicked);
+        SGWorld.DetachEvent("OnRButtonUp", OnRButtonUp);
+        SGWorld.DetachEvent("OnFrame", OnFrame);
+        Reset(false, false,true)
+    }
+}
+//-------------------
+function OnFrame() {
+    try {
+        if (gSetLocationActivate && !gCalcStarted) {
+            var cursor = SGWorld.Window.GetMouseInfo();
+            var centerPoint = SGWorld.Window.PixelToWorld(cursor.X, cursor.Y, -1 & ~(4 | 128 | 1024)).Position;
+            
+            var Point = centerPoint.Move(gDistance/2, 0, centerPoint.Pitch);
+            var Point1 = Point.Move(gDistance/2, 90, centerPoint.Pitch);
+            var Point2 = Point1.Move(gDistance, 180, centerPoint.Pitch);
+            var Point3 = Point2.Move(gDistance, 270, centerPoint.Pitch);
+            var Point4 = Point3.Move(gDistance, 0, centerPoint.Pitch);
+            verticesArray = [Point1.X, Point1.Y, centerPoint.Altitude, Point2.X, Point2.Y, centerPoint.Altitude, Point3.X, Point3.Y, centerPoint.Altitude, Point4.X, Point4.Y, centerPoint.Altitude];
+            var green = SGWorld.Creator.CreateColor (0,255,0,0);
+            if (gRectObj != null)
+                SGWorld.ProjectTree.DeleteItem(gRectObj.ID);
+            gRectObj = SGWorld.Creator.CreatePolygonFromArray(verticesArray,green,green,3, SGWorld.ProjectTree.HiddenGroupID, "clearPathRectangle");
+            gRectObj.SaveInFlyFile = false;
+            gRectObj.Visibility.ShowThroughDistance = 99999;
+           gRectObj.FillStyle.Color.SetAlpha (0.3);
+        
+        }
+             
+    }
+    catch (err) { if (gDebug) alert("ClearPath.html -> OnFrame: " + err.message); }
+}
+//--------------
+function OnLButtonClicked(Flags, X, Y) {
+    try {
+        if (gSetLocationActivate) {
+            SGWorld.DetachEvent("OnLButtonClicked", OnLButtonClicked);
+            SGWorld.DetachEvent("OnRButtonUp", OnRButtonUp);
+            SGWorld.DetachEvent("OnFrame", OnFrame);
+            calc();
+        }
+    }
+    catch (err) { if (gDebug) alert("ClearPath.html -> OnLButtonClicked: " + err.message); }
+}
+//--------------
+function OnRButtonUp(Flags, X, Y) {
+    if (gSetLocationActivate) {
+        Reset(false, false,true);
+        return true;
+    }
+    return false;
+}
+//--------------
+function OnInputModeChanged (mode) {
+    if (gSetLocationActivate) {
+        Reset(false, false,true);
+        return true;
+    }
+    return false;
+}
+
+//-----------
+function calc() {
+    gGreenArray = [];
+    gCalcStarted=true;
+    $("#PropertiesSheetTbl").hide();
+    $("#progressTbl").show();
+
+    // Upscale quality of all mesh layers in the project
+    var meshLayers=[];
+    BuildObjectsList(SGWorld.ProjectTree.RootID, meshLayers, 38); 
+    meshLayers.forEach(function(element){
+        var meshObj = SGWorld.Creator.GetObject (element);
+        gMeshlayersQuality.push ([element,meshObj.Oversampling,meshObj.Visibility.Show]);
+        meshObj.Oversampling = 150; // Best
+    });
+    gSettingQuality = SGWorld.GetOptionParam ("TerrainModelQuality"  );
+    SGWorld.SetOptionParam ('TerrainModelQuality',2);
+    updateProgressBar (5);
+
+    if(gQueryType==0){
+        gSlopeRadians = $("#maxSlope").val() *  (Math.PI / 180)
+        $("#progressText").text(SGLang.i18n("GeneratingElevationsTerrain"));
+        setTimeout (function(){ getFloorElevation (gRectObj.Geometry);},1);
+    }
+    else {
+        $("#progressText").text(SGLang.i18n("GeneratingElevationsModel"));
+        setTimeout (function(){ getModelElevation (gRectObj.Geometry,null);},1);
+    }
+}
+
+//---------------------------
+function getFloorElevation (polygonGeometry) {
+    SGWorld.SetParam (-16,0); // hide model but keep the floor
+    
+    rectangleGeometryToMultipleElevationParams(
+        polygonGeometry, 
+        function (bufferParams){
+            SGWorld.SetParam (-16,1); 
+            $("#progressText").text(SGLang.i18n("GeneratingElevationsModel"));
+            getModelElevation (gRectObj.Geometry,bufferParams);
+        },
+        function (progress){ 
+            updateProgressBar (Math.floor(progress/5.0+5)); 
+        },
+        function (error){
+            SGWorld.SetParam (-16,1); 
+            if (gDebug) alert("ClearPath.html -> getFloorElevation OnReject: " + err.message);
+        }
+    );
+}
+//---------------------------
+function getModelElevation (polygonGeometry,floorBuffer) {
+    rectangleGeometryToMultipleElevationParams(
+        polygonGeometry, 
+        function (bufferParams) {
+            $("#progressText").text(SGLang.i18n("FindClearPoints"));
+            if (gQueryType==0)
+                findClearPathPoints(polygonGeometry,bufferParams,floorBuffer);
+            else 
+                findHighLowValues(polygonGeometry,bufferParams);
+        },
+        function (progress) {
+            updateProgressBar (Math.floor(progress/5.0+25));
+        },
+        function(error){
+            if (gDebug) alert("ClearPath.html -> getModelElevation OnReject: " + err.message);
+        }
+    );
+}
+//-----------
+// findClearPathPoints
+function findClearPathPoints(polygonGeometry, elevationBufferParams, floorBufferParams) {
+    var searchSpacing = 2; // 2 meters
+    searchSpacingXAxisPixels = Math.round(searchSpacing * elevationBufferParams.dimensionXInPixels * elevationBufferParams.numOfXQuerysNeeded / gDistance) ; // query steps in pixels 
+    searchSpacingYAxisPixels = Math.round(searchSpacing * elevationBufferParams.dimensionYInPixels * elevationBufferParams.numOfYQuerysNeeded / gDistance) ; // query steps in pixels 
+    var patchSearchSpacing = 0.5; // 0.5 meter
+    patchSearchSpacingPixels = Math.max (1, Math.round(patchSearchSpacing * elevationBufferParams.dimensionYInPixels * elevationBufferParams.numOfYQuerysNeeded / gDistance)) ; // query steps in pixels 
+    var width = $("#minWidth").val()/2.0;
+    widthPixels = Math.max (1, Math.round(width * elevationBufferParams.dimensionYInPixels * elevationBufferParams.numOfYQuerysNeeded / gDistance)) ; // search width in pixels
+    
+    for (var i = widthPixels; i < elevationBufferParams.dimensionYInPixels * elevationBufferParams.numOfYQuerysNeeded - widthPixels; i += searchSpacingYAxisPixels) {
+        var progress = Math.floor ( 55+ (i/(elevationBufferParams.dimensionYInPixels * elevationBufferParams.numOfYQuerysNeeded - widthPixels) * 40));
+        (function(i, progress){
+            setTimeout (function(){ queryRow (elevationBufferParams, floorBufferParams, i, progress);}, 1);
+        })(i, progress);
+    }
+    
+    setTimeout (function(){ $("#progressText").text(SGLang.i18n("DrawPoints"));},1);
+    setTimeout (function(){ DrawPoints();},1);
+   
+    return true;
+}   
+//-------------
+function queryRow(elevationBufferParams, floorBufferParams, i, progress){
+    var pixelToMeter = gDistance / (elevationBufferParams.dimensionXInPixels * elevationBufferParams.numOfXQuerysNeeded);
+    var y = elevationBufferParams.maxY - i * elevationBufferParams.resY;
+    for (var j = widthPixels; j < elevationBufferParams.dimensionXInPixels * elevationBufferParams.numOfXQuerysNeeded - widthPixels; j += searchSpacingXAxisPixels){
+        var x = elevationBufferParams.minX + j * elevationBufferParams.resX;
+        var modelAltitude = elevationBufferParams.buffer[i * elevationBufferParams.dimensionXInPixels * elevationBufferParams.numOfXQuerysNeeded + j];
+        var floorAltitude = floorBufferParams.buffer[i * elevationBufferParams.dimensionXInPixels * elevationBufferParams.numOfXQuerysNeeded + j];
+        var found = true;
+        //model altitude < -500 if hole in the terrain
+        //floorAltitude < -500 sporadic issue temporary fix
+        if(modelAltitude < -500 || floorAltitude < -500)
+            continue;
+
+        if (modelAltitude-floorAltitude > 1.5)
+            found = false;
+        else 
+            for (var kk = -(widthPixels); kk <= widthPixels && found ; kk+= patchSearchSpacingPixels) {  // check for 10m+ walls 5 meters around the point
+                var tt = Math.floor( Math.sqrt(widthPixels*widthPixels - kk*kk));
+                for (var ll = -(tt); ll <= tt && found; ll+= patchSearchSpacingPixels) { 
+                    var neighborAltitude = elevationBufferParams.buffer[(ll+i) * elevationBufferParams.dimensionXInPixels * elevationBufferParams.numOfXQuerysNeeded + kk + j];
+                    var distancePixels = Math.sqrt(kk*kk+ll*ll)
+                    if (Math.atan(Math.abs(neighborAltitude - modelAltitude) / (Math.max(distancePixels) * pixelToMeter)) > gSlopeRadians) {
+                        found = false;
+                    }
+                }
+            }
+        if (found)
+            gGreenArray.push(x, y, modelAltitude);
+        updateProgressBar (progress);
+    }
+}
+
+//-----------
+// findClearPathPoints
+function findHighLowValues(polygonGeometry,elevationBufferParams) {
+    
+    var bufferParam = geometryToElevationParam(polygonGeometry,(elevationBufferParams.dimensionXInPixels * elevationBufferParams.numOfXQuerysNeeded));
+    var searchSpacing = 1; // 1 meter
+    var searchSpacingPixels = Math.round((searchSpacing*(elevationBufferParams.dimensionXInPixels * elevationBufferParams.numOfXQuerysNeeded))/gDistance) ; // query steps in pixels 
+    var minHeight = 99999;
+    var maxHeight = -99999;
+
+    for (var i = 0; i < elevationBufferParams.dimensionYInPixels * elevationBufferParams.numOfYQuerysNeeded; i += searchSpacingPixels) {
+        var progress = Math.floor ( 55+ (i/(elevationBufferParams.dimensionYInPixels * elevationBufferParams.numOfYQuerysNeeded)*40));
+        for (var j = 0 ; j < elevationBufferParams.dimensionXInPixels * elevationBufferParams.numOfXQuerysNeeded; j += searchSpacingPixels){
+            var modelHeight = elevationBufferParams.buffer[i * elevationBufferParams.dimensionXInPixels * elevationBufferParams.numOfXQuerysNeeded + j];
+            minHeight = Math.min (minHeight,modelHeight);
+            maxHeight = Math.max (maxHeight,modelHeight);
+        }
+    }
+
+    var deltaHeight = maxHeight - minHeight;
+    var topHeight = maxHeight - deltaHeight*$("#topPresentage").val()/100
+    var bottomHeight = minHeight + deltaHeight*$("#bottomPresentage").val()/100
+
+    var parentGroup = TEF ? parent.projectTree.getMyDataGroup() : SGWorld.ProjectTree.RootID;
+    gGroupID = SGWorld.ProjectTree.CreateGroup(SGLang.i18n("heighLowAreas"), parentGroup);
+
+    var type = $("#heighLowDisplayMode").val();
+    if (type==0 || type==1){
+        var topGeometry = polygonGeometry.Clone();
+        topGeometry.StartEdit();
+        for (i=0; i<topGeometry.Rings.Item(0).NumPoints ; i++)
+            topGeometry.Rings.Item(0).Points.Item(i).Z = topHeight
+        topGeometry = topGeometry.EndEdit();
+        var topHeightPolygon = SGWorld.Creator.CreatePolygon (topGeometry,SGWorld.Creator.CreateColor (0,255,0,0),SGWorld.Creator.CreateColor (0,255,0,100),3,gGroupID,SGLang.i18n("heighAreas"))
+        topHeightPolygon.VolumeClassification.Mode = 2
+        topHeightPolygon.VolumeClassification.ExtrudeDownBack = 0;
+        topHeightPolygon.VolumeClassification.ExtrudeUpFront = 999;
+    }  
+
+    if (type==0 || type==2){
+        var bottomGeometry = polygonGeometry.Clone();
+        bottomGeometry.StartEdit();
+        for (i=0; i<bottomGeometry.Rings.Item(0).NumPoints ; i++)
+            bottomGeometry.Rings.Item(0).Points.Item(i).Z = bottomHeight
+        bottomGeometry = bottomGeometry.EndEdit();
+        var bottomHeightPolygon = SGWorld.Creator.CreatePolygon (bottomGeometry,SGWorld.Creator.CreateColor (255,0,0,0),SGWorld.Creator.CreateColor (255,0,0,100),3,gGroupID,SGLang.i18n("bottomAreas"))
+        bottomHeightPolygon.VolumeClassification.Mode = 2
+        bottomHeightPolygon.VolumeClassification.ExtrudeDownBack = 999;
+        bottomHeightPolygon.VolumeClassification.ExtrudeUpFront = 0;
+    }
+
+     $("#progressText").text(SGLang.i18n("DrawPoints"));
+    
+    $("#progressTbl").hide();
+    $("#queryCompleteTbl").show();
+    Reset(false,false,false);
+}
+//-------------
+// AddPoint
+function AddPoint(pos) {
+    var position1 = pos.ToAbsolute(0);
+    gPositionsArray[gPointsIndex] = position1;
+    gPointsIndex += 1;
+}
+
+//------------
+//  DrawPoints
+function DrawPoints() {
+    gCalcFinished = true;
+    var size = 0.5;
+
+    var parentGroup = TEF ? parent.projectTree.getMyDataGroup() : SGWorld.ProjectTree.RootID;
+    gGroupID = SGWorld.ProjectTree.CreateLockedGroup(SGLang.i18n("ToolName"), parentGroup);
+
+
+    var creator = objectTypeCreators["Polyline"];
+    if (gGreenArray.length>5){
+        var greenGeometry = SGWorld.Creator.GeometryCreator.CreateLineStringGeometry(gGreenArray);
+        creator(greenGeometry, SGLang.i18n("clearPath"), SGWorld.Creator.CreateColor (0,255,0,0));
+    }
+    
+    gRectObj.FillStyle.Color.SetAlpha (0);
+    SGWorld.ProjectTree.SetParent (gRectObj.ID,gGroupID);
+
+    $("#pointsCreatedID").text (gGreenArray.length / 3)
+    $("#progressTbl").hide();
+    $("#queryCompleteTbl").show();
+    Reset(false,false,false);
+
+    return true;
+}
+//---------------
+function ValidateInput() {
+
+    return true;
+}
+//--------------
+function updateProgressBar(progress) {
+    $('#progress div').css('width', progress + '%').text(progress.toFixed(0) + '%');
+  }
+//--------------
+function CheckNumberEx(field, defVal, MinNum, MaxNum) {
+    try {
+        field.value = validateNumber(field.value);
+
+        if (field.value < MinNum)
+            field.value = MinNum;
+        if (field.value > MaxNum)
+            field.value = MaxNum;
+    }
+    catch (e) { field.value = defVal }
+}
+var objectTypeCreators = {
+    "ImageLabel": function (position, name, param)
+    {
+        TEObj = SGWorld.Creator.CreateImageLabel(position,abspath() + "/img/rectangle.png", SGWorld.Creator.CreateLabelStyle(), gGroupID, name);
+        TEObj.Style.LimitScreenSize = false;
+        TEObj.Style.Scale = 0.2;
+        TEObj.SaveInFlyFile = false;
+        TEObj.Style.IconColor.FromHTMLColor (param);
+        //TEObj.Visibility.MaxVisibilityDistance = $("#visibilityDistance").val();
+    },
+    "Polyline": function (geometry, name, param)
+    {
+        TEObj = SGWorld.Creator.CreatePolyline(geometry, param, 3, gGroupID, name);
+        TEObj.LineStyle.Width = -1012; // new way to show only the waypoints
+        // TEObj.SaveInFlyFile = false;
+        TEObj.Visibility.MaxVisibilityDistance = 5000;
+        TEObj.LineStyle.Color.SetAlpha(0.5);
+    }
+}
+
+function Close(){
+    if(TEF)
+        parent.panel.back()
+}
+</script>
+
+</body>
+</html>

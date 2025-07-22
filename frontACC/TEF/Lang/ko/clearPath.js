@@ -1,0 +1,38 @@
+﻿SGLang.lang = $.extend(SGLang.lang,{
+    ToolTitle:                  "SkylineGlobe - 스카이라인 소프트웨어 시스템즈, Inc.",
+    ToolName:                   "경로 지우기",
+    clearPath:                  "경로 지우기",
+    help:                       "도움말",
+    searchFor:                  "검색",
+    HeliPad:                    "헬리콥터 착륙장",
+    TankPath:                   "대형차량통로",
+    VehiclePath:                "차량 통로",
+    Custom:                     "사용자정의",
+    MinWidth:                   "최소 너비",
+    MaxSlope:                   "최대 경사",
+    SearchRadius:               "검색 반경",
+    setLocation:                "위치 설정",
+    Meter:                      "미터",
+    degrees:                    "각도.",
+    ClickToSet:                 "검색 영역의 중심을 지정하려면 3D 창을 마우스 왼쪽 버튼으로 클릭하세요. 작업을 취소하려면 마우스 오른쪽 버튼을 클릭하세요.",
+    Working:                    "이 작업은 몇 분 정도 걸릴 수 있습니다. 중단하려면 대화 상자 상단에 있는 닫기 또는 뒤로 버튼을 클릭하세요.",
+    QueryCompleted:             "표면 분석이 완료되었습니다. ",
+    PointCreated:               "생성된 포인트 :",
+    GeneratingElevationsTerrain:"지형의 고도 지도를 계산하는 중입니다. ",
+    GeneratingElevationsModel:  "모델의 고도 지도를 계산하는 중입니다. ",
+    FindClearPoints:            "일치하는 위치를 검색하는 중입니다. ",
+    DrawPoints:                 "일치하는 점 그리기",
+    Disclaimer:                 "Clear Path 도구는 검색 기준을 충족하는 위치에 대한 예비 표시를 제공합니다. 더 많은 정보를 바탕으로 결정하려면 모델을 검토하십시오.",
+
+    highLowHelp:                "고저 도구는 선택한 관심 영역의 고도 차이를 식별합니다. 설정된 백분율 값을 기준으로 가장 높은 지역과 가장 낮은 지역을 색상으로 표시합니다. ",
+    displayMode:                "하이라이트 모드",
+    heighLowAreas:              "높은 지역과 낮은 지역",
+    heighAreas:                 "높은 지역",
+    lowAreas:                   "낮은 지역",
+    topPresentage:              "최고 비율",
+    bottomPresentage:           "최하위 비율",
+    
+    Close:                      "닫기",
+
+    Text999:                    ""
+});

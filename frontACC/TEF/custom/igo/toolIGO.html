@@ -1,0 +1,61 @@
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+</head>
+
+<body onload="init()">
+Hello world<br>
+<button onclick="circle();">Click to circle around</button>
+<button onclick="startClick();">Creer Panneau</button>
+</body>
+<script>
+var SGWorld = null;
+
+function init() {
+SGWorld = parent.SGWorld;
+SGWorld.AttachEvent("OnLButtonClicked",OnLButtonClicked);
+}
+
+function circle() {
+SGWorld.Command.Execute (1057,0);
+}
+
+let captureClick=false;
+function startClick(){
+	captureClick=true;
+}
+
+let lastModel;
+function createPanneau(dXCoord,dYCoord){
+	let urlFichier = "https://igogeovendee.igo.fr/datas/xpl/panneausolaire.xpl2";
+      //var dXCoord = -1.760819;// W ,   N
+      //var dYCoord = 46.491345;
+      var dAltitude = 1;
+      var eAltitudeTypeCode = 0; // AltitudeTypeCode.ATC_TERRAIN_RELATIVE;
+      var dYaw = 0.0;
+      var dPitch = 0.0;
+      var dRoll = 0.0;
+      var dDistance = 500;
+
+      var cPos = SGWorld.Creator.CreatePosition(dXCoord, dYCoord, dAltitude, eAltitudeTypeCode, dYaw, dPitch, dRoll, dDistance);
+         
+
+
+      var lastModel = SGWorld.Creator.CreateModel(cPos, urlFichier,1, 0,"", "Panneau");
+
+
+}
+
+function OnLButtonClicked(Flags,X,Y)
+{
+	if (captureClick==true){
+		let wpi = SGWorld.Window.PixelToWorld(X,Y,0); 
+		createPanneau(wpi.Position.X,wpi.Position.Y);
+		captureClick=false;
+	}
+
+}
+</script>
+</html>

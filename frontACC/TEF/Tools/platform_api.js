@@ -1,0 +1,1 @@
+function CreateSGWorld(version){return opener.SGWorld}function UTF8ToString(string){return opener.UTF8ToString(string)}

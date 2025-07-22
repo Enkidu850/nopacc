@@ -1,0 +1,31 @@
+﻿SGLang.lang = $.extend(SGLang.lang,{
+    ToolTitle: "SkylineGlobe - Skyline Software Systems, Inc.",
+    ToolName: "Distance",
+    help: "Aide",
+    Text6: "Créer un objet de mesure",
+    Text7: "Accroche",
+    Text17: "Unités",
+    Text18: "Supprimer la mesure.",
+    Text19: "Supprimer le dernier point de mesure.",
+    Text20: "Aligne les points de mesure sur les arêtes, objets et sommets.",
+    Text23: "Afficher le profil d'élévation du terrain le long d'une ligne aérienne.",
+    Text24: "Afficher la distance aérienne",
+    Text25: "Afficher la distance horizontale",
+    Text26: "Afficher la distance verticale",
+
+    Text_TotalAerialDistance: "Total distance aérienne",
+    Text_TotalHorizontalDistance: 'Total distance horizontale',
+    Text_TotalVerticalDistance: 'Total distance verticale',
+    Text_Slope: 'Pente',
+    Text_Firstpointtolastpoint: 'Du premier point au dernier',
+    Text_in: "in",
+    Text_ft: "ft",
+    Text_mile: "mile",
+    Text_mm: "mm",
+    Text_cm: "cm",
+    Text_meter: "m",
+    Text_km: "km",
+    Text14: "Profil de terrain",
+
+    dummy: ""
+});

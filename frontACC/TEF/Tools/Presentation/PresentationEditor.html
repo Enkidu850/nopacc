@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Presentation</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=11" />
+    <!--<meta http-equiv="Content-Type" content="text/html; charset=utf-8">-->
+    <link rel="StyleSheet" href="../Style80.css" type="text/css">
+    <link rel="StyleSheet" href="presentation.css" type="text/css">
+    <script type="text/javascript" src="../jquery/jquery-3.1.1.min.js"></script>
+    <script language="javascript" src="../TeTypes.js"></script>
+    <script language="javascript" src="../ToolsCommon80.js"></script>
+    <script type="text/javascript" src="../jquery/jscolor/jscolor.js"></script>
+    <script language="javascript" src="presentation.schema.json.js"></script>
+
+
+
+    <style>
+    </style>
+</head>
+
+<body id="Body" style=" width: 100%; margin: 0px; overflow:hidden;"  onload="init()" onunload="uninit()">
+
+    <style>
+
+        .unselectable {
+            /* If you want to implement it in very old browser-versions */
+            -webkit-user-select: none; /* Chrome/Safari */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* IE10+ */
+            /* The rule below is not implemented in browsers yet */
+            -o-user-select: none;
+            /* The rule below is implemented in most browsers by now */
+            user-select: none;
+        }
+
+        .tree {
+            flex-grow: 1;
+            width: 100%;
+            margin: 0px 0px 4px -4px;
+            overflow: scroll;
+            height: 100px;
+        }
+
+            .tree ol {
+                counter-reset: item;
+                list-style: none;
+                padding-left: 20px;
+                /* -ms-overflow-style: none; */
+                width: 100%;
+                height: 100%;
+                /* Internet Explorer 10+ */                
+            }
+
+                .tree ol > li {
+                    /* margin: 0 0.2rem 0.5rem 0; */
+                    padding-left: 50px;
+                    counter-increment: item;
+                    position: relative;
+                    cursor: pointer;
+                    font-weight: bold;
+                    border-radius: 2px; 
+                }
+
+                    .tree ol > li::before {
+                        content: counter(item);
+                        position: absolute;
+                        left: 20px;
+                        width: 20px;
+                        height: 20px;
+                        top: 0;
+                        background: #F0F2F5;
+                        border-radius: 10px;
+                        text-align: center;
+                        z-index: 3;
+                        /* box-shadow: 4px 4px 8px 0px rgba(0,0,0,0.1); */
+                    }
+
+                /* .tree ol li div::before,
+                .tree ol li div::after {
+                    content: " ";
+                    display: table;
+                    
+                } */
+
+                .tree ol li div div span:hover {
+                    background-color: rgba(0,0,0,0);
+                }
+
+                .tree ol li div div:not(.selected_):hover {
+                    background-color: rgba(230,230,230,0.4);
+                    border-radius: 6px; 
+                }
+
+                .tree ol li div:hover > img {
+                    visibility: visible;
+                    /*width: 100%;*/
+                }
+
+                .tree ol ul {
+                    list-style: none;
+                    padding-left: 0px;
+                    /* -ms-overflow-style: none; */
+                    margin-top: 4px;
+                }
+
+                    .tree ol ul > li {
+                        left: -4px;
+                        position: relative;
+                        cursor: pointer;
+                        height: 24px;
+                        display: flex;
+                        color: #5a5d60;
+                    }
+
+                        .tree ol ul > li::before {
+                            content: "";
+                            position: absolute;
+                            width: 16px;
+                            height: 30px;
+                            left: -18px;
+                            top: -18px;
+                            background-image: url('images/liImage.png');
+                        }
+
+        .dropArea {
+            background: #FAFAFA 0% 0% no-repeat padding-box;
+            border: 2px dashed #CBCBCB;
+            border-radius: 4px;
+            opacity: 1;
+            height: 116px;
+        }
+
+        .dropArea-animation-accepted {
+            animation: dropAccepted 2s infinite;
+        }
+
+        @keyframes dropAccepted {
+            50% {
+                background: #00d8ff;
+                color: #000;
+            }
+        }
+
+        .dropArea-animation-rejected {
+            animation: dropRejected 2s infinite;
+        }
+
+        @keyframes dropRejected {
+            50% {
+                background: #e8a1a1;
+                color: #000;
+            }
+        }
+
+
+        fieldset {
+            /*  border: 1px solid gray; */
+            border: none;
+        }
+          
+
+        .fieldLine {
+            display: flex;
+            width: 100%;
+            height: 28px;
+            line-height: 18px;
+            flex-basis: 0;
+            flex-grow: 8;
+            padding: 2px 2px;
+            align-items: center;            
+            margin-bottom: 14px;
+            
+        }
+
+        .colName {
+            flex: 4;
+            flex: min-content;
+            text-align: left;
+            letter-spacing: 0px;
+            color: #000000;
+            opacity: 1;
+            vertical-align: central;
+        }
+
+        .colValue {
+            flex: 5;
+            border: 1px solid #CBCBCB;
+            opacity: 1;
+            border-radius: 3px;
+            color: #5a5d60;
+            overflow: hidden;
+            vertical-align:central;
+        }
+
+               
+        .colValue > input {
+            border: none; 
+            outline:0px;
+            
+        }
+
+        .colValue > input:hover {
+            border: none;
+            outline:0px;
+        }
+
+        .colValue > select {
+            border: none; 
+            outline:0px;
+        }
+/* 
+        .colValue > select {
+            border: 0px; 
+            outline:0px;
+        } */
+
+        ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+            color: #A0A0A1;
+        }
+
+        :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+            color: #A0A0A1;
+            opacity: 1;
+        }
+
+        ::-moz-placeholder { /* Mozilla Firefox 19+ */
+            color: #A0A0A1;
+            opacity: 1;
+        }
+
+        :-ms-input-placeholder { /* Internet Explorer 10-11 */
+            color: #A0A0A1;
+        }
+
+        ::-ms-input-placeholder { /* Microsoft Edge */
+            color: #A0A0A1;
+        }
+
+        ::placeholder { /* Most modern browsers support this now. */
+            color: #A0A0A1;
+        }
+
+
+        .dragBorder {
+            border: dashed 4px lightgray;
+        }
+
+        .dragInError {
+            border: dashed 4px red;
+            background-color: lightpink
+        }
+
+        .helper {
+            color: rgb(174, 174, 174);
+            font-size: 20px;
+            padding: 3px 3px 3px 3px;
+        }
+
+        .helperError {
+            color: rgb(158, 97, 97);
+            font-size: 20px;
+            padding: 3px 3px 3px 3px;
+        }
+
+        span.no_selection {
+            user-select: none; /* standard syntax */
+            -webkit-user-select: none; /* webkit (safari, chrome) browsers */
+            -moz-user-select: none; /* mozilla browsers */
+            -khtml-user-select: none; /* webkit (konqueror) browsers */
+            -ms-user-select: none; /* IE10+ */
+        }
+
+
+        .liContainer {
+            display: flex;
+            flex-wrap: nowrap;
+            white-space: nowrap;
+            width: 100%;
+            
+        }
+        
+
+        .liEntry {
+            
+            width: 100%;
+            border-radius: 6px;
+        }
+
+            .liEntry:hover .liContainer .dropdown .dropbtn {
+                visibility: visible;
+            }
+
+        /* Dropdown Button */
+        .dropbtn {
+            padding: 0px;
+            border: none;
+        }
+
+        /* The container <div> - needed to position the dropdown content */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Dropdown Content (Hidden by Default) */
+
+        .dropdown-content-no-hover {
+            display: none;
+        }
+
+        .dropdown-content {
+            display: block;
+            position: absolute;
+            background-color: white;
+            min-width: 100px;
+            box-shadow: 0px 0px 16px 0px rgba(0,0,0,0.2);
+            z-index: 9999;
+            opacity: 0.95;
+            top: 200px;
+            left: 100px;
+            /*border-top: 1px solid #d0d0d0;*/
+        }
+
+            /* Links inside the dropdown */
+            .dropdown-content a {
+                background-color: white;
+                padding: 4px 8px;
+                text-decoration: none;
+                display: block;
+                font-family: Calibri,Arial;
+                font-size: 11pt;
+                font-style: normal;
+                font-weight: normal;
+                color: #000000;
+                z-index: 999;
+            }
+
+                /* Change color of dropdown links on hover */
+                .dropdown-content a:hover {
+                    background-color: #f0f0f0;
+                }
+
+        /* Show the dropdown menu on hover */
+        /*    .dropdown:focus .dropdown-content {
+                  display: block;
+              }*/
+
+        /* Change the background color of the dropdown button when the dropdown content is shown */
+        .dropdown:hover .dropbtn {
+            /*  background-color: #3e8e41;*/
+        }
+
+        .break {
+            flex-basis: 100%;
+            height: 0;
+        }
+
+        .item {
+            flex-grow: 1;
+            flex-basis: auto;
+            padding: 4px;
+        }
+
+        .item-wide {
+            flex-grow: 3;
+            padding: 4px;
+        }
+
+        .toolbox {
+            top: 0px;
+            left: 0px;
+            /*width: 100%;*/
+            /*height: 45px;*/
+            background-color: #151515;
+            /*display: inline-block;*/
+            position: relative;
+        }
+
+        .toolboxIcon {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+            padding-right: 5px;
+            background-color: #151515;
+            width: 32px;
+            height: 32px;
+        }
+
+        .toolboxSeparator {
+            padding: 5px 5px 5px 5px;
+            background-color: #151515;
+            max-width: 5px;
+        }
+
+        .toolboxIcon:not(.toolboxIconDisabled):hover {
+            background-color: #2b2b2b;
+        }
+
+        .toolboxIconHighlight {
+            background-color: #004975;
+        }
+
+        .toolboxIconDisabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+
+        .toolbox-dropbtn {
+            /*padding: 4px;*/
+            border: none;
+            
+        }
+
+        .toolbox-dropbtn-inner {
+            /*padding: 8px;*/
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #151515;
+            border-radius: 5px;
+        }
+
+            .toolbox-dropbtn-inner:hover {
+                background: #2b2b2b;
+            }
+
+        /* The container <div> - needed to position the dropdown content */
+        .toolbox-dropdown {
+            position: relative;
+            display: inline-block;
+            background-color: rgba(0,0,0,0);
+            margin: 0px;
+            padding: 0px;
+            color: white;
+            top: -2px;
+            border-radius: 5px;
+        }
+
+            .toolbox-dropdown:hover {
+                background-color: rgba(0,0,0,0);
+            }
+
+        .toolbox-dropdown-content {
+            display: block;
+            position: absolute;
+            visibility: hidden;
+            left: 0px;
+            top: 44px;
+            background-color: #151515;
+            opacity: 0.9;
+            /*min-width: 100px;*/
+            /*width: 100%;*/
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 2000;
+            /*border-top: 1px solid black;*/
+            /*border: 1px solid green;*/
+            border-radius: 5px;
+        }
+
+            /* Links inside the dropdown */
+            .toolbox-dropdown-content a {
+                background-color: #2b2b2b;
+                padding: 0px 8px;
+                text-decoration: none;
+                display: block;
+                font-family: Calibri,Arial;
+                font-size: 11pt;
+                font-style: normal;
+                font-weight: normal;
+                color: white;
+                border-radius: 5px;
+            }
+
+            .toolbox-dropdown-content div {
+                display: flex;
+                align-items: center;
+                justify-content: left;
+                background-color: #151515;
+                /* padding: 0px 8px;*/
+                margin: 12px 8px;
+                text-decoration: none;
+                color: white;
+                border-radius: 5px;
+                height: 32px;
+            }
+
+
+            .toolbox-dropdown-content img {
+                vertical-align: middle;
+                padding-right: 4px;
+                /*height: 32px;*/
+            }
+
+
+            /* Change color of dropdown links on hover */
+            .toolbox-dropdown-content div:hover {
+                background-color: #2b2b2b;
+            }
+
+        .no-hover {
+        }
+
+        /* Show the dropdown menu on hover */
+        .toolbox-dropdown:not(.no-hover) .toolbox-dropdown-content {
+            display: block;
+        }
+
+
+
+        /* Change the background color of the dropdown button when the dropdown content is shown */
+        .toolbox-dropdown:hover .dropbtn {
+            /*background-color: #2b2b2b;*/
+        }
+
+        .dragging {
+            opacity: 0.5;
+        }
+
+        [draggable="true"] {
+            /*
+         To prevent user selecting inside the drag source
+        */
+            user-select: none;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+        }
+
+
+        .ForignPresentationStepHeader {
+            position: absolute;
+            /*width: 100%;*/
+            page-break-after: avoid;
+            color: #a0a0a0;
+            opacity: 0.6;
+            text-shadow: 2px 2px 4px 0px rgba(0,0,0,0.2);
+            display: flex;
+            border-bottom: 1px solid rgba(200,200,200,0.5);
+            /*text-shadow: 1px 1px white, -1px -1px rgba(255,255,255,0.7);*/
+        }
+
+            .ForignPresentationStepHeader div {
+                height: 50%;
+                line-height: 50%;
+            }
+
+        .pulsing {
+            background: #FFFFFF;
+            animation: btnPulsing 2s infinite;
+        }
+
+            .pulsing:hover {
+                background: #FFFFFF;
+                animation: btnPulsing 2s infinite;
+            }
+
+
+        @keyframes btnPulsing {
+            50% {
+                background: #def8f0;
+                color: #000;
+            }
+        }
+
+        .recordPulsing {
+            animation: recordPulsingAnim 2s ease-in-out infinite;
+        }
+
+        @keyframes recordPulsingAnim {
+            50% {
+                opacity: 0.2;
+            }
+        }
+
+    .widthHeightMinus20 {
+
+        margin: 3px 0px 0px 3px;
+
+        height: -webkit-calc(100% - 8px);
+        height: -moz-calc(100% - 8px);
+        height: calc(100% - 8px);
+
+        width: -webkit-calc(100% - 8px);
+        width: -moz-calc(100% - 8px);
+        width: calc(100% - 8px);
+    }
+
+    .popup-1 {
+
+        position: absolute;
+        min-width: 100px;
+        box-shadow: 2px 2px 16px 0px rgba(0,0,0,0.5);        
+        opacity: 0.95;
+        background-color: white;
+        padding: 10px;
+        text-decoration: none;
+        display: block;
+        line-height: 28px;
+        color: #000000;
+        z-index: 9999;
+        border-radius: 5px;
+    }
+
+    .popup-1 a {
+        font-family: Arial;
+        font-weight: normal;
+        font-size: 10pt;
+        padding: 0px 10px;
+    }
+
+    .popup-1 a:hover {
+        color: #00D8FF;
+    }
+
+    .dropHilight {        
+        /* -webkit-box-shadow:inset 0px 0px 4px 1px #00D8FF;
+        -moz-box-shadow:inset 0px 0px 4px 1px #00D8FF;
+        box-shadow:inset 0px 0px 4px 1px #00D8FF; */
+
+        background-color: rgba(0,216,255, 0.4);
+    }
+
+
+    .selected_ {
+
+        background-color: rgba(0,215,254, 0.4);
+    }
+
+
+        .presentationToolbarButton {
+            cursor: pointer;
+            COLOR: #000000;
+            text-decoration: none;
+            width: 18px;
+            height: 18px;
+            margin: 0px 5px;
+            border-radius: 0px;
+        }
+
+            .presentationToolbarButton:hover {
+                COLOR: #E2A21B;
+                text-decoration: none;
+                cursor: pointer;
+            }
+    </style>
+
+
+    <div style="width: 100%; height: 100%; display:flex; flex-direction: column;" class="s9">
+
+        <!--<div style="overflow:hidden; height: 100px;">
+            <iframe id="controlPanel" src="about:blank" style="width: 100%; height: 100%;"></iframe>
+        </div>-->
+
+        <div id="caption1" class="s9 unselectable" style="display: flex; overflow: hidden; width: 100%; height: 24px; background-color: #151515; color: #00d8ff; padding: 6px; border-bottom: 1px solid #303030;"></div>
+
+        <!--Toolbar-->
+
+        <div id="toolboxDiv" class="toolbox unselectable" style="display: flex; flex-wrap: wrap; flex-direction:row; align-items:center;">
+
+            <div id="tbnh" class='toolbox-dropdown item' style="margin-left:4px;">
+                <div id="btnTbNewAction" style="" onclick="presentationEditor.actionsMenuClicked()">
+                    <div class="toolbox-dropbtn-inner" style="padding: 4px;">
+                        <img style="height: 24px; width: 24px; vertical-align: middle;" src="images/toolbarNewAction.png">
+                        <span class="s9 i18n" style="color:white;">CreateNewAction</span>
+                        <img id="btnNewAction" style="vertical-align: middle; padding: 0px 8px;" src="images/toolbarDownTriangle.png">
+                    </div>
+                </div>
+                <div class='toolbox-dropdown-content' id="ActionDropdown" onfocusout="presentationEditor.closeActionMenu()">
+
+                    <div style="" onclick="presentationEditor.createNewFlyTo(event)">
+                        <img id="btnNewAction" src="images/toolbarFlyTo.svg" class="presentationToolbarButton">
+                        <span class="s9 i18n" style="padding: 0px 14px; color:white;">FlytoLocationObject</span>
+                    </div>
+                    <div style="" onclick="presentationEditor.createNewShow(event)">
+                        <img id="btnNewAction" src="images/toolbarShow.svg" class="presentationToolbarButton">
+                        <span class="s9 i18n" style="padding: 0px 14px; color:white;">ShowObjectorGroup</span>
+                    </div>
+                    <div style="" onclick="presentationEditor.createNewHide(event)">
+                        <img id="btnNewAction" src="images/toolbarHide.svg" class="presentationToolbarButton">
+                        <span class="s9 i18n" style="padding: 0px 14px; color:white;">HideObjectorGroup</span>
+                    </div>
+
+                    <div style="" onclick="presentationEditor.createNewWait(event)">
+                        <img id="btnNewAction" src="images/toolbarWait.svg" class="presentationToolbarButton">
+                        <span class="s9 i18n" style="padding: 0px 14px; color:white;">SetWaitTime</span>
+                    </div>
+                    <div style="" onclick="presentationEditor.createNewSetTime(event)">
+                        <img id="btnNewAction" src="images/toolbarSetTime.svg" class="presentationToolbarButton">
+                        <span class="s9 i18n" style="padding: 0px 14px; color:white;">SetTime</span>
+                    </div>
+                    <div style="" onclick="presentationEditor.createNewCaption(event)">
+                        <img id="btnNewAction" src="images/toolbarCaption.svg" class="presentationToolbarButton">
+                        <span class="s9 i18n" style="padding: 0px 14px; color:white;">CreateCaption</span>
+                    </div>
+                    <div style="" onclick="presentationEditor.createNewClearCaption(event)">
+                        <img id="btnNewAction" src="images/toolbarClearCaption.svg" class="presentationToolbarButton">
+                        <span class="s9 i18n" style="padding: 0px 14px; color:white;">ClearCaption</span>
+                    </div>
+                    <div style="" onclick="presentationEditor.createNewMessage(event)">
+                        <img id="btnNewAction" src="images/toolbarMessage.svg" class="presentationToolbarButton">
+                        <span class="s9 i18n" style="padding: 0px 14px; color:white;">CreateMessageObject</span>
+                    </div>
+                    <div style="" onclick="presentationEditor.createNewRestartDynamic(event)">
+                        <img id="btnNewAction" src="images/restartDynamic.svg" class="presentationToolbarButton">
+                        <span class="s9 i18n" style="padding: 0px 14px; color:white;">RestartDynamicObject</span>
+                    </div>
+                    <div style="" onclick="presentationEditor.createNewPlayAnotherPresentation(event)">
+                        <img id="btnNewAction" src="images/toolbarAnotherPresentation.svg" class="presentationToolbarButton">
+                        <span class="s9 i18n" style="padding: 0px 14px; color:white;">PlayAnotherPresentation</span>
+                    </div>
+                    <div style="" onclick="presentationEditor.createNewUndergroundMode(event)">
+                        <img id="btnNewAction" src="images/toolbarUnderground.svg" class="presentationToolbarButton">
+                        <span class="s9 i18n" style="padding: 0px 14px; color:white;">TurnUndergroundModeOnOff</span>
+                    </div>
+                    <div style="" onclick="presentationEditor.createNewRecord(event)">
+                        <img id="btnRecord" src="images/toolbarRecordRoute.svg" class="presentationToolbarButton">
+                        <span id="btnRecordText" class="s9 i18n" style="padding: 0px 14px; color:white;">RecordRoute</span>
+                    </div>
+                    <div style="" onclick="presentationEditor.createMenuAction(event, 2217)">
+                        <img id="btnSlopeMap" src="images/toolbarMenu.svg" class="presentationToolbarButton">
+                        <span id="btnSlopeMapText" class="s9 i18n" style="padding: 0px 14px; color:white;">ShowHideSlopeMap</span>
+                    </div>
+                    <div style="" onclick="presentationEditor.createMenuAction(event, 2216)">
+                        <img id="btnContourMap" src="images/toolbarMenu.svg" class="presentationToolbarButton">
+                        <span id="btnContourMapText" class="s9 i18n" style="padding: 0px 14px; color:white;">ShowHideContourMap</span>
+                    </div>
+                    <div style="" onclick="presentationEditor.createMenuAction(event, 2118)">
+                        <img id="btnShadows" src="images/toolbarMenu.svg" class="presentationToolbarButton">
+                        <span id="btnShadowsText" class="s9 i18n" style="padding: 0px 14px; color:white;">ShowHideShadows</span>
+                    </div>
+
+                    <!--<div style="" onclick="presentationEditor.createSetSpeedFactor()">
+                <img id="btnNewAction" src="images/toolbarSetSpeedFactor.png" class="presentationToolbarButton">
+                <span class="s9" style="padding: 0px 14px; color:white;">Set speed factor</span>
+            </div>-->
+                </div>
+            </div>
+
+            <div class="item"><img id="btnStep" src="images/newStep.png" class="toolboxIcon presentationToolbarButton" style="height: 26px; width: 26px; " onclick="presentationEditor.createNewStep()"></div>
+
+            <!--<div class="item"><img id="sep" src="images/toolbarSeperator.png" class="toolboxSeparator"></div>-->
+            <!--<div class="break"></div>-->
+
+            <div class="item"><img id="btnCreateMovie" src="images/CreateMovie.png" class="toolboxIcon presentationToolbarButton" style="height: 26px; width: 26px;" onclick="presentationEditor.openCreateMovie()"></div>
+
+            <!--<div class="item"><img id="sep2" src="images/toolbarSeperator.png" class="toolboxSeparator"></div>-->
+            <!--<div class="break"></div>-->
+
+            <div class="item"><img id="btnSettings" src="images/gear.svg" class="toolboxIcon presentationToolbarButton" style="height: 24px; width: 24px; " onclick="presentationEditor.openSettings()"></div>
+
+            <div>
+                <div id="startStopRecord" style="display: none; min-width: 36px; overflow: hidden; float: left; height: 36px; line-height: 36px; margin-left: 20px; " onclick="presentationEditor.startRecord(event)">
+                    <img id="btnRecord2" src="images/record.png" class="presentationToolbarButton" style="border-radius: 28px; width: 36px; height: 36px;">
+                    <span id="btnRecordText2" class="s9" style="padding: 0px 6px; color:white;">Start Recording</span>
+                </div>
+
+                <div id="cancelRecord" style="display: none; min-width: 36px; overflow: hidden; height: 36px;line-height: 36px; margin-left: 20px " onclick="presentationEditor.cancelRecord(event)">
+                    <img id="btnCancelRecord" src="images/cancelRecord.png" class="presentationToolbarButton" style="width: 36px; height: 36px; ">
+                    <span id="btnCancelRecord2" class="s9" style="padding: 0px 6px; color:white;">Cancel Recording</span>
+                </div>
+            </div>
+        </div>
+        <!--tree-->
+        <div id="presentationItems" class="tree unselectable">
+            <ol class="s10" id="stepsList" style=" white-space: nowrap; text-overflow: ellipsis;">
+            </ol>
+
+        </div>
+
+        <!--properties-->
+        <div id="properties" style="width: 100%; height: 20px; display:none;" ondrop="_form.dragDrop.onDrop(event)" ondragover="_form.dragDrop.onDragOver(event)" ondragleave="_form.dragDrop.onDragLeave(event)" ondragenter="_form.dragDrop.onDragEnter(event)">
+
+            <!--<div style=" padding: 0px 8px 0px 8px; margin: 8px 0px 8px 0px; display: flex; flex-wrap: nowrap; justify-content: space-between; align-items: center; height: 26px; background-color: #F2F2F2; line-height: 26px;">-->
+            <!--<form style="height: calc(100% - 19px); margin: 8px; border: 1px solid #b0b0b0; border-radius: 4px; background-color: white; ">-->
+            <form class="widthHeightMinus20" style="background: #FFFFFF 0% 0% no-repeat padding-box;">
+                <div style="width: 100%; height: 100%; display: flex; flex-wrap: nowrap; justify-content: space-between; align-items: center; height: 26px; background-color: #f2f2f2;  line-height: 26px; ">
+                    <p id="propertiesCaption" style="padding-left: 8px; font-size: 9pt; white-space: nowrap; text-overflow:ellipsis; color: #2f2f2f;">Properties</p>
+                    <!--<img id="closeProperties" class="highlightButton" style="padding: 16px; width:12px; height: 12px;" src="images/x.png" />-->
+                    <!-- <span style="width: 80%;"></span> -->
+                    <!-- <a class="s7" style="margin-top: -10px; text-decoration: underline; padding: 16px; color: red; " onclick='presentationEditor.onDeleteItem()'>Delete</a> -->
+                    <a style="padding-right: 8px;" onclick='presentationEditor.closePropertiesPanel()'><img src="images/x.png"></a>
+                </div>
+                <fieldset id="_fieldset" style="padding-top: 16px; height: 100%; overflow: hidden;">
+                    <!--<legend>Contact Information</legend>-->
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
+    <!-- right popup menu -->
+    <div id='actionMenu' class='popup-1' style='display: none;' targetId=''>
+        <a href='#' id='menuPlayFroHere' onclick='presentationEditor.doContextOperation(presentationEditor.onPlayItem)'>1</a>
+        <a href='#' id='menuJumpHere' onclick='presentationEditor.doContextOperation(presentationEditor.onJumpToItem)'>1</a>
+        <a href='#' id='menuCopyAction' onclick='presentationEditor.doContextOperation(presentationEditor.onCopyItem)'>2</a>
+        <a href='#' id='menuPasteAction' onclick='presentationEditor.doContextOperation(presentationEditor.onPasteItem)'>3</a>
+        <a href='#' id='menuEditAction' onclick='presentationEditor.doContextOperation(presentationEditor.onEditItem)'>4</a>
+        <a href='#' id='menuDeleteAction' onclick='presentationEditor.doContextOperation(presentationEditor.onDeleteItem)'>5</a>
+        <a href='#' id='menuDeleteMulti' onclick='presentationEditor.doContextOperation(presentationEditor.onDeleteMultiItem)'>6</a>
+
+        <a href='#' id='menuCopyStep' onclick='presentationEditor.doContextOperation(presentationEditor.onCopyItem)'>1</a>
+        <a href='#' id='menuPasteStep' onclick='presentationEditor.doContextOperation(presentationEditor.onPasteItem)'>1</a>
+        <a href='#' id='menuRenameStep' onclick='presentationEditor.doContextOperation(presentationEditor.onRenameStep)'>1</a>
+        <a href='#' id='menuToggleWaitStep' onclick='presentationEditor.doContextOperation(presentationEditor.onToggleWaitStep)'>1</a>
+        <a href='#' id='menuDeleteStep' onclick='presentationEditor.doContextOperation(presentationEditor.onDeleteStep)'>1</a>
+        <a href='#' id='menuDeleteMultiStep' onclick='presentationEditor.doContextOperation(presentationEditor.onDeleteMultiStep)'>1</a>
+    </div>
+ 
+    <script language="javascript" src="PresentationCommon.js"></script>
+    <script language="javascript" src="PresentationEditor.js"></script>
+
+    <link rel="stylesheet" type="text/css" media="all" href="./jscalendar/skins/tiger/theme.css" title="Tiger" />
+    <script type="text/javascript" src="./jscalendar/calendar.js"></script>
+    <script type="text/javascript">
+        //-------------------
+        // load lang file for calendar
+
+        (function () {
+            document.write("<script language='javascript' src='./jscalendar/calendar-lang.js'></" + "script>");
+            var code = SGLang.getCode();
+            document.write("<script  language='javascript' src='./jscalendar/" + code + "/calendar-lang.js'></" + "script>");
+        })();
+
+        window.onresize = function () {
+            $("#visualization").height($(window).height() - 40);
+        }
+    </script>
+    <script type="text/javascript" src="./jscalendar/calendar-setup.js"></script>
+
+</body>
+
+</html>

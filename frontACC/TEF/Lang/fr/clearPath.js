@@ -1,0 +1,38 @@
+﻿SGLang.lang = $.extend(SGLang.lang,{
+    ToolTitle:                  "SkylineGlobe - Skyline Software Systems, Inc.",
+    ToolName:                   "Chemin Dégagé",
+    clearPath:                  "Chemin Dégagé",
+    help:                       "Aide",
+    searchFor:                  "Rechercher",
+    HeliPad:                    "Zone d'atterrissage pour hélicoptères",
+    TankPath:                   "Sentier pour gros véhicules",
+    VehiclePath:                "Parcours des véhicules",
+    Custom:                     "Personaliser",
+    MinWidth:                   "Largeur minimale",
+    MaxSlope:                   "Pente maximale",
+    SearchRadius:               "Rayon de recherche",
+    setLocation:                "Définir l'emplacement",
+    Meter:                      "m",
+    degrees:                    "deg.",
+    ClickToSet:                 "Faites un clic gauche dans la 3D pour placer le centre de la zone de recherche. Clic droit pour annuler l'opération.",
+    Working:                    "Cette opération peut prendre quelques minutes. Pour l'annuler, cliquez sur Fermer ou sur le bouton Retour.",
+    QueryCompleted:             "Analyse de surface terminée. ",
+    PointCreated:               "Points créés :",
+    GeneratingElevationsTerrain:"Calcul de la carte d'élévation du terrain. ",
+    GeneratingElevationsModel:  "Calcul de la carte d'élévation des modèles. ",
+    FindClearPoints:            "Recherche d'emplacements correspondants. ",
+    DrawPoints:                 "Dessin des points correspondants",
+    Disclaimer:                 "L'outil Chemin Dégagé propose des indications préliminaires sur les emplacements qui répondent aux critères de recherche. Pour une décision plus éclairée, veuillez consulter le modèle",
+
+    highLowHelp:                "L'outil Haut et Bas identifie les différences d'altitude dans une zone d'intérêt sélectionnée. Il colorise les zones les plus élevées et les plus basses en fonction des valeurs de pourcentage définies.",
+    displayMode:                "Mode surbrillance",
+    heighLowAreas:              "Zones hautes et basses ",
+    heighAreas:                 "Zones hautes",
+    lowAreas:                   "Zones basses",
+    topPresentage:              "Pourcentage au-dessus",
+    bottomPresentage:           "Pourcentage en-dessous",
+    
+    Close:                      "Fermer",
+
+    Text999:                    ""
+});

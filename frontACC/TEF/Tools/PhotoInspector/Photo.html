@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=11" />
+    <link rel="StyleSheet" href="../Style80.css" type="text/css">
+    <link rel="StyleSheet" href="photo.css" type="text/css">
+    <link rel="StyleSheet" href="../jquery/DataTable/datatables.css" type="text/css">
+</head>
+
+<body class="photoInspectorBody hideUntilTranslated s9" id="PhotoInspectorBody"  onunload="application.exit()" oncontextmenu="return false;" hidden> 
+
+    <div id="toolboxDiv" class="toolbox s9">
+        <img id="toolBoxSelectPoint" src="images/SelectPoint.png" class="toolboxIcon link2" onclick="application.SelectPoint()">
+        <img id="toolMultipleViewers" src="images/singleViewer.png" class="toolboxIcon link2" onclick="settings.changeMultipleViewersToolbox(true)">
+        <img id="toolReset" src="images/reset.png" class="toolboxIcon link2" onclick="application.ResetPhotos()">
+        <img src="images/seperator.png" class="toolboxSeparator hideInViewerMode">
+        <img id="toolInspectionDraw0" src="images/draw.png" class="toolboxIcon link2 hideInViewerMode" onclick="inspections.Draw(true,0)" >
+        <img id="toolInspectionDraw1" src="images/drawpoint.png" class="toolboxIcon link2 hideInViewerMode" onclick="inspections.Draw(true,1)" >
+        <img id="toolInspectionDraw2" src="images/distance.png" class="toolboxIcon link2 hideInViewerMode" onclick="inspections.Draw(true,2)" >
+        <img id="toolInspectionSelect" src="images/selectFeature.png" class="toolboxIcon link2 hideInViewerMode" onclick="inspections.Select()">
+        <img id="toolInspectionShowList" src="images/FeaturesList.png" class="toolboxIcon link2 hideInViewerMode" onclick="inspections.ShowList(true)">
+        <img src="images/seperator.png" class="toolboxSeparator">
+        <img id="toolSettings" src="images/settings.png" class="toolboxIcon link2" onclick="settings.ShowSettings(true)">
+    </div>
+    <!--                -->
+    <!-- Quick Guide    -->
+    <!--                -->
+    <div id="QuickGuideDiv" class="settings">
+
+        <div id="QuickGuideDiv" class="QuickGuide lineSpace2">
+            <span class="s18 i18n">TextQuickGuideTitle</span><br><br>
+            <div class="link2" onclick="application.ZoomToArea()"><img src="images/QuickGuide-ZoomToArea.png" class="imgMiddle padding10"> <span class="s9 i18n link2" >TextQuickGuideZoomToArea</span></div>
+            <div class="link2" onclick="application.SelectPoint()"><img src="images/QuickGuide-SelectPoint.png" class="imgMiddle padding10"><span class="s9 i18n link2">TextQuickGuideStatInspection</span></div>
+            <div class="link2 hiddenInTEF" onclick="DisplayHelpPopup6(SGLang.i18nFile('help.mht'),SGLang.i18n('help'))"><img src="images/QuickGuide-Help.png" class="imgMiddle padding10"><span class="s9 i18n link2">TextQuickGuideHelp</span></div>
+            <br><br>
+            <span class="s12b i18n ">TextQuickGuideKeysTitle</span><br>
+            <p class="s9"><span class='SpanOutline MR5'>M</span><span class="s9 i18n">TextQuickGuideKeyMark</span></p>
+            <p class="s9"><span class='SpanOutline MR5'>></span><span class="s9 i18n">TextQuickGuideKeyNext</span></p>
+            <p class="s9"><span class='SpanOutline MR5'><</span><span class="s9 i18n">TextQuickGuideKeyPrev</span></p>
+            <p class="s9 hideInViewerMode"><span class='SpanOutline MR5'>D</span><span class="s9 i18n">TextQuickGuideKeyDarw</span></p>
+        
+            <span class="s12b i18n ">TextQuickGuideViewersTitles</span><br>
+            <span class="s9 i18n ">TextQuickGuideViewers</span><br><br>
+            <span class="s12b i18n hideInViewerMode">TextQuickGuideInspectionDrawingTitles</span><br>
+            <span class="s9 i18n hideInViewerMode">TextQuickGuideInspectionDrawing</span><br><br>
+        </div>
+    </div>
+
+    <!--                -->
+    <!-- Photo Viewer   -->
+    <!--                -->
+    <div id="PhotoViewersDiv"  class="photoViewers" style="display:none;" >
+        <table class="photoViewerTable" >
+            <tr id="PhotoViewerMainTR">
+                <td colspan=2 id="ViewerTD-0" class="photoViewerTDFull" valign="top">
+                </td>
+            </tr>
+            <tr id="PhotoViewerSecondaryTR">
+                <td colspan=2 id="ViewerTD-1" class="photoViewerTDFull" valign="top">
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!--            -->
+    <!-- Settings   -->
+    <!--            -->
+    <div id="SettingsDiv" style="display:none;" class="settings">
+        <table class="settingsTable s13">
+            <tr>
+                <td >
+                    <span class="s18 i18n">TextSettingsTitle</span>
+                </td>
+                <td align="right">
+                    <label  onclick="settings.ShowSettings(false); application.SetMarkerPos(application.lastCursorPosition);" class="s18 i18n link2"  >X</label> 
+                </td>
+            </tr>
+            <tr class="hiddenInTEF">
+                <!-- Fix photo path -->
+                <td class="s9">
+                    <label class="i18n">TextFixPhotosURLTitle</label>
+                </td>
+                <td align="right" class="s9" >
+                    <button 
+                        id="FixPhotoPathButtonID"
+                        class="MenuButtonSmallRoundOutline i18n"
+                        onclick="settings.ShowFixURL(true)"
+                    >
+                        TextFixURL
+                    </button>
+                </td>
+            </tr>
+            <tr class="s9">                <!-- camera icon size -->
+                <td class="s9">
+                    <label class="i18n ">TextIconSize</label>
+                </td>
+                <td align="right" class="s9">
+                    <input  id="iconSizeID" onchange="settings.SaveSettings();settings.changeIconSize();" onkeyup="if (event.keyCode === 13) {settings.SaveSettings();settings.changeIconSize();}" type="text" value="" size="7" />
+                </td>
+            </tr>
+              <!-- show projector -->
+            <!-- <tr>              
+                <td class="i18n s9">
+                    <span class="s9 i18n">TextShowProjector</span>
+                </td>
+                <td align="right" class="s9">
+                    <select id="showProjectorID" class="select100">
+                        <option class="i18n" value="0" selected="selected">TextNo</option>
+                        <option class="i18n" value="1">TextYes</option>
+                    </select> 
+                </td>
+            </tr> -->
+            <tr>
+                <!-- Search Distance -->
+                <td class="s9">
+                    <label class="s9 i18n">TextSeachDistance</label>
+                </td>
+                <td align="right" class="s9">
+                    <input id="searchDistanceID" onchange="settings.SaveSettings();settings.NeedRefreshViewers=true;" onkeyup="if (event.keyCode === 13) {settings.SaveSettings();settings.NeedRefreshViewers=true;}" type="text" value="" size="7" />
+                </td>
+            </tr>
+
+            <tr class="s9">                <!-- Max results -->
+                <td class="s9">
+                    <label class="i18n ">TextMaxResults</label>
+                </td>
+                <td align="right" class="s9">
+                    <input  id="maxResultsID" onchange="settings.SaveSettings();settings.NeedRefreshViewers=true;" onkeyup="if (event.keyCode === 13) {settings.SaveSettings();settings.NeedRefreshViewers=true;}" type="text" value="" size="7" />
+                </td>
+            </tr>
+            <tr class="s9 hiddenInTEF">                <!-- Tile Streaming -->
+                <td class="s9">
+                    <label class="i18n ">TextTileStreaming</label>
+                </td>
+                <td align="right" class="s9">
+                    <label class="switch margin-right5">
+                        <input type="checkbox" id="TileStreamingID" onchange="settings.SaveSettings()">
+                        <span class="slider round"></span>
+                    </label>
+                </td>
+            </tr>
+                    <!-- Publish section -->
+                    <!--------------------->
+            <tr class="hiddenInTEF"> 
+                <td colspan="2" class="s9">
+                    <br>
+                    <span class="s18 i18n">TextPublishTitle</span><br>
+                </td>
+            </tr>            
+            <tr class="hiddenInTEF">
+                <!-- Publish to SGS -->
+                <td class="s9">
+                    <label class="i18n">TextPublishToSGSTitle</label>
+                </td>
+                <td align="right" class="s9" >
+                    <button class=" MenuButtonSmallRoundOutline i18n"
+                        onclick="application.PublishProjectToSGS()">TextPublish</button>
+                </td>
+            </tr>
+            <tr class="hiddenInTEF">
+                <!-- Extract and Publish Area as Offline Kit  -->
+                <td class="s9">
+                    <label class="i18n">TextExtractAndPublishAreaAsOfflineKit</label>
+                </td>
+                <td align="right" class="s9" >
+                    <button class=" MenuButtonSmallRoundOutline i18n"
+                        onclick="application.ExtractAndPublishAreaAsOfflineKit()">TextPublish</button>
+                </td>
+            </tr>            
+            <!-- Show secondary window section-->
+            <tr>
+                <td colspan="2" class="s9">
+                    <br>
+                    <span class="s18 i18n">TextSecondaryViewerTitle</span><br>
+                </td>
+            </tr>    
+            <tr>
+                <td class="i18n s9">
+                    <span class="s9 i18n">TextShowSecondaryViewer</span>
+                </td>
+                <td align="right"  class="checkboxTD">
+                    <label  class="switch margin-right5">
+                        <input type="checkbox" id="MultipleViewersSelectionID" onchange="settings.SaveSettings();settings.NeedRefreshViewers=true;">
+                        <span class="slider round"></span>
+                    </label>
+                </td>
+            </tr>
+            <!-- Attach secondary to main -->
+            <tr>
+                <td class="i18n s9">
+                    <span class="s9 i18n">TextAttachSecondaryToMain</span>
+                </td>
+                 <td align="right"  class="checkboxTD">
+                    <label class="switch margin-right5">
+                        <input type="checkbox" id="SecondaryAttachID" onchange="settings.SaveSettings();settings.NeedRefreshViewers=false;">
+                        <span class="slider round"></span>
+                    </label>
+                </td>
+            </tr>
+            <!-- secondary window type -->
+            <tr>
+                <td class="i18n s9">
+                    <span class="s9 i18n">TextSecondaryViewerType</span>
+                </td>
+                <td align="right" class="s9"> 
+                    <select id="SecondaryViewerTypeID" class="select100"  onchange="settings.SaveSettings();settings.NeedRefreshViewers=true;">
+                        <option class="i18n" value=0 selected="selected">TextSecondaryByDirection</option>
+                        <option class="i18n" value=1 >TextSecondaryByBand</option>
+                    </select>
+                </td>
+            </tr>
+            <!-- Virtual Cursor -->
+            <!-- <tr class="s9">                
+                <td class="s9">
+                    <label class="i18n ">TextVirtualCursor</label>
+                </td>
+                <td align="right" class="s9">
+                    <select id="virtualCursorID" class="select100"  onchange="settings.SaveSettings();">
+                        <option class="i18n" value=0 selected="selected">TextNo</option>
+                        <option class="i18n" value=1 >TextYes</option>
+                    </select>
+                </td>
+            </tr> -->
+          <!-- Inspection Section               -->
+            <tr class="hideInViewerMode">
+                <td colspan="2" class="s9">
+                    <br>
+                    <span class="s18 i18n">TextInspectionLayerTitle</span><br>
+                </td>
+            </tr>
+            <tr class="hideInViewerMode">
+                <!-- Select inspection layer -->
+                <td class="s9">
+                    <label class="i18n">TextSelectInspection</label>
+                </td>
+                <td align="right" class="s9">
+                    <select id="InspectionListID" onchange="inspections.SelectInspectionLayer();settings.SaveSettings();" class="select100">  </select>
+                    <br class="hiddenInTEF"><button class="hiddenInTEF MenuButtonSmallRoundOutline i18n" onclick="inspections.ShowCreateInspectionLayer(true)">TextCreate</button>
+                </td>
+            </tr>
+            <tr class="hiddenInTEF hideInViewerMode">
+                <!-- Reset inspection layer style -->
+                <td class="s9">
+                    <label class="i18n">TextStyleInspectionTitle</label>
+                </td>
+                <td align="right" class="s9">
+                    <button class=" MenuButtonSmallRoundOutline i18n" onclick="inspections.OpenLayerPS()">TextEditStyleInspection</button>
+                    <button class=" MenuButtonSmallRoundOutline i18n" onclick="inspections.StyleInspectionLayer(false)">TextResetStyleInspection</button>
+                </td>
+            </tr>
+          
+            <tr class="s9 hideInViewerMode">                <!-- Draw mode (0 - polyline.  1 - freehand line. 3 - polygon.) -->
+                <td class="s9">
+                    <label class="i18n ">TextInspectionsDrawMode</label>
+                </td>
+                <td align="right" class="s9">
+                    <select id="InspectionDrawModeID" class="select100" onchange="settings.SaveSettings();">
+                        <option class="i18n" value=0 >TextInspectionDrawWaypoints</option>
+                        <option class="i18n" value=1 >TextInspectionDrawDrag</option>
+                        <option class="i18n" value=3 >TextInspectionDrawWaypointsClosed</option>
+                    </select>
+                </td>
+            </tr>          
+            <tr class="s9 hideInViewerMode">                <!-- Line width (1 - very thin. 2 - thin. 3 - medium. 4 - thick. 5 - very thick) -->
+                <td class="s9">
+                    <label class="i18n ">TextLineWidth</label>
+                </td>
+                <td align="right" class="s9">
+                    <select id="LineWidthID" class="select100" onchange="settings.SaveSettings();settings.NeedRefreshViewers=true;">
+                        <option class="i18n" value=0.0045 >5</option>
+                        <option class="i18n" value=0.003 >4</option>
+                        <option class="i18n" value=0.0015 selected="selected">3</option>
+                        <option class="i18n" value=0.0005 >2</option>                        
+                        <option class="i18n" value=0.0001 >1</option>
+                    </select>
+                </td>
+            </tr>            
+            <tr class="s9 hideInViewerMode">                <!-- Max inspection on photo -->
+                <td class="s9">
+                    <label class="i18n ">TextInspectionsOnPhoto</label>
+                </td>
+                <td align="right" class="s9">
+                    <input  id="maxInspectionsOnPhotoID" onchange="settings.SaveSettings();settings.NeedRefreshViewers=true;" onkeyup="if (event.keyCode === 13) {settings.SaveSettings();settings.NeedRefreshViewers=true;}" type="text" value="" size="7" />
+                </td>
+            </tr>         
+            <tr class="s9 hideInViewerMode">                <!-- Measurement units -->
+                <td class="s9">
+                    <label class="i18n ">TextMeasurementUnit</label>
+                </td>
+                <td align="right" class="s9">
+                    <select id="MeasurementUnitID" class="select100" onchange="settings.SaveSettings();">
+                        <option class="i18n" value=0 selected="selected">TextMetric</option>
+                        <option class="i18n" value=1 >TextImperial</option>
+                    </select>
+                </td>
+            </tr>        
+            <tr class="hiddenInTEF s9">                <!-- Mesh model -->
+                <td class="s9">
+                    <label class="i18n ">TextInspectionsMeshModel</label>
+                </td>
+                <td align="right" class="s9" >
+                    <table class="settingsFieldTable" >
+                        <tr> 
+                            <td class="W50"><span  id="MeshModelName" >   </span> </td>
+                            <td class="W50" align="right">
+                                <button class=" MenuButtonSmallRoundOutline i18n" onclick="settings.captureMesh(true)">TextInspectionsCapture</button>
+                                <button class=" MenuButtonSmallRoundOutline i18n" onclick="settings.captureMesh(false)">TextReset</button>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>         
+            <tr class="hiddenInTEF s9">                <!-- BIM model -->
+                <td class="s9">
+                    <label class="i18n ">TextInspectionsBIMModel</label>
+                </td>
+                <td align="right" class="s9" >
+                    <table class="settingsFieldTable" >
+                        <tr> 
+                            <td class="W50"><span  id="BIMModelName" >   </span> </td>
+                            <td class="W50" align="right">
+                                <button class=" MenuButtonSmallRoundOutline i18n" onclick="settings.captureBIM(true)">TextInspectionsCapture</button>
+                                <button class=" MenuButtonSmallRoundOutline i18n" onclick="settings.captureBIM(false)">TextReset</button>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>               
+            <!-- Project Section   -->
+            <tr class="hideInViewerMode">
+                <td colspan="2" class="s9">
+                    <br>
+                    <span class="s18 i18n">TextSettingsProjectTitle</span><br>
+                </td>
+            </tr>
+            <tr class="s9 hideInViewerMode">                <!-- Project name -->
+                <td class="s9">
+                    <label class="i18n ">TextSettingsProjectName</label>
+                </td>
+                <td align="right" class="s9">
+                    <input  id="projectNameID" onchange="settings.NeedRefreshViewers=false;" onkeyup="if (event.keyCode === 13) {settings.SaveSettings();settings.NeedRefreshViewers=false;}" type="text" value="" size="7" />
+                </td>
+            </tr>     
+            <tr class="s9 hideInViewerMode">                <!-- project description -->
+                <td class="s9">
+                    <label class="i18n ">TextSettingsProjectDescription</label>
+                </td>
+                <td align="right" class="s9">
+                    <textarea  id="projectDescriptionID" onchange="settings.SaveSettings();settings.NeedRefreshViewers=false;" onkeyup="if (event.keyCode === 13) {settings.SaveSettings();settings.NeedRefreshViewers=false;}" type="text" value="" size="7" ></textarea>
+                </td>
+            </tr>                    
+            <tr class="s9 hideInViewerMode">                <!-- Created for -->
+                <td class="s9">
+                    <label class="i18n ">TextSettingsCreatedFor</label>
+                </td>
+                <td align="right" class="s9">
+                    <input  id="createdForID" onchange="settings.SaveSettings();settings.NeedRefreshViewers=false;" onkeyup="if (event.keyCode === 13) {settings.SaveSettings();settings.NeedRefreshViewers=false;}" type="text" value="" size="7" />
+                </td>
+            </tr>     
+            <tr class="s9 hideInViewerMode">                <!-- Author -->
+                <td class="s9">
+                    <label class="i18n ">TextSettingsAuthor</label>
+                </td>
+                <td align="right" class="s9">
+                    <input  id="authorID" onchange="settings.SaveSettings();settings.NeedRefreshViewers=false;" onkeyup="if (event.keyCode === 13) {settings.SaveSettings();settings.NeedRefreshViewers=false;}" type="text" value="" size="7" />
+                </td>
+            </tr>     
+            
+            <tr>
+                <td colspan="2" align="center" class="s9">
+                    <br>
+                    <button class=" MenuButtonSmallRound i18n" onclick="settings.ShowSettings(false); application.SetMarkerPos(application.lastCursorPosition);">TextClose</button>
+                </td>
+            </tr>        
+        </table>
+    </div>
+    <!--            -->
+    <!-- Fix URL    -->
+    <!--            -->
+    <div id="FixPhotosURLDiv" style="display:none;" class="settings">
+        <table class="settingsTable">
+            <tr>
+                <td >
+                    <span class="s18 i18n">TextFixPhotosURLTitle</span>
+                </td>
+                <td align="right">
+                    <label onclick="settings.ShowFixPhotosURL(false)" class="s18 i18n link2"  >X</label> 
+                </td>
+            </tr>
+            <tr> <!-- Find -->
+                <td class="s9">
+                    <label  class="i18n">TextFromURL</labe>
+                </td>
+                <td align="right" class="s9">
+                    <input id="findURLID" type="text" value=" " size="50"  />
+                </td>            
+            </tr>   
+            <tr> <!-- replace with -->
+                <td class="s9">
+                    <label  class="i18n">TextToURL</label>
+                </td>
+                <td align="right" class="s9" >
+                    <input id="replaceURLID" type="text" value=" " size="50"  />
+                </td>            
+            </tr>   
+            <tr> <!-- replace button -->
+                <td align="center" colspan=2>
+                    <br>
+                    <label id ="replaceButtonID" onclick="settings.fixPhotosURL()" class="MenuButtonSmallRound i18n" style="cursor:pointer;" >TextReplace</label> 
+    
+                </td>            
+            </tr>   
+        </table>
+    </div>
+    <!--            -->
+    <!-- Fix SMPTs URL    -->
+    <!--            -->
+    <div id="FixSMPTsURLDiv" style="display:none;" class="hiddenInTEF settings">
+        <table class="settingsTable">
+            <tr>
+                <td >
+                    <span class="s18 i18n">TextFixSMPTsURLTitle</span>
+                </td>
+                <td align="right">
+                    <label onclick="settings.ShowFixSMPTsURL(false)" class="s18 i18n link2"  >X</label> 
+                </td>
+            </tr>
+            <tr> 
+                <td class="s9">
+                    <label  class="i18n">TextPath</label>
+                </td>
+                <td align="right" class="s9" >
+                    <input id="SMPTFolderPathID" type="text" value="" size="50"  />
+                </td>            
+            </tr>   
+            <tr> <!-- replace button -->
+                <td></td>
+                <td align="left">
+                    <br>
+                    <label id ="FixSMPTPathButtonID" onclick="settings.FixSMPTsURL()" class="MenuButtonSmallRound i18n" style="cursor:pointer;padding-left: 17px;padding-right: 17px;" >TextFix</label> 
+                    <label id ="FixSMPTPathButtonID" onclick="settings.ResetSMPTsURL()" class="MenuButtonSmallRound i18n" style="cursor:pointer;" >TextReset</label> 
+                </td>            
+            </tr>   
+        </table>
+    </div>
+    <!--                            -->
+    <!-- Edit Inspection feature    -->
+    <!--                            -->
+    <div id="inspectionPropertiesDiv" style="display:none;" class="settings">
+        <table class="settingsTable" >
+            <tr>
+                <td >
+                    <span class="s18 i18n">TextInspectionPropertiesTitle</span>
+                    <span class="s18 margin-left5" id="InspectionPropertiesIndexID"></span>
+                </td>
+                <td align="right">
+                    <label onclick="inspections.ShowEditInspectionFeature(0)" class="s18 i18n link2"  >X</label> 
+                </td>
+            </tr>            
+            <tr>
+                <td colspan=2>
+                    <table class="settingsTable" id="inspectionPropertiesAttributes">
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button id="InspectionPSDeleteID" class=" MenuButtonWhiteMedium i18n" title="TextInspectionDelete" onclick="inspections.DeleteFeature()"><img src="images/DeleteFeature.png"></button>
+                    <button id="InspectionPSRedrawID" class=" MenuButtonWhiteMedium i18n" title="TextInspectionRedraw" onclick="inspections.Draw(false,0)"><img src="images/RedrawFeature.png"></button>
+                    <button id="InspectionPSFlyToID" class=" MenuButtonWhiteMedium i18n" title="TextInspectionFlyTo" onclick="inspections.FlyToFeature(null)"><img src="images/FlyToFeature.png"></button>
+                    <button id="InspectionPSShowPhotosID" class=" MenuButtonWhiteMedium i18n" title="TextInspectionShowPhotos" onclick="inspections.ShowPhotosFeature(null,false)"><img src="images/ShowPhotosFeature.png"></button>
+                    <button id="InspectionPSSelectBIMID" class="hiddenInTEF MenuButtonWhiteMedium i18n" title="TextInspectionSelectBIM" onclick="inspections.SelectBIM(false)"><img src="images/SelectBIM.png"></button>
+                </td>
+                <td >
+                    <label onclick="inspections.ShowEditInspectionFeature(0)" class="MenuButtonSmallRound i18n" style="cursor:pointer;" >TextClose</label> 
+                </td>
+            </tr>
+        </table>
+    </div>    
+    <!--                            -->
+    <!-- Create Inspection Layer    -->
+    <!--                            -->
+    <div id="createInspectionLayerDiv" style="display:none;" class="settings">
+        <table class="settingsTable" >
+            <tr>
+                <td >
+                    <span class="s18 i18n">TextCreateInspectionTitle</span>
+                </td>
+                <td align="right">
+                    <label onclick="settings.ShowCreateInspectionLayer(false)" class="s18 i18n link2"  >X</label> 
+                </td>
+            </tr>
+
+            <tr> <!-- layer name -->
+                <td class="s9" colspan=2>
+                    <span  class="s9 i18n">TextInspectionLayerName</span>
+                </td>            
+            </tr>   
+            
+            <tr> <!-- layer name -->
+                <td class="s9" colspan=2>
+                    <input id="NewInspectionNameID" type="text" value="" size="10"  />
+                </td>            
+            </tr>   
+            <tr> <!--  -->
+                <td class="s9">
+                    <br> <span  class="i18n">TextAttributes</labe>
+                </td>
+                <td align="left">
+                </td>            
+            </tr>   
+            <tr><td colspan=2 >
+            <table id="creatInspectionAttributesTable" class="settingsTable"></table>
+            </td></tr>
+            
+            <tr> <!-- create inspection button -->
+                
+                <td align="center" colspan=2>
+                    <br>
+                    <label onclick="inspections.CreateInspectionLayer()" class="MenuButtonSmallRound i18n" style="cursor:pointer;" >TextCreate</label> 
+                </td>            
+            </tr>   
+        </table>
+    </div>
+
+    <!--                            -->
+    <!-- Inspection feature list    -->
+    <!--                            -->
+    <div id="inspectionListDiv" style="display:none;" class="settings">
+        <table class="settingsTable" >
+            <tr>
+                <td >
+                    <span class="s18 i18n">TextInspectionListTitle</span>
+                </td>
+                <td align="right">
+                    <label onclick="inspections.ShowList(false)" class="s18 i18n link2"  >X</label> 
+                </td>
+            </tr>         
+            <tr>
+                <!-- <td onclick="inspections.BuildReportPreparation(true)"><img src="images/report.png" class="imgMiddle padding10"> <span class="s9 i18n link2 underline"  >TextInspectionShowReport</span></td> -->
+                <td><button id="generateReportBtn" class="MenuButtonSmallRoundOutline MenuButtonBlueShadow i18n" onclick="inspections.BuildReportPreparation(true)">TextInspectionShowReport</button></td>
+                <td align="right"> <span id="openListInTE" class="s9 i18n link2 underline"  onclick="inspections.OpenListInTE()">TextInspectionListOpenInTE</span></td>
+            </tr>
+            <tr id="ListNoFeaturesTR" >
+                <td colspan=2 > <span class="s10b i18n"  >TextInspectionListNoFeatures</span></td>
+            </tr>
+            </table>
+            
+            <div id="ListDatatableDiv">
+                
+                <table id="InspectionListTableID" class="display " cellpadding="0" cellspacing="0" data-page-length='100'>
+                    <thead>
+                        <tr id="InspectionListTH">
+                        </tr>
+                    </thead>
+                    <tbody id="inspectonFeaturesTable">
+                    </tbody>
+                </table>    
+            </div>
+
+            <table class="settingsTable" >
+                <tr>
+                <td colspan="2" align="center" class="s9">
+                    <br>
+                    <button class=" MenuButtonSmallRound i18n" onclick="inspections.ShowList(false)">TextClose</button>
+                </td>
+            </tr>
+        </table>
+
+    </div>    
+
+    
+    <script src="../jquery/jquery-3.6.0.min.js" type="text/javascript"></script>
+    <script src="../TeTypes.js"></script>
+    <script src="../ToolsCommon80.js"></script>
+    <script src="../jquery/DataTable/datatables.js"></script>
+    <script src="../jquery/openseadragon-bin-2.4.2/openseadragon.js"></script>
+    <script src="../jquery/openseadragon-bin-2.4.2/openseadragon-canvas-overlay.js"></script>
+    <!-- <script src="../jquery/openseadragon-bin-2.4.2/openseadragon.min.js"></script> -->
+    <script src="Services.js"></script>
+    <script src="PhotoViewer.js"></script>
+    <script src="Inspections.js"></script>
+    <script src="Settings.js"></script>
+    <script src="Application.js"></script>
+    <script >
+        function Init(){
+            application.init();
+            application.UIToViewerMode();
+        }
+
+    </script>

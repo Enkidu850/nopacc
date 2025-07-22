@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>ToolTitle</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <!--<meta http-equiv="Content-Type" content="text/html; charset=utf-8">-->
+    <link rel="StyleSheet" href="../Style80.css" type="text/css">
+    <script src="../jquery/jquery-3.1.1.min.js"  type="text/javascript"></script>
+    <script language="javascript" src="../ToolsCommon80.js"></script>
+    <style>
+    </style>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" style="border: 0px" id="Body"  class="hideUntillTranslated" onload="Init()" onunload="Reset(false,false);">
+    <!--oncontextmenu="return false;">  onclick="bHide=true;HideOptionsNow()" > -->
+    <table border="0" width="100%" cellspacing="0" cellpadding="2">
+        <tr>
+            <td class="ToolTopArea" id="TopAreaTD" width="100%" valign="middle" >
+                <table border="0" width="100%" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td width="55px"><img style="margin-left:5px;" src="ToolIcon.png" alt="" /></td>
+                        <td id="TitleTD" align="center" class="s12w i18n">ToolName</td>
+                        <td align="right" id="CloseHelpTd"></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td  class="ToolTopSeperator"></td>
+        </tr>        
+      
+        <tr class="s8">
+            <td colspan="2"  >
+                <span class="s9 ">Start Photo Inspector</span>
+                <span class="s9  link" onclick="Start();">start</span>
+            </td>
+        </tr>
+    </table>
+
+
+<script language="JavaScript">
+
+var SGWorld = null;
+
+
+    //------------------
+    function Init() {
+        SGWorld = initSGWorld();
+    }
+    //------------------
+    function Reset(FirstTime, FromMouseInputMode) {
+    }
+    //----------------------
+    function Start() {
+
+        var url = abspath() + "/PhotoInspector.html";
+        var popupMsg = SGWorld.Creator.CreatePopupMessage(SGLang.i18n("StartToolName"), url, 300, 300, 700, 210, -1);
+
+        popupMsg.Flags = 2 + 32 ;
+        SGWorld.Window.ShowPopup(popupMsg);
+
+    }
+
+    </script>
+
+</body>
+</html>

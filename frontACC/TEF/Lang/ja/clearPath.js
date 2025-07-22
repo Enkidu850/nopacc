@@ -1,0 +1,38 @@
+﻿SGLang.lang = $.extend(SGLang.lang,{
+    ToolTitle:                  "SkylineGlobe - Skyline Software Systems, Inc.",
+    ToolName:                   "クリアパス",
+    clearPath:                  "クリアパス",
+    help:                       "ヘルプ",
+    searchFor:                  "検索する",
+    HeliPad:                    "ヘリコプターの着陸ゾーン",
+    TankPath:                   "大型車両",
+    VehiclePath:                "一般車両",
+    Custom:                     "カスタム",
+    MinWidth:                   "最小幅",
+    MaxSlope:                   "最大傾斜角",
+    SearchRadius:               "検索範囲",
+    setLocation:                "場所の<br>設定",
+    Meter:                      "メートル",
+    degrees:                    "度",
+    ClickToSet:                 "3Dウィンドウを左クリックして、検索領域の中心を指定します。 右クリックして操作をキャンセルします。",
+    Working:                    "この操作には数分かかる場合があります。 中止するには、ダイアログの上部にある「閉じる」ボタンまたは「戻る」ボタンをクリックします。",
+    QueryCompleted:             "表面解析が完了しました。",
+    PointCreated:               "作成された点:",
+    GeneratingElevationsTerrain:"地形の標高値をもとに解析します。",
+    GeneratingElevationsModel:  "モデルの標高値をもとに解析します。",
+    FindClearPoints:            "条件に適合した箇所を検索しています。",
+    DrawPoints:                 "条件に適合した箇所に点を描画します。",
+    Disclaimer:                 "クリアパスは、下記条件を満たす場所を抽出します。 より多くの情報に基づいた決定を行うには、モデルを確認してください。",
+
+    highLowHelp:                "高低域抽出ツールは、選択した対象範囲の標高が高い箇所と低い箇所を特定します。設定値に基づいて高域と低域を色分けします。",
+    displayMode:                "ハイライトモード",
+    heighLowAreas:              "高域と低域",
+    heighAreas:                 "高域",
+    lowAreas:                   "低域",
+    topPresentage:              "高域割合(パーセント)",
+    bottomPresentage:           "低域割合(パーセント)",
+    
+    Close:                      "閉じる",
+
+    Text999:                    ""
+});

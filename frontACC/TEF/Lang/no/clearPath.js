@@ -1,0 +1,38 @@
+﻿SGLang.lang = $.extend(SGLang.lang,{
+    ToolTitle:                  "SkylineGlobe - Skyline Software Systems, Inc.",
+    ToolName:                   "Rydd sti",
+    clearPath:                  "Rydd sti",
+    help:                       "Hjelp",
+    searchFor:                  "Search for",
+    HeliPad:                    "helikopterlandingsområde",
+    TankPath:                   "Stor kjøretøysti",
+    VehiclePath:                "Kjøretøysti",
+    Custom:                     "Tilpasset",
+    MinWidth:                   "Minimumsbredde",
+    MaxSlope:                   "Maksimal helning",
+    SearchRadius:               "Søkeradius",
+    setLocation:                "Angi lokasjon",
+    Meter:                      "m",
+    degrees:                    "grader.",
+    ClickToSet:                 "Venstreklikk i 3D-vinduet for å plassere sentrum av søkeområdet. Høyreklikk for å avbryte operasjonen.",
+    Working:                    "Denne operasjonen kan ta noen minutter. For å avbryte, klikk på Lukk- eller Tilbake-knappen øverst i dialogboksen.",
+    QueryCompleted:             "Overflateanalyse fullført. ",
+    PointCreated:               "Punkter opprettet :",
+    GeneratingElevationsTerrain:"Beregner høydekart over terrenget. ",
+    GeneratingElevationsModel:  "Beregner høydekart over modeller. ",
+    FindClearPoints:            "Søker etter matchende lokasjoner. ",
+    DrawPoints:                 "Tegner matchede punkter",
+    Disclaimer:                 "Verktøyet for å rydde sti gir foreløpige indikasjoner på steder som oppfyller søkekriteriene. For en mer detaljert beslutning, vennligst gjennomgå modellen",
+
+    highLowHelp:                "Verktøyet for Høy og Lav identifiserer høydeforskjeller i et valgt interesseområde. Det farger de høyeste og laveste regionene basert på de prosentvise verdiene som er satt.   ",
+    displayMode:                "Highlight modus",
+    heighLowAreas:              "Høy- og lavområder",
+    heighAreas:                 "Høye områder",
+    lowAreas:                   "Lave områder",
+    topPresentage:              "Topp prosentandel",
+    bottomPresentage:           "Bunn prosentandel",
+    
+    Close:                      "Lukk",
+
+    Text999:                    ""
+});

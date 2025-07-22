@@ -1,0 +1,1 @@
+SGWorld.SetOptionParam ("Saturation", 0);

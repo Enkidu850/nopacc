@@ -1,0 +1,447 @@
+html {font-size: 15px; overflow:hidden;height:100%;width:100%}
+input[type='checkbox'] {transform: scale(1.2);}
+
+img {vertical-align:middle;margin-right: 0.3rem;width:2.13rem;height:auto}
+.img16 {vertical-align:middle;width:1.1rem;}
+
+body {  background-color: White;  background-repeat: no-repeat; overflow-x:hidden; overflow-y:auto; height:100%;width:100%; }
+.helpHtml { overflow:inherit}
+.background {  background-color:#ffffff; background-image: url(img\background.gif); background-repeat: no-repeat}
+.s7 {font-family:  Calibri,Arial; font-size:1rem; font-style: normal; font-weight: normal; color: #151515; text-decoration: none;}
+.s8 {font-family:  Calibri, Arial; font-size:1rem; font-style: normal; font-weight: normal; color: #151515; text-decoration: none;}
+.s8w {font-family:  Calibri,Arial; font-size:1rem; font-style: normal; font-weight: normal; color: #ffffff; text-decoration: none;}
+.s8b {font-family:  Calibri,Arial; font-size:1rem; font-style: normal; font-weight: bold; color: #151515; text-decoration: none;}
+.s8bu {font-family:  Calibri, Arial; font-size:1rem; font-style: normal; font-weight: bold; color: #151515; text-decoration: underline;}
+.s9 {font-family:  Calibri,Arial; font-size:1.1rem; font-style: normal; font-weight: normal; color: #151515; text-decoration: none;}
+.s9b {font-family:  Calibri,Arial; font-size:1.1rem; font-style: normal; font-weight: bold; color: #151515; text-decoration: none;}
+.s9w {font-family:  Calibri,Arial; font-size:1.1rem; font-style: normal; font-weight: normal; color: #ffffff; text-decoration: none;}
+.s9red{font-family:   Calibri,Arial;font-size:1.1rem;font-style: normal;line-height: normal;font-weight: normal;font-variant: normal;text-transform: none;color: #B90000;text-decoration: none;}
+.s9bred{font-family:   Calibri,Arial;font-size:1.1rem;font-style: normal;line-height: normal;font-weight: bold;font-variant: normal;text-transform: none;color: #B90000;text-decoration: none;}
+.s10 {font-family:  Calibri,Arial; font-size:1.1rem; font-style: normal; font-weight: normal; color: #151515; text-decoration: none;}
+.s10w {font-family:  Calibri,Arial; font-size:1.1rem; font-style: normal; font-weight: normal; color: #ffffff; text-decoration: none;}
+.s10b {font-family:  Calibri,Arial; font-size:1.1rem; font-style: normal; font-weight: bold; color: #151515; text-decoration: none;}
+.s12 {font-family:  Calibri,Arial; font-size:1.3rem; font-style: normal; font-weight: normal; color: #151515; text-decoration: none;}
+.s12b {font-family:  Calibri,Arial; font-size:1.3rem; font-style: normal; font-weight: bold; color: #151515; text-decoration: none;}
+.s12w {font-family:  Calibri,Arial; font-size:1.3rem; font-style: normal; font-weight: normal; color: #ffffff; text-decoration: none;}
+.s13b {font-family:  Calibri,Arial; font-size:1.3rem; font-style: normal; font-weight: bold; color: #151515; text-decoration: none;}
+.s14b {font-family:  Calibri,Arial; font-size:1.8rem; font-style: normal; font-weight: bold; color: #151515; text-decoration: none;}
+.s14bi {font-family:  Calibri,Arial; font-size:1.8rem; font-style: italic; font-weight: bold; color: #151515; text-decoration: none;}
+.s18 {font-family:  Calibri,Arial; font-size:1.8rem; font-style: normal; font-weight: normal; color: #151515; text-decoration: none;}
+
+p {font-family:  Calibri, Arial; font-size:1rem; font-style: normal; font-weight: normal; color: #151515; text-decoration: none;}
+span {font-family:  Calibri, Arial; font-size:1rem;  }
+
+.HelpTextHeader {font-family:  Calibri,Arial; font-size: 1.6rem; font-style: normal; font-weight: normal; color: #007F7F; text-decoration: none;}
+.HelpText {font-family:  Calibri,Arial; font-size: 0.95rem; font-style: normal; font-weight: normal; color: #151515; text-decoration: none;}
+
+.ToolTopArea {background-color: #1383BE; height:2.67rem; color:#FFFFFF; font-weight:bold; font-size:0.8rem; vertical-align:middle; }
+.ToolTopSeperator{background-color: #ffffff; height:0.09rem;}
+.PropertiesSheet {background-color:#ffffff;width:100%; border-collapse: collapse;}
+.PropertiesSheet td { border:0rem solid #cccccc; padding:0.4rem}
+.TableOtherLine{background-color:#ffffff; }
+.ToolButtonsArea {background-color:#ffffff; }
+
+button { padding: 0.2rem 0.53rem 0.2rem 0.53rem; margin:0.3rem;white-space: normal; background-color:#f7f8fc; border:0.07rem solid #e2e6ef; border-radius: 0.4rem; font-family:  Calibri,Arial; font-size: 0.9rem; font-weight: normal; }
+button span {padding-top: 0.65rem;font-family:  Calibri,Arial; font-size: 0.9rem; font-weight: normal;  color:#151515;}
+button img {width:2.15rem; height:auto}
+button:hover{border:0.07rem solid #1383BE; cursor: pointer;animation:blinkBorder normal 1.5s infinite ease-in-out ;}
+button:disabled{background-color: #e2e6ef; cursor:default;}
+button:disabled img {filter: brightness(150%);}
+button:disabled:hover{cursor: default;border:0.07rem solid #e2e6ef;}
+.ButtonChecked { background-color:#1383BE; color:white; }
+.ButtonChecked span { color:white; }
+.ButtonChecked img {filter: brightness(1000%);}
+
+
+/* .MenuButton{width:5.6rem;height:7rem;padding: 0.2rem 0.54rem 0.2rem 0.54rem; margin:0.3rem;white-space: normal; background-color:#1383BE; border:0.07rem solid #e2e6ef; border-radius: 0.4rem; } */
+.MenuButton{width:5.6rem;height:7rem;padding: 0.2rem 0.54rem 0.2rem 0.54rem; margin:0.3rem;white-space: normal; background-color:#f7f8fc; border:0.07rem solid #e2e6ef; border-radius: 0.4rem; overflow: hidden;}
+.MenuButton span {padding-top: 0.67rem;font-family:  Calibri,Arial; font-size: 0.9rem; font-weight: normal;  color:#151515;}
+.MenuButton img {vertical-align:baseline; padding: 0.5rem;width:2.15rem; height:2.15rem}
+.MenuButton:hover{border:0.07rem solid #1383BE; cursor: pointer;animation:blinkBorder normal 1.5s infinite ease-in-out ;}
+.MenuButton:disabled {background-color: #bbbbbb; opacity: 0.3; }
+.MenuButtonHighlight { background-color:#1383BE; color:white; }
+.MenuButtonHighlight span { color:white; }
+.MenuButtonHighlight img {filter: brightness(1000%);}
+.MenuButtonHighlight:hover{ border-color:#151515 ; }
+
+.MenuButton2{width:4rem;height:4rem;padding:0rem }
+/* .MenuButton2:hover{border:0.07rem solid #1383BE; cursor: pointer;animation:blinkBorder normal 1.5s infinite ease-in-out ;} */
+
+.MenuButtonLast{border-right:0rem}
+
+.MenuButtonMedium {height: 3.2rem;width: 4.3rem;margin: 0.18rem;white-space: normal; background-color:#151515;border:0rem; border-right:0.09rem solid #76757A;font-family:  Calibri,Arial; font-size: 0.9rem;  color:white;line-height:120%; }
+.MenuButtonMedium:hover{background-color:#2B2B2B; }
+.MenuButtonSmall {height: 1.34rem;margin: 0rem;white-space: normal; background-color:#151515;border:0rem; border-right:0.09rem solid #76757A;font-family:  Calibri,Arial; font-size: 0.9rem;  color:white; }
+.MenuButtonSmallWhite {height: 1.34rem;margin: 0rem;white-space: normal;padding-left:0.357rem; padding-right: 0.357rem; background-color:white;border:0rem; border-right:0.09rem solid #151515;font-family:  Calibri,Arial; font-size: 0.9rem;  color:black;cursor: pointer; }
+.MenuButtonSmall:hover{background-color:#2B2B2B; }
+.MenuButtonSmallRound {margin: 0rem;padding: 0.133rem 0.54rem 0.133rem 0.54rem ; white-space: normal; background-color:#151515;border:0rem; border-right:0.09rem solid #76757A;font-family:  Calibri,Arial; font-size: 0.9rem;  color:white; border-radius: 0.2rem; }
+.MenuButtonSmallRound:hover{background-color:#2B2B2B; cursor: pointer;}
+.MenuButtonSmallRoundOutline {margin: 0rem;padding: 0.133rem 0.54rem 0.133rem 0.54rem ; white-space: normal; background-color:#fafafa;border:0.07rem solid #dddddd;font-family:  Calibri,Arial; font-size: 0.9rem; font-weight: normal;  color:black; border-radius: 0.2rem; box-shadow: 0rem 0rem 0.07rem 0.133rem rgba(0,0,0,.04);}
+.MenuButtonSmallRoundOutline img {width:1.07rem; height:1.07rem}
+.MenuButtonSmallRoundOutline:hover{border:0.07rem solid #151515; cursor: pointer;}
+.MenuButtonSmallRoundOutline:disabled:hover{    border: 0.07rem solid #dddddd;}
+.MenuButtonSmallRoundOutlineChecked { background-color:#1383BE;border:0.07rem solid #cccccc; color:white; }
+.MenuButtonWhiteMedium{background-color:white; padding: 0.33rem 0.33rem 0.33rem 0.33rem; width:3.2rem; height:3.2rem;border:0rem;box-shadow: 0rem 0rem 0.267rem 0.133rem rgba(0,0,0,.04);border-radius: 0.2rem; margin-left: 0.267rem; margin-right: 0.267rem;}
+.MenuButtonWhiteMedium:hover{background-color:#A4E8FF; cursor: pointer;}
+.MenuButtonBlueShadow {background-color:#F0F7FF ; border:0.07rem solid rgba(164, 232, 255, 1); border-radius: 0.133rem; box-shadow: 0rem 0rem 0.54rem 0.07rem rgba(164, 232, 255, 1);}
+.MenuButtonShort {height:1.33rem;padding: 0rem 0.267rem 0rem 0.267rem ;}
+.pointer {cursor: pointer}
+
+.SpanOutline {margin: 0rem;padding: 0.133rem 0.55rem 0.133rem 0.55rem ; white-space: normal; background-color:#fafafa;border:0.07rem solid #dddddd;font-family:  Calibri,Arial; font-size: 1.1rem; font-weight: normal;  color:black; border-radius: 0.2rem; box-shadow: 0rem 0rem 0.07rem 0.133rem rgba(0,0,0,.04);}
+.ML5 {margin-left: 0.33rem;}
+.MR5 {margin-right: 0.33rem;}
+.tabArea {background-color:#151515;}
+.tab {float: left;background-color: #2B2B2B;border: solid 0.09rem #2B2B2B;margin: 0rem 0.2rem 0rem 0.2rem;color:white;padding: 0.27rem;cursor: pointer; }
+.tabSelected {background-color: #0CC2DE;border:solid 0.09rem #0CC2DE;}
+.tabNarrow {padding: 0rem 0.27rem 0rem 0.27rem}
+.scrollbar-dark {scrollbar-base-color:white;scrollbar-face-color: #2b2b2b;scrollbar-arrow-color:white; scrollbar-shadow-color:#2b2b2b;scrollbar-3dlight-color: #2b2b2b;scrollbar-highlight-color:#2b2b2b;scrollbar-track-color: white;  }
+
+.SectionCaption{font-style:normal;  font-weight: bold;font-size:1.1rem;font-family:  Calibri,Arial; color:rgb(69,103,131)}
+.SectionText{font-style:normal;  font-weight: normal;font-size:0.72rem;font-family:  Calibri,Arial; color:rgb(49,74,95)}
+.SectionTextWhite{font-style:normal;  font-weight: normal;font-size:0.72rem;font-family:  Calibri,Arial; color:black}
+
+.Footer{BORDER-top: rgb(198,207,214) 0.45rem solid;BORDER-bottom:rgb(198,207,214) 0.18rem solid;BACKGROUND-COLOR: rgb(239,243,247);font-style:normal;  font-weight: normal;font-size:0.9rem;font-family:  Calibri,Arial; color:rgb(49,74,95)}
+
+li{margin: 0 0 0 9; list-style-type: square; font-family:  Calibri, Arial; font-size: 1rem; font-style: normal; font-weight: normal; color: #151515; text-decoration: none;}
+ol li{ list-style-type:inherit !important;  }
+
+A {COLOR: #151515; text-decoration: none; font-weight: normal; cursor:pointer; }
+A:link {COLOR: #151515; text-decoration: none; font-weight: bold; }
+A:visited {color: #151515; text-decoration: none;; font-weight: bold;}
+A:hover {COLOR: #E2A21B; text-decoration: none;}
+
+td.ColorWin {  padding: 0 0 0 0;  margin:  0 0 0 0;  border:  0 0 0 0;  height: 1.1rem;  width: 1.1rem;}
+#PS.td {border-bottom: solid 0.09rem #ffcc00;}
+.SelectDark {border-style:solid; border-width: 0.07rem; border-color: white ; height:1.33rem; font-family:  Calibri,Arial;  font-size: 0.8rem; font-style: normal; font-weight: normal; color: #ffffff; text-decoration: none; background-color:#000000;background-image: url(http://i62.tinypic.com/15xvbd5.png) no-repeat 96% 0; }
+
+INPUT[type=text] , input[type='number'],input[type='url'],input[type='password'] {width:8.5rem;font-family:Calibri,Arial; font-size: 1rem; font-style: normal; font-weight: normal; color: #151515; text-decoration: none; border: solid 0.07rem #dddddd;box-shadow: 0rem 0rem 0.07rem 0.133rem rgba(0,0,0,.04);border-radius: 0.4rem;}
+INPUT[type=text]:hover {border: solid 0.07rem #151515;}
+INPUT[type=text]:-ms-input-placeholder { color: #a0a0a0;}
+
+input[type="range"] {-webkit-appearance: none;width:100%;height: 0.07rem;background-color: #bbbbbb; border:0.07rem solid #e2e6ef;background-size: 70% 100%;background-repeat: no-repeat;border-radius: 0.6rem;font-family:  Calibri,Arial; font-size:1rem; font-style: normal; font-weight: normal; color: #151515;}
+input[type="range"]::-webkit-slider-thumb {  -webkit-appearance: none;height: 1rem;width: 1rem;border:0.13rem solid #ffffff;border-radius: 50%;background: #1383BE;cursor: ew-resize;transition: box-shadow .15s ease-in-out}
+input[type="range"]::-ms-thumb {  -webkit-appearance: none;height: 1rem;width: 1rem;border:0.13rem solid #ffffff;border-radius: 50%;background: #1383BE;cursor: ew-resize;transition: box-shadow .15s ease-in-out}
+input[type="range"]:hover {background-color: #1383BE;}
+input[type="range"]::-webkit-slider-thumb:hover { border:0.13rem solid #1383BE;border-radius: 50%;background: #ffffff;box-shadow: 0rem 0rem 1rem 0.25rem #1383BE;}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  input[type="range"] {  width:90%; height: 1rem;    padding: 0rem;    background-color: rgba(0,0,0,0);    border: 0px solid #999;    border-radius: 5px;  }
+  input[type=range]::-ms-track {     height: 0.2rem;    background: transparent;    border-color: transparent;    border-width: 0px 0;    color: transparent;    }
+  input[type=range]::-ms-fill-lower {    background: #777;    border-radius: 10px;}
+  input[type=range]::-ms-fill-upper {    background: #ddd;    border-radius: 10px;}
+  input[type=range]::-ms-thumb {    border: none;    height: 1rem;    width: 1rem;    border-radius: 50%;    background: #1383BE;}
+  input[type="range"]:hover {background-color: rgba(0,0,0,0);}
+}
+
+
+INPUT.checkbox {width:1.34rem;font-family:  Calibri,Arial; font-size: 0.8rem; font-style: normal; font-weight: normal; color: #151515; text-decoration: none;}
+INPUT.file {width:14.3rem;font-family:  Calibri,Arial; font-size: 0.8rem; font-style: normal; font-weight: normal; color: #151515; text-decoration: none;}
+INPUT.ColorButton {width:4.46rem;font-family:  Calibri,Arial; font-size: 0.8rem; font-style: normal; font-weight: normal; text-decoration: none;}
+INPUT.ColorButton2 {width:8.66rem;font-family:  Calibri,Arial; font-size: 0.8rem; font-style: normal; font-weight: normal;}
+INPUT.button {width:11rem;border-width:1;filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#FFFAFAE2', endColorstr='#FFC0C18B')}
+INPUT.button2 {width:11rem;border-width:1;filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#FFFFEEE7', endColorstr='#FFDBA47B')}
+
+.SelectSymbol1 {height: 13.4rem; overflow:auto}
+.SelectSymbol2 {height: 13.4rem; overflow:auto; background-color: #FFFFFF;}
+.SelectedSymbol {font-style: italic; background-color: #00FFFF;}
+.UnSelectedSymbol {font-style: normal; background-color: #FFFFFF;}
+
+
+.PropertiesTable{border-collapse :separate;BORDER-RIGHT: #c6cbce 0.09rem solid;  BORDER-TOP: #c6cbce 0.09rem solid; BORDER-LEFT: #c6cbce 0.09rem solid; BORDER-BOTTOM: #c6cbce 0.09rem solid; BACKGROUND-COLOR: #f7f7f7}
+.PropertiesTDTop{PADDING-Left: 0.09rem; BORDER-BOTTOM: #c6cbce 0.09rem solid;font-family:  Calibri,Arial; FONT-SIZE: 0.72rem;font-weight: bold;BACKGROUND-COLOR: #e6e3e0;}
+.PropertiesTD{PADDING-Left: 0.09rem; BORDER-BOTTOM: #c6cbce 0.09rem solid;font-family:  Calibri,Arial; FONT-SIZE: 0.72rem;font-weight: normal;}
+.tableSpacer td {padding: 0.33rem;}
+
+.ButtonYellow{BACKGROUND-COLOR: #ffffff;PADDING-RIGHT: 0rem; BACKGROUND-POSITION: left top; PADDING-LEFT: 0rem; FONT-WEIGHT: bold; FONT-SIZE: 0.72rem;  PADDING-BOTTOM: 0rem; MARGIN: 0rem; COLOR: black; BORDER-TOP-STYLE: none; PADDING-TOP: 0rem; BACKGROUND-REPEAT: no-repeat; FONT-FAMILY: Calibri,Arial; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; HEIGHT: 1.87rem; BORDER-BOTTOM-STYLE: none;text-align :center;line-height:1.34rem;cursor:hand}
+.ButtonYellowLeftTD{BACKGROUND-IMAGE: url(Images\ButtonYellowLeft.gif);width:0.18rem; background-repeat:no-repeat}
+.ButtonYellowCenterTD{width:100% ;BACKGROUND-IMAGE: url(Images\ButtonYellowCenter.gif);text-align:center ; FONT-WEIGHT: bold; FONT-SIZE: 0.72rem;  PADDING-BOTTOM: 0rem; MARGIN: 0rem; COLOR: black; FONT-FAMILY: Calibri,Arial;height:1.87rem}
+.ButtonYellowRightTD{BACKGROUND-IMAGE: url(Images\ButtonYellowRight.gif);width:0.27rem; background-repeat:no-repeat}
+.ButtonYellowTable{PADDING: 0rem; MARGIN: 0rem; WIDTH: 100%; HEIGHT: 100%;  BORDER-STYLE:none}
+
+.link {cursor:pointer; }
+.link2 {cursor:pointer;COLOR: #151515; text-decoration: none;  }
+.link2:hover {COLOR: #E2A21B; text-decoration: none;cursor: pointer;}
+.underline {text-decoration: underline;}
+
+.w100 {width: 100%;}
+.h100 {height: 100%;}
+.px6 {padding-right: 0.4rem !important; padding-left: 0.4rem;}
+.py6 {padding-top: 0.4rem !important; padding-bottom: 0.4rem !important;}
+
+a.button {
+    background: transparent url('commonImg/bg_button_a.gif') no-repeat scroll top right;
+    color: #444;
+    display: block;
+    float: left;
+    font: normal 0.8rem Calibri,Arial, sans-serif;
+    height: 2rem;
+    margin-right: 0.45rem;
+    padding-right: 0.72rem;
+    text-decoration: none;
+}
+
+a.button span {
+    background: transparent url('commonImg/bg_button_span.gif') no-repeat;
+    display: block;
+    line-height: 0.9rem;
+    padding: 0.357rem 0 0.357rem 0.72rem;
+}
+
+a.button:active {
+    background-position: bottom right;
+    color: #000;
+    outline: none;
+}
+
+a.button:active span {
+    background-position: bottom left;
+    padding: 0.45rem 0 0.27rem 0.72rem;
+}
+.hideUntillTranslated
+{
+	display:none;
+}
+
+/* Animated checkbox */
+.switch {    float: inherit ;    position: relative;    display: inline-block;        width: 2rem;    left: 0.33rem;    height: 0.26rem;    top:0.55rem;}
+.switch input {  opacity: 0;  width: 0;  height: 0;}
+.slider {    position: absolute;    cursor: pointer;    top: -0.26rem;    left: -0.33rem;    right: 0;    bottom: 0;    background-color: #bbbbbb;    -webkit-transition: 0.4s;    transition: 0.4s;}
+.slider:before {  position: absolute;  content: "";  height: 1rem;  width: 1rem;  left: -0.133rem;  bottom: -0.3rem;  background-color:#bbbbbb;  border: 0.133rem solid #ffffff;  -webkit-transition: 0.4s;  transition: 0.4s;}
+input:checked + .slider {  background-color: #bbbbbb;}
+input:checked + .slider:before {  border: 0.133rem solid #ffffff;background-color:#1383BE; }
+input:focus + .slider {    box-shadow: 0 0 0.07rem #999999;}
+input:checked + .slider:before {  transform: translateX(1.35rem);}
+.slider.round {    border-radius: 2.27rem;  }
+.slider.round:before {    border-radius: 50%;  }
+
+
+  
+.select100 { width: 100%}
+/* new selection box*/
+select { width: 90%; font-size: 1rem;  font-family: Calibri,Arial;    color: #151515;   padding: 0.07rem 1rem 0.07rem 0.07rem;   max-width: 100%;  box-sizing: border-box;  margin: 0;  border: solid 0.07rem #dddddd;box-shadow: 0rem 0rem 0.07rem 0.133rem rgba(0,0,0,.04);  border-radius: 0.07rem;  -moz-appearance: none; -webkit-appearance: none; appearance: none; background-color: #ffffff;border-radius: 0.4rem;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'),    linear-gradient(to bottom, #ffffff 0%,#ffffff 100%);  background-repeat: no-repeat, repeat;  background-position: right 0.33rem top 50%, 0 0;  background-size: 0.55rem auto, 100%;}
+/* Hide arrow icon in IE browsers */
+select::-ms-expand {  display: none;}
+/* Hover style */
+select:hover {  border-color: #151515;}
+/* Focus style */
+select:focus {  border-color: #151515;  /* It'd be nice to use -webkit-focus-ring-color here but it doesn't work on box-shadow */
+  color: #151515;   outline: none;}
+/* Set options to normal weight */
+select option {  font-weight:normal;}
+/* Disabled styles */
+select:disabled, select[aria-disabled=true] {  color: graytext;  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22graytext%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'),    linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%);}
+select:disabled:hover, select[aria-disabled=true] {  border-color: #aaa;}
+
+.floatingPanel {
+    /* Layout Properties */
+    margin: 0rem;
+    border: 0rem;
+    /* UI Properties */
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    opacity: 1;
+}
+
+div#imageContainerAlignBottom {
+    vertical-align: bottom;
+    display: table-cell;
+}
+
+#imageContainerAlignBottom img {
+    vertical-align: bottom
+}
+
+
+/* thin horizontal progress bar */
+div#progressBar {
+    width: 100%; 
+    height: 0.267rem; 
+    border-radius: 0.07rem; 
+    background-color: #E5EDF8; 
+    margin: 0.55rem 0.133rem 0.55rem 0.133rem;
+}
+
+#progressBar div {
+    height: 100%; 
+    width: 50%; 
+    border-radius: 0.07rem; 
+    background-color: #00D8FF;
+}
+.progressBarBlue {width: 100%;background-color: #cccccc;margin: 0.133rem ;}
+.progressBarBlue Div {height: 100%; color:white; background-color:#1383BE;    border-radius: 0.2rem;  padding-left: 0.267rem;}
+
+
+.textWithRoundedBackground {
+    background-color: #F0F2F5;
+    font-weight: normal; 
+    font-size: 90%;
+    border-radius: 50%;
+    padding: 0.267rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+
+/* Presentation */
+
+.controlBody {width: 26.4rem; height: 8.4rem; padding: 0rem; overflow: hidden}
+.div1 {width: 100%; height: 100%; overflow: hidden; display: flex; margin-top:0.4rem; flex-wrap:nowrap; background-color: #FFFFFF;}
+.bodyOverlap {position: absolute; width: 26.54rem; height: 6.935rem ;background-color: black; opacity: 0.2; z-index:20000; border-radius: 0rem 0rem 0.533rem 0.533rem; display: none;}
+.wrapperDiv {width: 100%; overflow:hidden; margin: 0rem;}
+.mainPanel {width: 100%; height: 2.6rem; margin:0.4rem 0rem;}
+.div2 {position: relative; width: 100%; height: 0.067rem; top: 0.267rem; background-color: #00d8ff; }
+.presentationProgress {position: relative; width: 0%; height: 0.6rem; top: -0.067rem; background-color: #00d8ff; border-radius: 0.267rem;}
+.btnOpenSidePanel {border-radius: 0rem; left: 23.6rem; top: 4.934rem; width: 1.1rem; height: 1.1rem; margin: 0.267rem 0.533rem; position: absolute; display: inline-block}
+.speedNum {font-size:1.2rem; font-weight: bold;font-family: Calibri,Arial;  position: absolute;    top: 50%;    left: 50%;    transform: translate(-50%, -50%);}
+.link {cursor: pointer;}
+.neomorphicShadow {    /* background-color: #ededed; */    -webkit-box-shadow: 0.33rem 0.33rem 0.33rem #e0e0e0, -0.33rem -0.33rem 0.67rem #ffffff;    box-shadow: 0.33rem 0.33rem 0.67rem #e0e0e0, -0.33rem -0.33rem 0.67rem #ffffff;    }
+.btnShadow {    box-shadow: rgba(0, 0, 0, 0.2) 0rem 0rem 0.8rem 0rem;    z-index: 1000;  }
+.btnShadow:not(.svg-disabled):active {    box-shadow: rgba(0, 0, 0, 0.4) 0rem 0rem 0.8rem 0rem;}
+.disable-selection {            user-select: none;           -moz-user-select: none;            -webkit-user-select: none;            -ms-user-select: none;        }
+.font-scroll {                        font-family: Calibri,Arial;            font-size: 0.9rem;            color: #c0c0c0;            text-decoration: none;        }
+.click-entry {            height: 2.13rem;            font-size: 1.1rem;            font-weight: bold;            vertical-align: center;            /* background-color: white; */            text-align: center;            /* border-radius: 0.26rem; */            color: rgb(0, 0, 0);            cursor: pointer;            margin: 0.67rem 0.26rem;            -webkit-border-radius: 0.26rem;             border-radius: 0.26rem;            overflow: visible;        }
+ol {            width: 22rem;            height: 4.26rem;                        line-height: 2.2rem;            list-style: none;            margin: 0rem 0.54rem;            -ms-overflow-style: none;            /* Internet Explorer 10+ */            overflow-y: scroll;             white-space: nowrap;             text-overflow: ellipsis;         }
+ol li {                /* margin: 0 0.2rem 0.5rem 0;                 */                                position: relative;                left: -2.67rem;                text-align: left;            }
+.panelButton {            
+  -webkit-border-radius: 50%; 
+  border-radius: 50%; 
+  background: #FFFFFF;           
+}
+
+.imgWithCanvasContainer{
+  -webkit-border-radius: 50%; 
+  border-radius: 50%;
+  /* overflow: hidden; */
+  display:inline-block;
+  position: relative; 
+  width: 2.6rem; 
+  height: 2.6rem;
+  position:relative; 
+  margin: 0.26rem 0.54rem;
+  pointer-events: none;
+}
+
+
+.svg-panel-button {
+  -webkit-border-radius: 50%; 
+  border-radius: 50%;
+  width: 2.2rem; 
+  height: 2.2rem; 
+  margin: 0.54rem 0.54rem;
+  position: relative;
+  display: inline-block;
+  color:rgb(0, 0, 0);
+}
+
+.svg-panel-button .svg-normal {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 99;
+} 
+
+.svg-panel-button .svg-hover {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 99;
+}
+
+.svg-panel-button .svg-disabled {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 99;
+}
+
+.svg-panel-button:not(.svg-disabled):hover .svg-hover {
+  display: inline;
+  color: #00D8FF;
+}
+      
+
+.svg-panel-button:not(:hover):not(.svg-disabled) .svg-normal {
+  display: inline;
+  color: black;
+}
+
+.svg-panel-button:not(.svg-normal) .svg-disabled {
+  display: inline;
+  color: #c0c0c0;
+}
+
+
+.panelButton:active {            
+  -webkit-box-shadow: -0.2rem -0.2rem 0.54rem #e0e0e0, 0.2rem 0.2rem 0.54rem #ffffff;
+  box-shadow: -0.2rem -0.2rem 0.54rem #e0e0e0, 0.2rem 0.2rem 0.54rem #ffffff;
+}
+
+.panelButtonActive {
+  background: rgba(0,216,255, 0.4);
+}
+
+
+.pulsing {
+  background: #FFFFFF;
+  animation: btnPulsing 2s infinite;
+}
+
+  .pulsing:hover {
+      background: #FFFFFF;
+      animation: btnPulsing 2s infinite;
+  }
+
+
+@keyframes btnPulsing {
+  50% {
+      background: #00D8FF;
+      color: #000;
+  }
+}
+
+.pulsing2 {
+  background: rgba(0,216,255,0.2);
+  animation: btnPulsing2 2s infinite;
+}
+
+@keyframes btnPulsing2 {
+  50% {
+      background: rgba(255,255,255,1);
+      color: #000;
+  }
+}
+
+.progressBar {
+  width: 100%;
+  height: 0.6rem;
+  margin: 0.67rem 0.54rem;
+  position: relative;
+  top: 0.133rem;
+}
+
+.hideScroll {
+  overflow: hidden;
+}
+
+  .hideScroll::-webkit-scrollbar {
+      width: 0; /* Remove scrollbar space */
+      background: transparent; /* Optional: just make scrollbar invisible */
+  }
+
+.imgBk{position:absolute;z-index:1;}
+
+.actionProgressCanvas{
+  position:relative;
+  z-index:200;
+  margin: 0;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  pointer-events: none;
+}

@@ -1,0 +1,584 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>ToolTitle</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=11" />
+    <!--<meta http-equiv="Content-Type" content="text/html; charset=utf-8">-->
+    <link rel="StyleSheet" href="../Style80.css" type="text/css">
+    <link type="text/css" rel="StyleSheet" href="../jquery/slider.css" />
+	<link href="../jquery/css/dark-hive/jquery-ui-1.10.4.custom.css" rel="stylesheet" />
+    <link href="../jquery/jquery-ui-Override.css" rel="stylesheet" />    
+
+	<script src="../jquery/jquery-1.10.2.js"  type="text/javascript"></script>
+	<script src="../jquery/jquery-ui-1.10.4.custom.js"  type="text/javascript"></script>
+    <script language="javascript" src="../ToolsCommon80.js"></script>
+    <script type="text/javascript" src="../jquery/slider.js"></script>
+    <style>
+    </style>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" style="border: 0rem" id="Body"  class="hideUntillTranslated" onunload="Reset(false,false,true);">
+    <!--oncontextmenu="return false;">  onclick="bHide=true;HideOptionsNow()" > -->
+    <table border="0" width="100%" cellspacing="0" cellpadding="2">
+        <tr>
+            <td class="ToolTopArea" id="TopAreaTD" width="100%" valign="middle" >
+                <table border="0" width="100%" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td width="11rem"><img style="margin-left:0.33rem;" src="ToolIcon.png" alt="" /></td>
+                        <td id="TitleTD" align="center" class="s12w i18n">ToolName</td>
+                        <td align="right" id="CloseHelpTd"><img style="margin-right:0.33rem;" alt="" src="../CommonImg/help.png" border="0" class="i18n" alt="help" title="help" onclick="DisplayHelpPopup6(SGLang.i18nFile('help.html'),SGLang.i18n('help'))" style="cursor: pointer;"></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td  class="ToolTopSeperator"></td>
+        </tr>        
+        <tr class="s8">
+            <td >
+                <table class="PropertiesSheet" cellspacing="0" cellpadding="2" >
+
+                    <tr>
+                        <td class="">
+                            <label for="Mode"  class="i18n">Mode</label>
+                        </td>
+                        <td align="left">
+                            &nbsp;<select id="DirectionMode" onchange="ChangeMode();">
+                                <option class="i18n" value="0" selected="selected" >Auto</option>
+                                <option class="i18n" value="1" >Horizontal</option>
+                                <option class="i18n" value="2"  >Vertical</option>
+                            </select>
+                        </td>     
+                    </tr>
+
+                    <tr id="sizeTrID">
+                        <td class="">
+                            <label for="Mode"  class="i18n">Size</label>
+                        </td>
+                        <td align="left">
+                            <div id="SizeSlider" style="display:block; width:90%;height:0.067rem; margin:0.2rem;"></div>
+                        </td>     
+                    </tr>
+                    <tr id="directionTrID">
+                        <td class="">
+                            <label for="Mode"  class="i18n">Direction</label>
+                        </td>
+                        <td align="left">
+                            <!-- <div id="DirectionSlider" style="display:block; width:90%;height:0.067rem; margin:0.2rem;"></div> -->
+                            <input type="range" id="DirectionSlider" min="0" max="360" value="0" />
+                        </td>     
+                    </tr>
+                  <!--  <tr >
+                        <td class="">
+                            <label for="Mode"  class="i18n">Move</label>
+                        </td>
+                        <td align="left">
+                            <div id="MoveSlider" style="display:block; width:8.7rem;height:0.067rem; margin:0.2rem;"></div>
+                        </td>     
+                    </tr>-->
+<!--
+                    <tr >
+                        <td class="">
+                            <label for="Mode"  class="i18n">Color</label>
+                        </td>
+                        <td align="left">
+                            &nbsp;<input id="color" class="jscolor ColorButton2" value="ffffff" onchange="setColor();"/>
+                        </td>     
+                    </tr>
+-->
+                    <tr id="saveTrID">
+                        <td class="">
+                            <label for="Mode"  class="i18n">SaveTitle</label>
+                        </td>
+                        <td align="left">
+                            <button id="Button1" class="" onclick="SavePlane();" >   <span class="i18n">Save</span></button>
+                        </td>     
+                    </tr>
+                 </table>
+            </td>
+        </tr>
+        <tr class="s8">
+            <td colspan="2"  align="center" class="ToolButtonsArea">
+                <button id="AddRemoveBtn" class="MenuButton MenuButtonLast" onclick="Start();">    <img src="./img/Add.png" /><br /> <span id="StartStop" class="i18n">Add</span></button>
+            </td>
+        </tr>
+        </table>
+
+
+<script language="JavaScript">
+    var gDebug = false;
+    var rootId;
+    var gBoxObj = null;
+    var gCrossActivate = 0;
+    var bEditOn = false;
+    var bFirstTime;
+    var gCursorPos = null;
+    var gOriginBoxSize = 0;
+    var gOrigPos = null;
+//    var TransparencySlider;
+    var SizeSlider;
+    var DirectionSlider;
+//    var MoveSlider;
+    var gDeletePlane = true;
+    var gPopup = null;
+    var gDoubleSide = -1;
+    var gClickStart = false;
+
+var SGWorld =null;
+
+
+
+//--------------
+// Init
+function Init() {
+    SGWorld = initSGWorld();
+
+    rootId = GetParamValue("rootId", SGWorld.ProjectTree.RootID);
+    SGWorld.AttachEvent("OnInputModeChanged", OnInputModeChanged);
+    SGWorld.AttachEvent("OnSGWorldMessage", OnSGWorldMessage);
+    SGWorld.AttachEvent("OnFrame", OnFrame);
+    $("#sizeTrID").hide();
+
+    if (TEF){
+        $("#TopAreaTD").hide();
+        $("#directionTrID").hide();
+        $("#saveTrID").hide();
+        
+    }
+
+//    $("#TransparencySlider").slider({
+//        value: 30,
+//        min: 0,
+//        max: 100,
+//        slide: function (event, ui) {
+//            setTransparency();
+//        },
+//        change: function (event, ui) {
+//            setTransparency();
+//        }
+//    });
+
+    $("#SizeSlider").slider({
+        value: 15,
+        min: 1,
+        max: 100,
+        slide: function (event, ui) {
+            setSize();
+        },
+        change: function (event, ui) {
+            setSize();
+        }
+    });
+    // $("#DirectionSlider").slider({
+    //     value: 0,
+    //     min: 0,
+    //     max: 360,
+    //     slide: function (event, ui) {
+    //         setDirection();
+    //     },
+    //     change: function (event, ui) {
+    //         setDirection();
+    //     }
+    // });
+//    $("#MoveSlider").slider({
+//        value: 0,
+//        min: -100,
+//        max: 100,
+//        slide: function (event, ui) {
+//            setMove();
+//        },
+//        change: function (event, ui) {
+//            setMove();
+//        }
+//    });
+    Reset(1, 0);
+}
+//------------------
+// Reset
+//------------------
+function Reset(FirstTime, FromMouseInputMode,forceDelete) {
+    try {
+        if (forceDelete) {
+            if (!gClickStart) 
+                SGWorld.Creator.DeleteObject(gBoxObj.ID);
+            if (gBoxObj != null )
+                SGWorld.Analysis.HideCrossSectionBox();
+        }
+     }
+    catch (err) { if (gDebug) alert(err.message); }
+
+    try {
+    gBoxObj = null;
+    gDeletePlane = true;
+
+    $("#AddRemoveBtn").removeClass("MenuButtonHighlight");
+    $("#EditBtn").removeClass("MenuButtonHighlight");
+    $("#SaveImg").attr("src", "./img/SaveObjectDisabled.png");
+    $("#StartStop").text(SGLang.i18n("Add"));
+
+
+    SGWorld.ProjectTree.EnableRedraw(1);
+    SGWorld.Window.HideMessageBarText();
+
+    if (gCrossActivate>0) {
+        SGWorld.DetachEvent("OnLButtonClicked", OnLButtonClicked);
+        SGWorld.DetachEvent("OnRButtonUp", OnRButtonUp);
+    }
+    gCrossActivate = 0;
+    bEditOn = false;
+
+    if (FirstTime != 1 && FromMouseInputMode == 0)
+        SGWorld.Window.SetInputMode(0);
+    if (gPopup != null) {
+        SGWorld.Window.RemovePopup(gPopup);
+        gPopup = null;
+    }
+
+//    if (gDoubleSide != -1)
+//        SGWorld.SetParam(7700, gDoubleSide);
+//    gDoubleSide = -1;
+
+    } 
+    catch (err) { if (gDebug) alert(err.message); }
+ 
+}
+
+//--------------
+// Start
+//--------------
+function Start() {
+    if (gCrossActivate==0) {
+        gCrossActivate = 1;
+        bEditOn = true;
+
+        SGWorld.AttachEvent("OnLButtonClicked", OnLButtonClicked);
+        SGWorld.AttachEvent("OnRButtonUp", OnRButtonUp);
+
+
+        SGWorld.Window.SetInputMode(1, abspath() + "/cursor_m.cur",true);
+        SGWorld.Window.ShowMessageBarText(SGLang.i18n("ClickToAdd"));
+
+        $("#AddRemoveBtn").addClass("MenuButtonHighlight");
+        $("#EditBtn").addClass("MenuButtonHighlight");
+        //$("#MoveSlider").slider("value",0);
+    }
+    else {
+        Reset(false, false,true)
+    }
+}
+
+//-------------------
+function OnFrame() {
+    try {
+        if (gCrossActivate == 1) 
+            createBox(false);
+        if (gCrossActivate == 2)
+            setDirection();
+    }
+    catch (err) { }
+}
+//--------------
+function OnLButtonClicked(Flags, X, Y) {
+    try {
+        if (gCrossActivate == 1) {
+            createBox(true);
+
+        }
+    }
+    catch (err) { if (gDebug) alert(err.message); }
+}
+//--------------
+function ChangeMode() {
+    if (gCrossActivate != 2 || gBoxObj == null)
+        return;
+    createBox(true);
+}
+//----------------
+// createBox
+function createBox(fromClick) {
+
+    try {
+        if (fromClick && gBoxObj != null) {    // From Click or change mode
+            gCursorPos = gBoxObj.Position.Copy();
+            if ($("#DirectionMode").val() == 1)
+                gCursorPos.Pitch = 180;
+            if ($("#DirectionMode").val() == 2)
+                gCursorPos.Pitch = 90;
+
+        }
+        else {    // from OnFrame
+            var cursor = SGWorld.Window.GetMouseInfo();
+            var CursorPitch = 180;  // Horizontal
+            var CursorYaw = SGWorld.Navigate.GetPosition(3).Yaw + 180;
+            gCursorPos = SGWorld.Window.PixelToWorld(cursor.X, cursor.Y, -1 & ~(128 | 1024)).Position;
+            var DistanceFromCamera = SGWorld.Navigate.GetPosition(3).DistanceTo(gCursorPos);
+            if (cursor.X > 10 && cursor.X < SGWorld.Window.Rect.Width && cursor.Y > 10 && cursor.Y < SGWorld.Window.Rect.Height) {
+                var Pos1 = SGWorld.Window.PixelToWorld(cursor.X - 10, cursor.Y - 10, -1 & ~(128 | 1024)).Position;
+                var Pos2 = SGWorld.Window.PixelToWorld(cursor.X - 10, cursor.Y + 10, -1 & ~(128 | 1024)).Position;
+                var Pos3 = SGWorld.Window.PixelToWorld(cursor.X + 10, cursor.Y - 10, -1 & ~(128 | 1024)).Position;
+                var Pos4 = SGWorld.Window.PixelToWorld(cursor.X + 10, cursor.Y + 10, -1 & ~(128 | 1024)).Position;
+                if ($("#DirectionMode").val() == 2 || ((Math.abs(Pos1.AimTo(Pos4).Pitch) > 20 || Math.abs(Pos2.AimTo(Pos3).Pitch) > 20) && $("#DirectionMode").val() != 1)) {
+                    CursorPitch = 90;
+                    if (Math.abs(Pos1.AimTo(Pos4).Pitch) > 20 || Math.abs(Pos2.AimTo(Pos3).Pitch) > 20)
+                        CursorYaw = Pos1.AimTo(Pos4).Yaw + 90;
+                    gCursorPos = gCursorPos.Move(DistanceFromCamera / 100, CursorYaw, 0);
+                }
+                else {
+                    gCursorPos.Altitude += DistanceFromCamera / 100; 
+                }
+            }
+            else {
+                return;
+            }
+            gCursorPos.Pitch = CursorPitch;
+            gCursorPos.Yaw = CursorYaw;
+            gOriginBoxSize = DistanceFromCamera;
+        }
+        if (gBoxObj != null){
+            SGWorld.Creator.DeleteObject(gBoxObj.ID);
+            gBoxObj = null;
+        }
+        gBoxObj = SGWorld.Creator.CreateBox(gCursorPos, 1, 1, 0, "#ffffff", "#ffffff", SGWorld.ProjectTree.HiddenGroupID, "CrossSection");
+        gBoxObj.SaveInFlyFile = false;
+        gOrigPos = gBoxObj.Position.Copy();
+        gBoxObj.SetParam(5450, 1);
+        setTransparency();
+        setSize();
+        setDirection();
+        $("#StartStop").text(SGLang.i18n("Stop"));
+
+        // Add message
+//        var URL = "##CrossSection:" + gBoxObj.ID + " " + SGLang.i18n("OpenTool");
+//        var message = SGWorld.Creator.CreateMessage(3, URL, 0);
+//        gBoxObj.Message.MessageID = message.ID;
+
+
+//        if (PlaneMode == 1) // ($("#DirectionMode").val() == 0 ) // vertical
+//            SGWorld.ProjectTree.EditItem(gBoxObj.ID, 2);
+//        else  // Horizontal
+    //        SGWorld.ProjectTree.EditItem(gBoxObj.ID, 2);
+
+        //$("#SaveImg").attr("src", "./img/SaveObject.png");
+//        showCrossSection();
+
+        if (fromClick) {
+            gCrossActivate = 2;
+            gClickStart = true;
+            var url = abspath() + "/CrossSectionPopup.html?ObjID=" + gBoxObj.ID + "&lang=" + SGLang.getCode();
+            if (TEF) {
+                parent.panel.addAndShow (1,url,SGLang.i18n("ToolName"),null,parent.panel.state.widthLarge,parent.panel.state.heightSmall,false,1) 
+            } else {
+                if (gPopup != null) 
+                    SGWorld.Window.RemovePopup(gPopup);
+                gPopup = SGWorld.Creator.CreatePopupMessage(SGLang.i18n("ToolName"), url, 1, 10, 700, 110, -1);
+                gPopup.Flags = 2 + 32;
+                // $("#DirectionSlider").slider("value", gCursorPos.Yaw%360);
+                $("#DirectionSlider").val(gCursorPos.Yaw%360);
+                SGWorld.Window.ShowPopup(gPopup);
+            }
+            //gDoubleSide = SGWorld.GetParam(7700); // Double Side Rendering
+            //SGWorld.SetParam(7700,1);
+        }
+
+    }
+    catch (err) {  }
+}
+
+
+//--------------
+function OnRButtonUp(Flags, X, Y) {
+    if (gCrossActivate == 1) {
+        Reset(false, false,true);
+        return true;
+    }
+    return false;
+}
+
+//--------------
+function setColor() {
+    return;
+
+//    try {
+//        if (gBoxObj != null) {
+//            gBoxObj.FillStyle.Color.FromHTMLColor("#" + $("#color").val());
+//            gBoxObj.LineStyle.Color.FromHTMLColor("#" + $("#color").val());
+//            setTransparency();
+//        }
+//    }
+//    catch (err) { if (gDebug) alert(err.message); }
+}
+//--------------
+function setTransparency() {
+
+    var a = $("#TransparencySlider").slider("value");
+    try {
+        gBoxObj.FillStyle.Color.SetAlpha(0);
+//        if (gBoxObj != null) {
+//            gBoxObj.FillStyle.Color.SetAlpha(a/200);
+//        }
+    }
+    catch (err) { if (gDebug) alert(err.message); }
+}
+
+//--------------
+function setSize() {
+
+    var size = $("#SizeSlider").slider("value");
+    try {
+        if (gBoxObj != null) {
+            var boxSize = gOriginBoxSize /50 * $("#SizeSlider").slider("value");
+            gBoxObj.Width = boxSize;
+            gBoxObj.Depth = boxSize;
+            gBoxObj.Height = boxSize/100;
+        }
+    }
+    catch (err) { if (gDebug) alert(err.message); }
+}
+//--------------
+function setDirection() {
+
+    // var direction = $("#DirectionSlider").slider("value");
+    var direction = $("#DirectionSlider").val();
+    try {
+        if (gBoxObj != null && gCrossActivate == 2) {
+            gBoxObj.Position.Yaw = direction;
+        }
+    }
+    catch (err) { if (gDebug) alert(err.message); }
+}
+//--------------
+//function setMove() {
+//    try {
+//        if (gBoxObj.Position.Pitch == 90) { // vertical
+//            gBoxObj.Position = gOrigPos.Move($("#MoveSlider").slider("value"), gBoxObj.Position.Yaw, 0);
+//            gBoxObj.Position.Pitch = 90;
+//        }
+//        else
+//            gBoxObj.Position.Altitude = gOrigPos.Altitude - $("#MoveSlider").slider("value");
+//    }
+//    catch (err) { }
+//}
+//--------------
+function SavePlane() {
+    try {
+        if (gBoxObj == null)
+            return;
+
+        var savedPos = gBoxObj.Position.Copy();
+        var savedObj = SGWorld.Creator.CreateBox(savedPos, gBoxObj.Width, gBoxObj.Depth, gBoxObj.Height, gBoxObj.LineStyle.Color, gBoxObj.FillStyle.Color, SGWorld.ProjectTree.RootID, SGLang.i18n("ToolName"));
+        savedObj.SetParam(5450, 1);
+        savedObj.FillStyle.Color.SetAlpha(0);
+
+        var messageURL = SGWorld.Application.ExecutablePath + "tools/CrossSection/CrossSectionPopup.html?ObjID=" + savedObj.ID + "&lang=" + SGLang.getCode();
+        var message = SGWorld.Creator.CreatePopupMessage(SGLang.i18n("ToolName"), messageURL, 1, 10, 300, 50, -1);
+        message.Flags = 2 + 32 + 512;
+        savedObj.Message.MessageID = message.ID;
+        
+        SGWorld.Window.ShowMessageBarText(SGLang.i18n("ObjectSaved"));
+    }
+    catch (err) { if (gDebug) alert(err.message); }
+}
+
+
+//--------------
+function OnInputModeChanged (mode) {
+}
+
+//------------
+function OnSGWorldMessage(MessageID, SounrceID) {
+
+        try {
+            if (SounrceID == "MessageBarText" && MessageID.indexOf("##CrossSectionExit:") == 0) {
+                var objID = MessageID.substring(MessageID.indexOf(":") + 1);
+                if (objID == gBoxObj.ID)
+                    Reset(false, false,true);
+                return true;
+             }
+        }
+        catch (err) {return true; }
+
+
+//    try {
+//         if (SounrceID == "MessageBarText" && MessageID.indexOf("##CrossSection:") == 0) {
+//            Reset(false, false);
+//            var objID = MessageID.substring(MessageID.indexOf(":") + 1, MessageID.indexOf(" "));
+//            gBoxObj = SGWorld.ProjectTree.GetObject(objID);
+//            gBoxObj.SetParam(5450, 1);
+//            gDeletePlane = false;
+//            SGWorld.Navigate.FlyTo(gBoxObj.Position);
+//            gOriginBoxSize = gBoxObj.Width;
+//            gOrigPos = gBoxObj.Position.Copy();
+//            setTransparency();
+//            setSize();
+
+//            if (gBoxObj.Position.Pitch == 90) {
+//                SGWorld.ProjectTree.EditItem(gBoxObj.ID, 2);
+//                $("#DirectionMode").val(0);
+//            }
+//            else {  // Horizontal
+//                SGWorld.ProjectTree.EditItem(gBoxObj.ID, 2);
+//                $("#DirectionMode").val(1);
+//            }
+
+//            return true;
+//        }
+//    }
+//    catch (err) { if (gDebug) alert(err.message); }
+
+    return false;
+}
+///var tmpBox = null;
+//-------------------
+function showCrossSection() {
+
+//    try {
+//        if (gBoxObj == null || gCrossActivate != 2)
+//            return;
+// 
+//        var vertices = [];
+//        var sectionSize = gBoxObj.Width * 5;
+//        var pos = gBoxObj.Position;
+//        var planeTolarance = gOriginBoxSize / 100; 
+//        if (gBoxObj.Position.Pitch == 90) { 
+//            var yaw = gBoxObj.Position.Yaw - 180;
+//            pos = pos.Move(planeTolarance, yaw - 180, 0);  // make sure the cut area doesn't include the box
+//            pos = pos.Move(gBoxObj.Width / 2, 0, -90);
+//            pos = pos.Move(gBoxObj.Width / 2, yaw + 90, 0);
+//            vertices[0] = pos;
+//            pos = pos.Move(sectionSize, yaw - 180, 0);
+//            vertices[1] = pos;
+//            pos = pos.Move(gBoxObj.Width, yaw - 90, 0);
+//            vertices[2] = pos;
+//            pos = pos.Move(sectionSize, yaw, 0);
+//            vertices[3] = pos;
+//            vertices[4] = vertices[0].Move(gBoxObj.Width , 0, 90);
+//            vertices[5] = vertices[1].Move(gBoxObj.Width , 0, 90);
+//            vertices[6] = vertices[2].Move(gBoxObj.Width , 0, 90);
+//            vertices[7] = vertices[3].Move(gBoxObj.Width , 0, 90);
+//        }
+//        else {
+//            pos = pos.Move(planeTolarance, 0, 90);  // make sure the cut area doesn't include the box
+//            pos = pos.Move(gBoxObj.Width / 2, gBoxObj.Position.Yaw, 0);
+//            pos = pos.Move(gBoxObj.Width / 2, gBoxObj.Position.Yaw + 90, 0);
+//            vertices[0] = pos;
+//            pos = pos.Move(gBoxObj.Width, gBoxObj.Position.Yaw - 180, 0);
+//            vertices[1] = pos;
+//            pos = pos.Move(gBoxObj.Width, gBoxObj.Position.Yaw - 90, 0);
+//            vertices[2] = pos;
+//            pos = pos.Move(gBoxObj.Width, gBoxObj.Position.Yaw, 0);
+//            vertices[3] = pos;
+//            vertices[4] = vertices[0].Move(sectionSize, 0, 90);
+//            vertices[5] = vertices[1].Move(sectionSize, 0, 90);
+//            vertices[6] = vertices[2].Move(sectionSize, 0, 90);
+//            vertices[7] = vertices[3].Move(sectionSize, 0, 90);
+//        }
+//        var geometry = SGWorld.Creator.GeometryCreator.CreateLineStringGeometry(vertices);
+//        SGWorld.Analysis.ShowCrossSectionBox(geometry, false, "#ff"+$("#color").val()); // 
+//    }
+//    catch (err) { }
+}
+
+</script>
+
+</body>
+</html>

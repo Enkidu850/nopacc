@@ -1,0 +1,479 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>ToolTitle</title>
+	<meta name="viewport" content="initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=11" />
+    <!--<meta http-equiv="Content-Type" content="text/html; charset=utf-8">-->
+    <link rel="StyleSheet" href="../Style80.css" type="text/css">
+	<script language="javascript" src="../jquery/jquery-3.1.1.min.js"></script>
+	<script language="javascript" src="../ToolsCommon80.js"></script>
+
+	<style>
+		.lineColor {width:2.3rem; height:0.4rem; border:solid 0.07rem #808080; background-color: #ffffff;}
+    </style>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" style="border: 0rem; overflow: hidden;" id="Body"  class="hideUntillTranslated"  onunload="OnUnload()" >
+    <!--oncontextmenu="return false;">  onclick="bHide=true;HideOptionsNow()" > -->
+    <div id="content" style="display:none">
+
+    <table  border="0" width="100%" class="s8w tableSpacer">     
+        <tr class="s8">		
+            <td colspan="2"  align="left" class="ToolButtonsArea" style="border-bottom: 0.133rem solid #ffffff;">
+                <!-- <button id="deleteMeasure" class="MenuButton MenuButton2" style="border:none;" onclick="OnDeleteMeasure();"><img src="./img/delete.png" /><br /> </button> -->
+                <button id="deleteLastPoint" class="MenuButton MenuButton2"  onclick="OnDeleteLastPoint()"><img src="./img/delete_last_point.png" /><br /><!-- <span class="i18n">Text1</span> --></button>
+				<button id="snapping" class="MenuButton MenuButton2"  onclick="OnSnapping()"><img src="./img/snap.png" /><br /><!-- <span class="i18n" style="font:#2A4EA5">Text7</span>--> </button>								
+				<button id="onGroundDistance" class="MenuButton MenuButton2" onclick="OnGroundDistance()"><img src="./img/TerrainProfile.png" /><br /><!-- <span class="i18n" style="font:#2A4EA5">Text5</span>--></button>				
+				
+            </td>				
+        </tr>
+	</table>
+
+    <table border="0" width="100%" class="s9 tableSpacer" >     
+		<tr id="createTRId" class="lightGrayBackground" >			
+            <td  >
+				<span class="i18n s9" style="vertical-align:top;">Text6</span>
+			</td>
+			<td>
+			</td>
+			<td>
+				<label class="switch">
+					<input type="checkbox" id="createMeasurementObject" checked onclick="CreateMeasurementObject()">
+					<span class="slider round"></span>
+				</label>		
+            </td>												
+        </tr>
+		  <tr >
+		  <td  >
+				<span class="i18n s9" style="vertical-align:top;">Text24</span>
+			</td>
+			<td>
+				<div class="lineColor" style="background-color:yellow;"></div>
+			</td>
+			<td>
+				<label class="switch">
+					<input type="checkbox" id="showAerialDistance" checked onclick="OnShowAerial()">
+					<span class="slider round" ></span>
+				</label>		
+            </td>												
+		</tr>       
+		<tr >
+			<td >
+				<span class="i18n s9" style="vertical-align:top;;">Text25</span>
+			</td>
+			<td>
+				<div class="lineColor"></div>
+			</td>
+			<td>
+				<label class="switch">
+					<input type="checkbox" id="showHorizontalDistance" checked onclick="OnShowHorizontal()">
+					<span class="slider round"></span>
+				</label>		
+            </td>												
+		</tr>       
+		<tr >
+			<td  >
+				<span class="i18n s9" style="vertical-align:top;">Text26</span>
+			</td>
+			<td>
+				<div class="lineColor" style="background-color:#FF49E6;"></div>
+			</td>
+			<td>
+				<label class="switch">
+					<input type="checkbox" id="showVerticalDistance" checked onclick="OnShowVertical()">
+					<span class="slider round"></span>
+				</label>		
+            </td>												
+		</tr>       
+		<tr class="lightGrayBackground" valign="bottom">		
+			<td  colspan="3">			
+				<div id="resultDiv" class="s8" ></div>
+			</td>
+		</tr>
+		<tr>
+			<td  align="right"   colspan="3">		
+				<div id="unitsID" >
+					<span  id= "changeMeasurementUnits"  onclick="OnChangeMeasurementUnits()" class="i18n s9 link">Text17</span>										
+				</div>
+			</td>
+		</tr>	
+
+		
+    </table>
+	
+	
+
+<script language="JavaScript">
+
+//** this is a global variables for the polyline/polygon drawings
+var gPolygonText  ;
+var gPolylineText  ;
+var gDrawPolyClick = null;
+var gEndDrawPoly = DrawPoly;
+var gPopupCaption = "";
+//**
+
+var _AERIAL_REG_NAME = "DistanceMeasurementShowAerial";
+var _HORIZONTAL_REG_NAME = "DistanceMeasurementShowHorizontal";
+var _VERTICAL_REG_NAME = "DistanceMeasurementShowVertical";
+
+var bInEdit;
+var SGWorld =null;
+
+
+var gGeometry = null;
+//----------------
+// This function is called automatically after the Lang is ready
+function Init()
+{
+	SGWorld = initSGWorld();
+	SGWorld.AttachEvent("OnMeasurementDistanceResult", OnMeasurementResult);	
+	SGWorld.AttachEvent("OnInputModeChanged", OnInputModeChanged);	
+	SGWorld.AttachEvent("OnEndDrawMeasurement", OnEndDrawMeasurement);		
+	SGWorld.AttachEvent("OnLButtonUp", OnLButtonUp);		
+
+	gPolygonText = SGLang.i18n("Text35");
+	gPolylineText = SGLang.i18n("Text36");
+
+	var isPM = GetParamValue("pm", "0");
+	if (isPM=="1"){
+		$("#unitsID").hide();
+		$("#createTRId").hide();
+		$("#onGroundDistance").hide();
+	}	
+	if (TEF){
+		$("#snapping").hide();
+	}
+    $("#content").fadeIn(100);
+
+	document.getElementById("changeMeasurementUnits").value=SGLang.i18n("");
+	// document.getElementById("deleteMeasure").title=SGLang.i18n("Text18");
+	document.getElementById("deleteLastPoint").title=SGLang.i18n("Text19");
+	document.getElementById("snapping").title=SGLang.i18n("Text20");
+	document.getElementById("onGroundDistance").title=SGLang.i18n("Text23");
+		
+	////Turn off CreateMeasurementObject
+	//SGWorld.Command.Execute(2225,0);
+	
+	var bCreateMeasurementObject = (isPM=="1")?false:SGWorld.GetOptionParam("CreateMeasurementObjects");
+	document.getElementById("createMeasurementObject").checked = bCreateMeasurementObject;
+	CreateMeasurementObject();
+	
+	Reset(1,0);	
+	
+	SGWorld.Command.Execute(2356,0);//__TEC_MEASURE_AERIAL_DIST
+	
+	SetSnapping();
+
+	document.getElementById("showAerialDistance").checked = SGWorld.GetOptionParam(_AERIAL_REG_NAME);
+	document.getElementById("showHorizontalDistance").checked = SGWorld.GetOptionParam(_HORIZONTAL_REG_NAME);
+	document.getElementById("showVerticalDistance").checked = SGWorld.GetOptionParam(_VERTICAL_REG_NAME);
+
+    //////////////OnShow();
+
+    EnableDisableButtons();
+    
+	//showVerticalDistance
+}
+//----------------
+function ShowPopup(ProfileType, ObjID) 
+{
+    var CompareStr = "";
+    var CompareMode =0; 
+    var Density = 2;
+	var Layer1ID = "";
+	var Layer2ID = "";
+
+	gPopupCaption = SGLang.i18n("Text14") + " " + Date().toString();	
+    var url = abspath() + "/../TerrainProfile/TerrainProfilePopup.html?Type=" + ProfileType + "&CompareMode=" + CompareMode + "&ObjID=" + ObjID + "&Density=" + Density + "&Layer1ID=" + Layer1ID + "&Layer2ID=" + Layer2ID + "&Caption=" + gPopupCaption + "&lang=" + SGLang.getCode();
+
+	if (TEF){
+		parent.panel.addAndShow (1,url,gPopupCaption,null,parent.panel.state.widthLarge,parent.panel.state.heightMedium,true,1);
+	} else {
+		SGWorld.Window.RemovePopupByCaption(gPopupCaption);// Remove previos popup
+		var popupMsg = SGWorld.Creator.CreatePopupMessage(gPopupCaption, url, 1, -1000, 100, 100, -1);
+		popupMsg.Flags = 2 + 32;
+		SGWorld.Window.ShowPopup(popupMsg);        
+	}
+}
+function OnShowAerial()
+{
+	SGWorld.SetOptionParam(_AERIAL_REG_NAME,document.getElementById("showAerialDistance").checked);
+}
+	
+function OnShowHorizontal()
+{
+
+	SGWorld.SetOptionParam(_HORIZONTAL_REG_NAME,document.getElementById("showHorizontalDistance").checked);
+}
+function OnShowVertical()
+{
+	SGWorld.SetOptionParam(_VERTICAL_REG_NAME,document.getElementById("showVerticalDistance").checked);
+}
+	
+	
+
+
+
+function OnUnload()
+{
+	var measurementMode = SGWorld.GetParam(9916);
+	if(measurementMode == 33326/*ID_MEASURE_HDIST*/ || measurementMode == 33327/*ID_MEASURE_ADIST*/)
+		SGWorld.Window.SetInputMode(0);
+}
+
+//-------------
+// DrawPoly
+function DrawPoly(geometry, type, altitudeType) {
+
+    // create a polyline, under the hidden group, using this geometry and send the objID to the popup
+    var lineGroup = SGWorld.ProjectTree.CreateGroup(SGLang.i18n("Text28"), SGWorld.ProjectTree.HiddenGroupID);       // SGWorld.ProjectTree.RootID
+    var line = SGWorld.Creator.CreatePolyline(geometry, "#FC8220", 3, lineGroup, "ProfileLine");
+	
+    //line.LineStyle.Width = -4;
+    //line.SetParam(5440, 1);
+	line.Visibility.Show = false;
+
+    ShowPopup(0, lineGroup);
+    return true;
+
+}
+
+function OnDeleteMeasure()
+{
+	//Reset(0,0);
+    SGWorld.Command.Execute(2356, 0);//__TEC_MEASURE_AERIAL_DIST
+    EnableDisableButtons();	
+}
+
+function OnInputModeChanged(mode)
+{
+	if(mode==0 )
+	{
+		Reset(0,0);
+		if (TEF)
+			parent.analysis.closeByTool();
+	}
+}
+
+function OnLButtonUp(Flags, X, Y)
+{
+	
+	if((Flags & 0x0400)==0)
+	{
+		gGeometry = null;
+	}
+	return false;
+}
+
+function OnEndDrawMeasurement(geometry)
+{
+	gGeometry = geometry;		
+	EnableDisableButtons(true);		
+}
+
+function EnableDisableButtons(fromEndDrawMeaseurement)
+{		
+	var numPoints = SGWorld.GetParam(9915);				
+	
+	if(numPoints>0 && !fromEndDrawMeaseurement)	
+	{
+		// document.getElementById("deleteMeasure").style.opacity = 1;		
+		// $('#deleteMeasure').prop('disabled', false);
+	}
+	else
+	{
+		// document.getElementById("deleteMeasure").style.opacity = 0.3;
+		// $('#deleteMeasure').prop('disabled', true);
+	}
+
+	if(gGeometry==null)
+	{		
+		$('#deleteLastPoint').prop('disabled', false);
+	}
+	else
+	{
+		$('#deleteLastPoint').prop('disabled', true)
+	}	
+	
+	var bEnableTerrainProfile =  gGeometry!=null;
+	
+	if(bEnableTerrainProfile)	
+	{		
+		document.getElementById("onGroundDistance").style.opacity = 1;
+		$('#onGroundDistance').prop('disabled', false);
+	}
+	else
+	{
+		document.getElementById("onGroundDistance").style.opacity = 0.3;
+		$('#onGroundDistance').prop('disabled', true)
+	}	
+	
+}
+
+function OnMeasurementResult(measurementResult,SounrceID)
+{
+	measurementResult = measurementResult.replace(/\n/g, "<br />");
+	measurementResult = measurementResult.replace(/ in/g, " "+SGLang.i18n('Text_in'));
+	measurementResult = measurementResult.replace(/ feet/g, " "+SGLang.i18n('Text_ft'));
+	measurementResult = measurementResult.replace(/ ft/g, " "+SGLang.i18n('Text_ft'));
+	measurementResult = measurementResult.replace(/ mile/g, " "+SGLang.i18n('Text_mile'));
+	measurementResult = measurementResult.replace(/ mm/g, " "+SGLang.i18n('Text_mm'));
+	measurementResult = measurementResult.replace(/ cm/g, " "+SGLang.i18n('Text_cm'));
+	measurementResult = measurementResult.replace(/ m/g, " "+SGLang.i18n('Text_meter'));
+	measurementResult = measurementResult.replace(/ km/g, " "+SGLang.i18n('Text_km'));
+
+
+	measurementResult = measurementResult.replace(/Total Aerial Distance/g, " "+SGLang.i18n('Text_TotalAerialDistance'));
+	measurementResult = measurementResult.replace(/Total Horizontal Distance/g, " "+SGLang.i18n('Text_TotalHorizontalDistance'));
+	measurementResult = measurementResult.replace(/Total Vertical Distance/g, " "+SGLang.i18n('Text_TotalVerticalDistance'));
+	measurementResult = measurementResult.replace(/Slope/g, " "+SGLang.i18n('Text_Slope'));
+	measurementResult = measurementResult.replace(/First point to last point/g, " "+SGLang.i18n('Text_Firstpointtolastpoint'));
+	
+
+	$("#resultDiv").html(measurementResult)
+  
+  EnableDisableButtons();
+  return true;
+  
+
+}
+
+function OnChangeMeasurementUnits()
+{
+	if (TEF){
+		// parent.settings.showTab(0);
+		// parent.toolbox.selectTool ('settings',false);
+		parent.panel.addAndShow(
+			0,
+			'settingsView',
+			parent.Lang.settings.view,
+			null,
+			parent.panel.state.widthSmall,
+			parent.panel.state.heightLarge,
+			false,
+			0
+		);
+	}
+	else
+		SGWorld.Command.Execute(1011,3);	
+}
+
+function CreateMeasurementObject()
+{
+	var bCreateMeasurementObject = document.getElementById("createMeasurementObject").checked==true;
+	SGWorld.SetOptionParam("CreateMeasurementObjects",bCreateMeasurementObject);
+}
+
+function ResetButtons()
+{
+	//$("#verticalDistance").removeClass("MenuButtonHighlight");
+	$("#onGroundDistance").removeClass("MenuButtonHighlight");
+}
+
+//------------------
+// Reset
+//------------------
+function Reset(FirstTime, FromMouseInputMode) 
+{
+
+	ResetButtons();
+	gGeometry = null;
+    try {
+        if (gPolyObj != null)
+            SGWorld.Creator.DeleteObject(gPolyObj.ID);
+    } catch (e) { }
+
+    gPolyObj = null;
+    GroupID = null;
+
+    bDontAskme = false;
+
+    $("#lineButton").removeClass("MenuButtonHighlight");
+    $("#areaButton").removeClass("MenuButtonHighlight");
+    $("#groupButton").removeClass("MenuButtonHighlight");
+    $("#clipboardButton").removeClass("MenuButtonHighlight");
+
+    SGWorld.ProjectTree.EnableRedraw(1);
+    SGWorld.Window.HideMessageBarText();
+
+	if (FirstTime != 1){
+		SGWorld.DetachEvent("OnMeasurementDistanceResult", OnMeasurementResult);	
+		SGWorld.DetachEvent("OnInputModeChanged", OnInputModeChanged);	
+		SGWorld.DetachEvent("OnEndDrawMeasurement", OnEndDrawMeasurement);		
+		SGWorld.DetachEvent("OnLButtonUp", OnLButtonUp);		
+	}
+    //if (FirstTime != 1 && FromMouseInputMode == 0)
+       // SGWorld.Window.SetInputMode(0);
+}
+
+
+//--------------
+// CreateObjects
+//--------------
+function OnGroundDistance() 
+{
+
+	DrawPoly(gGeometry,0,0);	
+	return;
+}
+
+function SetSnapping()
+{
+	if( $("#snapping").hasClass("MenuButtonHighlight")) 	
+		SGWorld.SetParam(9912,1);		
+	else	
+		SGWorld.SetParam(9912,0);			
+}
+
+
+
+function OnSnapping()
+{
+	//$("#snapping").removeClass("MenuButtonHighlight");
+	
+	if( $(event.srcElement).hasClass("MenuButtonHighlight")) 	
+	{
+		$("#snapping").removeClass("MenuButtonHighlight");	
+		SGWorld.SetParam(9912,0);	
+	}
+	else
+	{
+		SGWorld.SetParam(9912,1);	
+		$(event.srcElement).addClass("MenuButtonHighlight");
+	}
+	
+}
+/*
+function OnVerticalDistance()
+{		
+	if( $(event.srcElement).hasClass("MenuButtonHighlight"))
+	{
+		Reset(0,0);
+		return;	
+	}
+	
+	
+	Reset(0,0);
+	$(event.srcElement).addClass("MenuButtonHighlight");
+	SGWorld.Command.Execute(1036,0);
+	
+	SetSnapping();
+}
+*/
+
+
+
+
+function OnDeleteLastPoint()
+{
+	SGWorld.SetParam(8335,0);
+	EnableDisableButtons();
+}
+
+
+
+</script>
+
+</body>
+</html>

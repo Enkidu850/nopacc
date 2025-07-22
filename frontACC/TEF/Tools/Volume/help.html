@@ -1,0 +1,112 @@
+﻿<html  class="helpHtml" >
+<HEAD>
+<TITLE>TerraExplorer Pro - Skyline Software Systems, Inc.</TITLE>
+<LINK REL=StyleSheet HREF="../Style80.css" TYPE="text/css">
+</head>
+<body class="s8">
+		<table border=0 cellPadding=0 CELLSPACING=0 class="s8" width=100%>
+		<tr><td class="s12b" align=center>
+			Volume Analysis
+		</tD></tr>
+		<tr><td>
+		<br>
+
+<div class="s8" >
+
+
+<p class="s8">The Volume Analysis tool analyzes the volume of the terrain or model removed or added by selected horizontal planes or modify terrain/3DML objects. </p>
+
+<p class=ProcedureHeader style='margin-left:0in;text-indent:0in'><span dir=LTR></span>To use the Volume Analysis tool:</p>
+
+<p class="s8">1.<span >&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span dir=LTR></span>In the <b>Compare </b>field, select one of the following analysis modes:</p>
+
+<ul  >
+  <li class="s8"><b>Horizontal Plane</b> – Calculate the volume added or removed by a horizontal plane defined either by a polygon you now draw or by polygons already on the clipboard.</li>
+  <li class="s8"><b>Modify Terrain – Draw New</b> – Calculate the volume added or removed by a new Modify Terrain object that you now create.</li>
+  <li class="s8"><b>Modify Terrain – Select Existing</b> – Calculate the volume added or removed by the Modify Terrain object(s) selected from the list.</li>
+</ul>
+<p class="s8">2.<span  >&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span dir=LTR></span>Enter the required parameters</p>
+
+<table class=SkyTable border=1 cellspacing=0 cellpadding=0 width=535
+ style='width:401.0pt;margin-left:.35in;border-collapse:collapse;border:none'>
+ <tr>
+  <td width=115 valign=top style='width:86.05pt;border:solid #4BACC6 1.0pt;
+  background:white;padding:1.45pt 5.75pt 4.3pt 5.75pt'>
+  <p class="s8" style='margin-left:.25in;text-indent:-.25in'>Compare</p>
+  </td>
+  <td width=420 valign=top style='width:314.95pt;border:solid #4BACC6 1.0pt;
+  border-left:none;background:white;padding:1.45pt 5.75pt 4.3pt 5.75pt'>
+  <p class="s8" style=''>
+  This field is displayed only when <b>Modify Terrain – Select Existing</b> mode is selected.<br />
+  Select one or more Modify Terrain objects from the list. Use CTRL-click or SHIFT-click to multi-select.<br /> 
+  Click <b> Refresh </b>to update the list if changes were made to the project.</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=115 valign=top style='width:86.05pt;border:solid #4BACC6 1.0pt;
+  border-top:none;background:#D2EAF1;padding:1.45pt 5.75pt 4.3pt 5.75pt'>
+  <p class="s8" style='margin-left:.25in;text-indent:-.25in'>Quality</p>
+  </td>
+  <td width=420 valign=top style='width:314.95pt;border-top:none;border-left:
+  none;border-bottom:solid #4BACC6 1.0pt;border-right:solid #4BACC6 1.0pt;
+  background:#D2EAF1;padding:1.45pt 5.75pt 4.3pt 5.75pt'>
+  <p class="s8" >
+  Determines the accuracy level by which the analysis is performed. Select one of the following options:
+<ul>
+<li class="s8">Low  – Performs 16K samples </li>
+<li class="s8">Medium – Performs 65K samples</li>
+<li class="s8">High – Performs 260K samples</li>
+</ul>
+  </p>
+  </td>
+ </tr>
+ <tr>
+  <td width=115 valign=top style='width:86.05pt;border:solid #4BACC6 1.0pt;
+  border-top:none;background:white;padding:1.45pt 5.75pt 4.3pt 5.75pt'>
+  <p class="s8" style='margin-left:.25in;text-indent:-.25in'>Results Layer</p>
+  </td>
+  <td width=420 valign=top style='width:314.95pt;border-top:none;border-left:
+  none;border-bottom:solid #4BACC6 1.0pt;border-right:solid #4BACC6 1.0pt;
+  background:white;padding:1.45pt 5.75pt 4.3pt 5.75pt'>
+  <p class="s8" >Select this option to create a point feature layer representing each volume analysis result. The area and volume (removed or added) of each sample in the feature layer is stored in attribute fields of the feature that represents the sample.</p>
+  </td>
+ </tr>
+</table>
+
+<p class="s8">&nbsp;</p>
+
+<p class="s8">3.<span >&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span dir=LTR></span>Perform the steps relevant to the selected mode:</p>
+
+<p style='margin-left:.25in;' class="s8b">Horizontal Plane Mode<br /></p>
+<ul  >
+<li class="s8">Select either of the following methods to mark your area of interest:</li>
+<ul>
+<li class="s8"><b>Draw Area –</b> The area is marked by drawing a polygon in the 3D Window. If this option is selected, left-click in the 3D Window to place the polygon waypoints, and right-click to complete. </li>
+<li class="s8"><b>From Clipboard –</b> Analysis is performed in the locations of all polygon clipboard objects. The polygons must be on the clipboard before selecting this option. </li>
+</ul>
+</ul>
+<p style='margin-left:.25in;'>
+<span class="s8b">Modify Terrain – New Object Mode</span><br />
+<br />
+a.	&nbsp;&nbsp;&nbsp;&nbsp;Click Create Modify. The Modify Terrain property sheet is displayed.<br />
+b.	&nbsp;&nbsp;&nbsp;&nbsp;In the 3D Window, left-click to place the polygon waypoints, and right-click to complete.<br />
+c.	&nbsp;&nbsp;&nbsp;&nbsp;Close the property sheet to start calculation.<br />
+<br />
+<span class="s8b">Modify Terrain – Select Mode</span><br />
+</p>
+<ul><li class="s8">Click Start Calculate.</li></ul>	
+
+
+
+<p class="s8">4.<span >&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span dir=LTR></span>When calculation is complete, a dialog box is displayed with the analysis results.</p>
+
+</div>
+
+			</td></tr>
+		</table>
+</body>
+</html>

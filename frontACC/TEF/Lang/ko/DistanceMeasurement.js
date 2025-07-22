@@ -1,0 +1,31 @@
+﻿SGLang.lang = $.extend(SGLang.lang,{
+    ToolTitle:                      "SkylineGlobe - 스카이라인 소프트웨어 시스템즈, Inc.",
+    ToolName:                       "거리",
+    help:                           "돕다",
+	Text6:                          "측정 개체 만들기",
+	Text7:                          "스냅",
+	Text17:                         "단위",
+    Text18:                         "측정을 삭제합니다.",
+	Text19:                         "마지막 측정 지점을 삭제합니다.",
+	Text20:                         "측정 지점을 가장자리, 개체 및 꼭지점에 맞춥니다.",
+	Text23:                         "공선을 따라 지형 고도 프로필을 표시합니다.",
+	Text24:                         "적선 거리 표시",
+	Text25:                         "수평 거리 표시",
+	Text26:                         "수직 거리 표시",
+
+    Text_TotalAerialDistance:       "총 직선 거리",
+    Text_TotalHorizontalDistance:   "총 수평 거리",
+    Text_TotalVerticalDistance:     "총 수직 거리",
+    Text_Slope:                     "경사면",
+    Text_Firstpointtolastpoint:     "마지막 첫 번째 지점",
+	Text_in:                        "인치",
+	Text_ft:                        "피트",
+	Text_mile:                      "마일",
+	Text_mm:                        "미터",
+	Text_cm:                        "센티미터",
+	Text_meter:                     "미터",
+	Text_km:                        "킬로미터",
+    Text14:                         "지형 프로파일",
+
+    dummy: ""
+});

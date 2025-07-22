@@ -1,0 +1,38 @@
+﻿SGLang.lang = $.extend(SGLang.lang,{
+    ToolTitle: "SkylineGlobe - Skyline Software Systems, Inc.",
+    ToolName:                       "דרך פנויה",
+    clearPath:                       "דרך פנויה",
+    help:                           "עֶזרָה",
+    searchFor:                      "לחפש אחר",
+    HeliPad:                        "אזור נחיתה של מסוקים",
+    TankPath:                       "מסלול טנק",
+    VehiclePath:                    "מסלול רכב",
+    Custom:                         "מותאם אישית",
+    MinWidth:                       "רוחב מינימלי",
+    MaxSlope:                       "שיפוע מירבי",
+    SearchRadius:                   "רדיוס חיפוש",
+    setLocation:                    "הזן מיקום",
+    Meter:                          "מ",
+    degrees:                        "מעלות",
+    ClickToSet:                     "לחץ שמאל על חלון התלת-ממד כדי למקם את מרכז אזור החיפוש. לחץ לחיצה ימנית לביטול הפעולה.",
+    Working:                        "פעולה זו עשויה להימשך מספר דקות. כדי לבטל לחץ על הלחצן סגור או החזרה בכיתוב הכלי.",
+    QueryCompleted:                 "ניתוח השטח הושלם",
+    PointCreated:                   "מספר נקודות התאמה:",
+    GeneratingElevationsTerrain:    "מחשב מפת גובה של פני השטח",
+    GeneratingElevationsModel:      "מחשב מפת גובה של המודל התלת ממדי",
+    FindClearPoints:                "מחפש מיקומים תואמים ",
+    DrawPoints:                     "ציור נקודות תואמות",
+    Disclaimer:                 "כלי זה מציע אינדיקציות ראשוניות בלבד למיקומים העומדים בקריטריוני החיפוש. לקבלת ההחלטה הסופית, אנא בדוק את המודל",
+
+    highLowHelp:                    "הכלי מזהה הפרשי גבהים באזור הנבחר וצובע את האזורים הגבוהים והנמוכים ביותר בהתבסס על ערכי האחוז שנקבעו",
+    displayMode:                    "מצב תצוגה",
+    heighLowAreas:                  "אזורים גבוהים ונמוכים",
+    heighAreas:                     "אזורים גבהים",
+    lowAreas:                       "אזורים נמוכים",
+    topPresentage:                  "אחוזון עליון",
+    bottomPresentage:               "אחוזון תחתון",
+
+    Close:                          "סגור",
+
+    Text999: ""
+});

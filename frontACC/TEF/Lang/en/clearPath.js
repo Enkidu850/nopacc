@@ -1,0 +1,38 @@
+﻿SGLang.lang = $.extend(SGLang.lang,{
+    ToolTitle:                  "SkylineGlobe - Skyline Software Systems, Inc.",
+    ToolName:                   "Clear Path",
+    clearPath:                  "Clear Path",
+    help:                       "Help",
+    searchFor:                  "Search for",
+    HeliPad:                    "helicopter Landing Zone",
+    TankPath:                   "Large Vehicle Pathway",
+    VehiclePath:                "Vehicle Pathway",
+    Custom:                     "Custom",
+    MinWidth:                   "Minimum Width",
+    MaxSlope:                   "Maximum Slope",
+    SearchRadius:               "Search Radius",
+    setLocation:                "Set Location",
+    Meter:                      "m",
+    degrees:                    "deg.",
+    ClickToSet:                 "Left click on the 3D window to place the center of the search area. Right click to cancel operation.",
+    Working:                    "This operation may take a few minutes. To abort, click the 'X' or the back arrow at the top of the dialog.",
+    QueryCompleted:             "Surface analysis completed. ",
+    PointCreated:               "Points created :",
+    GeneratingElevationsTerrain:"Calculating elevation map of the terrain. ",
+    GeneratingElevationsModel:  "Calculating elevation map of the models. ",
+    FindClearPoints:            "Searching for matching locations. ",
+    DrawPoints:                 "Drawing matched points",
+    Disclaimer:                 "The Clear Path tool offers preliminary indications for locations that meet the search criteria. For a more informed decision, please review the model",
+
+    highLowHelp:                "The High and Low tool identifies elevation differences in a selected area of interest. It colorizes the highest and lowest regions based on the percentage values set.   ",
+    displayMode:                "Highlight mode",
+    heighLowAreas:              "High and Low areas",
+    heighAreas:                 "High areas",
+    lowAreas:                   "Low Areas",
+    topPresentage:              "Top Precentage",
+    bottomPresentage:           "Bottom Precentage",
+    
+    Close:                      "Close",
+
+    Text999:                    ""
+});

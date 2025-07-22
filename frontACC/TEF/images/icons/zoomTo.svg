@@ -1,0 +1,11 @@
+<svg id="Zoom" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_1130" data-name="Rectangle 1130" width="32" height="32" fill="none"/>
+    </clipPath>
+  </defs>
+  <g id="Group_2110" data-name="Group 2110" clip-path="url(#clip-path)">
+    <path id="Path_1240" data-name="Path 1240" d="M16,3.5a12.5,12.5,0,0,0,0,25H28.5V16A12.5,12.5,0,0,0,16,3.5m0,22.753A10.253,10.253,0,1,1,26.253,16,10.252,10.252,0,0,1,16,26.253" fill="#646871"/>
+    <path id="Path_1241" data-name="Path 1241" d="M20.69,15H17V11.31a.6.6,0,0,0-.6-.6h-.8a.6.6,0,0,0-.6.6V15H11.31a.6.6,0,0,0-.6.6v.8a.6.6,0,0,0,.6.6H15v3.689a.6.6,0,0,0,.6.6h.8a.6.6,0,0,0,.6-.6V17h3.69a.6.6,0,0,0,.6-.6v-.8a.6.6,0,0,0-.6-.6" fill="#646871"/>
+  </g>
+</svg>

@@ -1,0 +1,26 @@
+﻿SGLang.lang = $.extend(SGLang.lang,{
+    ToolTitle: "SkylineGlobe - Skyline Software Systems, Inc.",
+    ToolName: "Clear Path",
+    help: "Help",
+    searchFor: "Search for:",
+    HeliPad: "helicopter landing zone",
+    TankPath: "Tank pathway",
+    VehiclePath: "Vehicle pathway",
+    Custom: "Custom",
+    MinWidth: "Minimum Width",
+    MaxSlope: "Maximum Slope",
+    SearchRadius: "Search Radius",
+    setLocation: "Set Location",
+    Meter: "m",
+    ClickToSet: "Left click on the 3D window to place the center of the search area. Right click to cancel operation.",
+    Working:"This operation may take few minutes. To abort click on the Close or the Back button on the tool's caption.",
+    QueryCompleted: "Clear Path analysis completed. ",
+    PointCreated: "Match points created :",
+    GeneratingElevationsTerrain: "Get elevation map of terrain. ",
+    GeneratingElevationsModel: "Get elevation map of models. ",
+    FindClearPoints: "Searching for matched locations. ",
+    DrawPoints: "Drawing matched points",
+    Close: "Close",
+
+    Text999: ""
+});

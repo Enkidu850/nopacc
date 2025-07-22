@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <title>ToolTitle</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="StyleSheet" href="../Style80.css" type="text/css">
+	<script language="javascript" src="../jquery/jquery-3.1.1.min.js"></script>
+    <script language="javascript" src="../ToolsCommon80.js"></script>
+    <style>
+    </style>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" style="border: 0px" id="Body"  class="hideUntillTranslated" >
+    <table id="queryCompleteTbl" class="s9" cellspacing="0" cellpadding="2" style="display: none">
+        <tr>
+            <td>
+                XXXXX
+            </td>
+            
+        </tr>
+    </table>
+
+<script language="JavaScript">
+
+//--------------
+function Init() {
+    
+}
+//------------------------------
+function saveLayerToIndexDB (){
+    try {
+        gPointLayer.Save();
+        FS.syncfs(function(err) {
+            if (err != null) {
+                console.error ('failed')
+            } else {
+                createDownloadLink();
+            }
+        })
+    } catch (err) {}
+}
+//------------------------------
+// Create a download link to download the result from the indexDB to the Downloads folder
+function createDownloadLink() {
+    try {
+    // Open the database
+        var request = indexedDB.open('/AppData', 21);
+    
+    // Retrieve the value of the key from the database
+        request.onsuccess = function(event) {
+            var db = event.target.result;
+            var transaction = db.transaction(['FILE_DATA'], 'readonly');
+            var objectStore = transaction.objectStore('FILE_DATA');
+            var request = objectStore.get('/AppData/Skyline/TerraExplorer/httpsdevskylinesoftcomsgDefaultprojectstest1268565.fly');
+            
+            request.onsuccess = function(event) {
+                var value = event.target.result;
+            
+                // Download the value as a file
+                var blob = new Blob([value.contents], {type: 'application/octet-stream'});    
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = 'file_name';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);    
+            };
+            request.onerror = function(event) {
+                var g=0;
+            }
+        };
+        request.onerror = function(event) {
+        var g=0;
+        }
+    } catch (err) {}
+}
+
+function deleteLayer() {
+    FS.unlink("myFilePath", (result) =>
+				{
+					if (result != 0)
+					{
+						Console.WriteLine("Failed to delete file");
+					}
+					else
+					{
+						Console.WriteLine("File: " + myFilePath + " deleted successfully");
+					}
+				});
+}
+</script>
+
+</body>
+</html>

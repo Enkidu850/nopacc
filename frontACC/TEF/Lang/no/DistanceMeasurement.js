@@ -1,0 +1,31 @@
+﻿SGLang.lang = $.extend(SGLang.lang,{
+    ToolTitle:                      "SkylineGlobe - Skyline Software Systems, Inc.",
+    ToolName:                       "Avstand",
+    help:                           "Hjelp",
+	Text6:                          "Opprett måleobjekter",
+	Text7:                          "Snapping",
+	Text17:                         "Enheter",	
+    Text18:                         "Slett målingen.",
+	Text19:                         "DSlett det siste målepunktet.",
+	Text20:                         "Snap målepunktene til kanter, objekter og hjørner.",
+	Text23:                         "Vis terrengens høydeprofil langs en luftlinje.",
+	Text24:                         "Vis skråavstand",
+	Text25:                         "SVis horisontal avstand",
+	Text26:                         "Vis vertikal avstand",
+
+    Text_TotalAerialDistance:       "Total skråavstand",
+    Text_TotalHorizontalDistance:   "Total horisontal avstand",
+    Text_TotalVerticalDistance:     "Total vertikal avstand",
+    Text_Slope:                     "Helning",
+    Text_Firstpointtolastpoint:     "Fra første til siste punkt",
+	Text_in:                        "in",
+	Text_ft:                        "ft",
+	Text_mile:                      "mile",
+	Text_mm:                        "mm",
+	Text_cm:                        "cm",
+	Text_meter:                     "m",
+	Text_km:                        "km",
+    Text14:                         "Terrengprofil",
+
+    dummy: ""
+});

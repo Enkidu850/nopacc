@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <title>ToolTitle</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=11"/>
+    <script language="javascript" src="../jquery/jquery-3.1.1.min.js"></script>
+    <script language="javascript" src="../ToolsCommon80.js"></script>
+    <link rel="StyleSheet" href="../Style80.css" type="text/css">
+    <style>
+        .MenuButton
+        {
+            height: 5.2rem;
+            width: 4.3rem;
+            margin: 0.2rem;
+			padding: 0rem;
+            white-space: normal;
+        }
+        .MenuButtonHighlight
+        {
+            color: Red;
+            font-weight: bold;
+        }
+        html, body
+        {
+            height:100%;
+        }
+        html, body 
+		{
+		    height: 100%;
+		    margin: 0rem;
+		    padding: 0rem;
+		}
+		#wrapper {
+		    width: 100%;
+		    height: 100%;
+		    margin: auto;
+		    position: relative;
+		}
+
+		#header {
+		    height: 2.7rem;
+    
+		}
+
+		#content {
+		    position:absolute;
+		    bottom:0;
+		    top: 2.7rem;
+		    width:100%;
+		    overflow: auto;
+    
+	}
+    .img32 {width:2.14rem; height:auto}
+    .img16 {width:1.1rem; height:auto}
+    </style>
+</he>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" style="border: 0;height:100%;overflow:hidden" id="Body" onunload="Exit();" oncontextmenu="return false;">
+    
+<div id="abortDiv" style="display:none;">
+    <table border=0 style="width:100%; height:100%;" id="Table1" style="display:none;" cellspacing=0 cellpadding=1>
+        <tr tyle="width:100%">
+        <td align="center">
+        <span class="i18n" style="font-size:1.6rem">Text4</span> 
+    </td>
+    </tr>
+    </table>
+</div> 
+<div id="calculating" class="calculating" style="display: none;"><span class="s18 i18n">TextCalculating</span></div>
+
+<div id="header">
+    <table border=0 style="width:100%;display:none; " id="mainTbl" cellspacing=0 cellpadding=1>
+        <tr style="width:100%; height:2.7rem;">
+        <td align="left">
+            <span style="padding-left:2rem;" />
+            <img class="img32" src="img/ZoomOut.png" style="cursor:pointer;" onclick="gPlot.zoomOut();" align="absmiddle" />
+            <img class="img32" src="img/ZoomIn.png" style="cursor:pointer;" onclick="gPlot.zoom();"  align="absmiddle" /> 
+            <img class="img32" src="img/Zoomall.png" style="cursor:pointer;" onclick="DrawGraph();"  align="absmiddle" /> 
+            <span style="padding-left:2rem;" />
+            <input type="checkbox" id= "WaypointsID" style="width:1rem;  vertical-align:middle;" onclick="DrawGraph();"  /><img class="img16" src="img/waypoint.jpg" align="absmiddle" /><span class="i18n">Text50</span>
+            <span style="padding-left:0.67rem;" />
+            <input type="checkbox" id="MinMaxAltID" style="width:1rem;  vertical-align:middle;"  onclick="DrawGraph();"/><img class="img16" src="img/minmaxAlt.jpg" align="absmiddle" /><span class="i18n">Text48</span>
+            <span style="padding-left:0.67rem;" />
+            <input type="checkbox" id="MinMaxSlopeID" style="width:1rem;  vertical-align:middle;" onclick="DrawGraph();"/><img class="img16" src="img/minmaxSlope.jpg" align="absmiddle" /><span class="i18n">Text49</span>
+            <span style="padding-left:0.67rem;" />
+            <span class="i18n">Text51</span> <span class="i18n" id="UnitID"></span>
+        </td>
+        <td align="right">
+            <button id="CreateLayerButton" onclick="CreateLayer();"><span class="i18n">Text40</span></button>
+            <span style="padding-left:0.67rem;" />
+        </td>
+    </tr>
+    </table>
+</div>
+<div id="content">
+    <div class="demo-container" style="height:100%;width:100%; ">
+      <div id="chartdiv" style="height:100%;width:99%; "></div>
+      </div>
+    </div>
+</div>
+    <!-- <object id="SGWorld" style="display:none" classid="CLSID:3a4f9199-65a8-11d5-85c1-0001023952c1">    </object> -->
+
+
+
+	    <script language="javascript" type="text/javascript" src="../jquery/jquery.min.js"></script>
+	    <script language="javascript" type="text/javascript" src="../jquery/jquery.flot.min.js"></script>
+    	<script language="javascript" type="text/javascript" src="../jquery/jquery.flot.navigate.min.js"></script>
+      	<script language="javascript" type="text/javascript" src="../jquery/jquery-ui-1.10.4.custom.min.js"></script>
+        <script language="javascript" type="text/javascript" src="../jquery/jquery.flot.resize.min.js"></script>
+        <script language="javascript" type="text/javascript" src="../jquery/jquery.flot.symbol.min.js"></script>
+        <script language="javascript" src="../TeTypes.js"></script>
+
+
+<script language="JavaScript">
+  
+//** this is a global variables for the polyline/polygon drawings
+var gPolyObj =null;
+var gPolyMethod;
+var gPolygonText = SGLang.i18n("Text35");
+var gPolylineText = SGLang.i18n("Text36");
+var gDrawPolyClick = null;
+var gEndDrawPoly = DrawPoly;
+var gAbort = false;
+var gASync = false;
+//**
+
+var isGroupFlag = false;
+var lineCounter = 0;
+var objectNameIndex = 0;
+var gSamplingInterval = [];
+var gObjectName = [];
+var gFollowLineGroup ;
+
+var isPolyline = true;              // Decided to switch to PolylineLayer. If we want to switch to the point layer in the future, we can change the true condition.
+//var gPointLayer;                  // gPointLayer has been changed in order to create a polyline layer with the same code
+var gLayer;
+
+var tmpGroundDistance = 0;
+var gPositionsArray = [];
+var gAltitudeArray = [];
+var gPointsArray = [];
+var gMaxAltitudeArray = [];
+var gMinAltitudeArray = [];
+var gMaxSlopeArray = [];
+var gMinSlopeArray = [];
+var gWaypointsArrayPos = [];
+var gWaypointsArray = [];
+
+var gLinePointsArray = [];
+var gTotalDistance = [];
+var gGroundDistance = [];
+var gHorizontalDistance = [];
+var gNumPoints = 0;
+var gPointsIndex = 0;
+var gNumLines = 0;
+var gWaypointIndex = 0;
+var gVisibilityDistance;
+var gSpacing = 1;
+var gDensity = 1;
+var gGraphReady = false;
+var gFoundLine = false;
+var gExtraLines = 0;
+var gUnit = 1.0;
+var gColorArray = ["#ff0000", "#00ff00", "#0000FF", "#FF00FF", "#C0FFFF", "#FFFF00", "#FFC119", "#B16CF8", "#D2FF01", "#AD8943"];
+var gColorArray2 = [255, 65280, 16711680, 12583104, 16777152, 65535, 4499444, 16280753, 65490, 4426157];
+
+var gCaption;
+var gActionType;
+
+var gLayer1ID;
+var gLayer2ID;
+var gLayer1Object;
+var gLayer2Object = null;
+var gIrrelevantLayerIDs;
+var gLineBBoxesArray = [];
+
+var bInEdit;
+var bFirstTime;
+var bDontAskme;
+var gPlot;
+///var gTotalHours;
+var SGWorld = null;
+var Layer1ObjectOriginalVisibility;
+var Layer2ObjectOriginalVisibility;
+var gDisableChangeInputMode = 0;
+var gImageLabelOnTerrain;
+var gImageLabelOnTerrainPosition;
+var gTooltipLineID = -1;
+
+var debug = true;
+//--------------
+// Init
+function Init() {
+	SGWorld = initSGWorld();
+    $("#calculating").show()
+
+    // if (TEF)
+    //     gASync = true;;
+
+    window.ondragstart = function() { return false; } 
+    setTimeout(StartQuery, 500); 
+
+}
+
+//------------
+function GetGlobalParmasFromPath() {
+    gCompareMode = GetParamValue("CompareMode", "0");
+    gActionType = GetParamValue("Type", "0");
+    gFollowLineGroup = GetParamValue("ObjID", "0");
+    gDisableChangeInputMode = GetParamValue("DisableChangeInputMode", "0");
+    gCaption = GetParamValue("Caption", "");
+    gDensity = parseInt(GetParamValue("Density", "1"));
+    gLayer1ID = GetParamValue("Layer1ID", "0");
+    gLayer2ID = GetParamValue("Layer2ID", "0");
+    if (gLayer1ID && gLayer1ID != 0 && gLayer1ID != -999)
+        gLayer1Object = SGWorld.Creator.GetObject(gLayer1ID);
+    if (gLayer2ID && gLayer1ID != 0 && gLayer2ID != -999)  //-999 is code for base terrain, it's visibility can't be changed
+        gLayer2Object = SGWorld.Creator.GetObject(gLayer2ID);
+}
+//------------
+function ShowPopupInMetersOrInFeet(){
+    if (SGWorld.GetOptionParam("AltitudeAndDistance") == 1) {       // Feet
+        gUnit = 3.28084;
+        $("#UnitID").html(SGLang.i18n("Text53"));
+        unitMethod = SGLang.i18n("Text59");
+    }
+    else {      // meters
+        $("#UnitID").html(SGLang.i18n("Text52"));
+        unitMethod = SGLang.i18n("Text57");
+    }
+}
+//------------
+function StartQuery() {
+    try {
+        Reset(1, 0);
+        GetGlobalParmasFromPath();
+        ShowPopupInMetersOrInFeet();
+        if(gCompareMode == "1"){
+            SaveIrrelevantLayersVisibilityState();
+            //0. in the line's BBox hide all irrelevant layers 
+            var success = HideIrrelevantLayers();
+            if(!success){
+                alert(SGLang.i18n("Text74"));
+                if(gActionType == 0) //follow line
+                    SGWorld.ProjectTree.DeleteItem(gFollowLineGroup);
+                return;
+            }
+            //1. show first layer, turn off second layer
+            ShowFirstLayerTurnOffSecondLayer();
+            //2. analize terrain profile
+            var success = StartProfile();
+            if(CheckIfAbort()){
+                SetBothLayersToOriginalState();
+                BringBackIrrelevantLayers();
+                setTimeout ("resizePopup();",500);
+                return;
+            }
+            if(!success)
+                return;
+            //3. show second layer, turn off first layer
+            if(gLayer1ID != -999) 
+                gLayer1Object.Visibility.Show = false;
+            if(gLayer2ID != -999) 
+                gLayer2Object.Visibility.Show = true;
+            //4. analize terrain profile
+            StartProfile();
+            //5. set both layers to original state            
+            SetBothLayersToOriginalState();
+            //6. bring back all irrelevnat layers to original visibility state
+            BringBackIrrelevantLayers();
+        }
+        else
+            StartProfile();
+
+        setTimeout ("resizePopup();",500);
+    }
+    catch (e) { 
+        if(gActionType == 0) //follow line
+            SGWorld.ProjectTree.DeleteItem(gFollowLineGroup);
+        if(debug) alert("TerrainProfilePopup.html -> StartQuery: " + e.message); 
+    }
+}
+//------------
+function ShowFirstLayerTurnOffSecondLayer(){
+    if(gLayer1ID != -999) {
+        Layer1ObjectOriginalVisibility = gLayer1Object.Visibility.Show;
+        gLayer1Object.Visibility.Show = true;
+    }
+    if(gLayer2ID != -999) {
+        Layer2ObjectOriginalVisibility = gLayer2Object.Visibility.Show;
+        gLayer2Object.Visibility.Show = false;
+    }
+}
+//------------
+function SetBothLayersToOriginalState(){
+    if(gLayer1ID != -999)
+        gLayer1Object.Visibility.Show = Layer1ObjectOriginalVisibility;
+    if(gLayer2ID != -999)
+        gLayer2Object.Visibility.Show = Layer2ObjectOriginalVisibility;
+}
+//------------
+function SaveIrrelevantLayersVisibilityState(){
+    gIrrelevantLayerIDs = [];
+
+    //OT_POINT_CLOUD, OT_ELEVATION_LAYER, OT_FEATURE_LAYER, OT_3D_MESH_LAYER
+    BuildMultipleObjectsTypesList(SGWorld.ProjectTree.RootID, gIrrelevantLayerIDs, [28,29,36,38]);
+
+    //remove the two relevant layers from the array
+    gIrrelevantLayerIDs = gIrrelevantLayerIDs.filter(function(layerID){
+        if(layerID == gLayer1ID || layerID == gLayer2ID)
+            return false;
+        return true;
+    });
+    
+    //save for each layer it's visibility state
+    tempArr = [];
+    gIrrelevantLayerIDs.forEach(function(layerID){
+        layerObject = SGWorld.Creator.GetObject(layerID);
+        tempArr.push({
+            ID: layerID,
+            Visibility: layerObject.Visibility.Show
+        });
+    });
+    gIrrelevantLayerIDs = tempArr;
+
+}
+//------------
+function HideIrrelevantLayers() {
+    try{
+        //0. empty BBoxesArray (may not be empty from prev terrain profile calculations)
+        gLineBBoxesArray = [];
+        //1. fill BBox array
+        switch (gActionType) {
+            case "0":                                 // Manual drawing
+                //gFollowLineGroup is group containing a polyline
+                var polyline = SGWorld.ProjectTree.GetNextItem(gFollowLineGroup, 11);
+                var layerObject = SGWorld.Creator.GetObject(polyline);
+                gLineBBoxesArray.push(layerObject.Geometry.Envelope)
+                break;
+            case "1":                                 // Group or Layer selection
+                node = SGWorld.ProjectTree.GetNextItem("", 10);
+                if (SGWorld.ProjectTree.IsLayer(node)) { //Layer
+                    var layer = SGWorld.ProjectTree.GetLayer(node);
+                    gLineBBoxesArray.push(layer.BBox);
+                }
+                else                                   //Group
+                    AllLayersInGroupToArrayOfBBoxes(node);
+                break;
+            case "2":                                   // Clipboard
+                searchGeometriesClipboard(SearchGeometriesClipboardCallBack);
+                break;
+        }
+
+        //2. if the polyline doesn't intersect one of the chosen layers -> stop the calculation
+        if(gCompareMode == 1){  //compare mode
+            for(var i = 0; i < gLineBBoxesArray.length; i++){
+                var bBox = gLineBBoxesArray[i];
+                if((gLayer1Object && !checkIntersaction(gLayer1Object.ID, bBox)) ||
+                    (gLayer2Object && !checkIntersaction(gLayer2Object.ID, bBox))
+                )
+                    return false;
+            }
+        }
+
+        var count = gLineBBoxesArray.length;
+        
+        //3. hide irrelevant layers that intersacts the terrain profile polyline
+        gIrrelevantLayerIDs = gIrrelevantLayerIDs.filter(function(layer){
+            var layerObject = SGWorld.Creator.GetObject(layer.ID);
+            for(var i = 0; i < gLineBBoxesArray.length; i++){
+                var bBox = gLineBBoxesArray[i];
+                if(checkIntersaction(layer.ID, bBox))
+                    return true;
+            }
+            return false;
+        });
+
+        gIrrelevantLayerIDs.forEach(function (layer) {
+            var layerObject = SGWorld.Creator.GetObject(layer.ID);
+            layerObject.Visibility.Show = false;
+        });
+
+        return true;
+    }
+    catch (e) { if(debug) alert("TerrainProfilePopup.html -> HideIrrelevantLayers: " + e.message); }
+}
+//------------
+function SearchGeometriesClipboardCallBack(geometry, type, altitudeType){
+    gLineBBoxesArray.push(geometry.Envelope);
+}
+//------------
+function BringBackIrrelevantLayers(){
+    try{
+        if(!gIrrelevantLayerIDs)
+            return;
+
+        gIrrelevantLayerIDs.forEach(function (layer) {
+            var layerObject = SGWorld.Creator.GetObject(layer.ID);
+            layerObject.Visibility.Show = layer.Visibility;
+        });
+    }
+    catch (e) { if(debug) alert("TerrainProfilePopup.html -> BringBackIrrelevantLayers: " + e.message); }
+}
+//------------
+function AllLayersInGroupToArrayOfBBoxes(groupOrLayer){
+    if(groupOrLayer == "")
+        return;
+
+    if (SGWorld.ProjectTree.IsLayer(groupOrLayer)) {                          //1.Layer
+        var layer = SGWorld.ProjectTree.GetLayer(groupOrLayer);
+        gLineBBoxesArray.push(layer.BBox);
+         //next
+        AllLayersInGroupToArrayOfBBoxes(SGWorld.ProjectTree.GetNextItem(groupOrLayer, 13))
+    }
+    else if (SGWorld.ProjectTree.IsGroup(groupOrLayer)) {                     //2.Group
+        //child
+        var child = SGWorld.ProjectTree.GetNextItem(groupOrLayer, 11);
+        AllLayersInGroupToArrayOfBBoxes(child); 
+    }
+    else{                                                                     //3.Not a Group and not a Layer
+        //next
+        AllLayersInGroupToArrayOfBBoxes(SGWorld.ProjectTree.GetNextItem(node, 13));
+    } 
+}
+//------------
+function checkIntersaction (layer, bBox){
+    try {
+        var bBoxGeometry;
+        if(bBox.GeometryType == 3){
+            bBoxGeometry = bBox;
+        }
+        else{
+            var bBoxGeometryRing = SGWorld.Creator.GeometryCreator.CreateLinearRingGeometry([bBox.MinX, bBox.MaxY, 0, bBox.MaxX, bBox.MaxY, 0, bBox.MaxX, bBox.MinY, 0, bBox.MinX, bBox.MinY, 0]);
+            bBoxGeometry = SGWorld.Creator.GeometryCreator.CreatePolygonGeometry(bBoxGeometryRing, bBoxGeometryRing);
+        }
+        
+        //for debug purposes
+        //SGWorld.Creator.Create3DPolygon(bBoxGeometry);
+        var layerObj = SGWorld.Creator.GetObject(layer);
+        if(layerObj.ObjectType == 29) {  // Elevation Layer
+            layerGeometry = layerObj.Geometry;
+        }
+        else if (layerObj.ObjectType == 28) {  //Point Cloud
+            var layerRing = SGWorld.Creator.GeometryCreator.CreateLinearRingGeometry([layerObj.Terrain.BBox.MinX, layerObj.Terrain.BBox.MaxY, 0, layerObj.Terrain.BBox.MaxX, layerObj.Terrain.BBox.MaxY, 0, layerObj.Terrain.BBox.MaxX, layerObj.Terrain.BBox.MinY, 0, layerObj.Terrain.BBox.MinX, layerObj.Terrain.BBox.MinY, 0]);
+            var layerGeometry = SGWorld.Creator.GeometryCreator.CreatePolygonGeometry(layerRing, layerRing);
+        }
+        else if (layerObj.ObjectType == 36 || layerObj.ObjectType == 38){  //Feature Layer or 3DML
+            var layerRing = SGWorld.Creator.GeometryCreator.CreateLinearRingGeometry([layerObj.BBox.MinX, layerObj.BBox.MaxY, 0, layerObj.BBox.MaxX, layerObj.BBox.MaxY, 0,layerObj.BBox.MaxX, layerObj.BBox.MinY, 0, layerObj.BBox.MinX, layerObj.BBox.MinY, 0]);
+            var layerGeometry = SGWorld.Creator.GeometryCreator.CreatePolygonGeometry (layerRing,layerRing);
+            //for debug purposes
+            //SGWorld.Creator.Create3DPolygon(layerGeometry); 
+        }
+        else
+            return false;
+
+        if (layerGeometry.SpatialRelation.Intersects(bBoxGeometry) == false ) {
+            return false;
+        }
+
+        return true;
+    }
+    catch (err) { if (debug) alert("TerrainProfilePopup.html -> checkIntersaction: " + err.message); } 
+}
+//------------
+function resizePopup() {
+    $("#calculating").hide();
+    
+    if (!gFoundLine)
+        return;
+    if (!TEF){
+        var popupMsg = SGWorld.Window.GetPopupByCaption(gCaption);
+        popupMsg.Left = 1;
+        popupMsg.Top =    SGWorld.Window.Rect.Height * 2 / 3;
+        popupMsg.Height = SGWorld.Window.Rect.Height / 3;
+        popupMsg.Width =  SGWorld.Window.Rect.Width - 2;
+    }
+
+    if (gPointsIndex > 0) {
+        CalcMinMax();
+        gGraphReady = true;
+        DrawGraph();
+    }
+
+    //Reset(0, 0);
+    /// setTimeout("$('<span> </span>').appendTo(document.body);", 100);  // Do not remove this line. It fixes a redraw problem.
+
+    CheckIfAbort();
+
+    $("#mainTbl").css('display', 'inline');
+
+   setTimeout("resizePopup1();", 1000);
+}
+//-------
+function CheckIfAbort(){
+    if (gAbort){
+        $("#abortDiv").show();
+        $("#header").hide();
+        $("#content").hide();
+
+        return true;
+    }
+    if (TEF)
+        $("#CreateLayerButton").hide();
+    
+    $("#mainTbl").css('display', 'inline');
+
+    return false;
+}
+//-------
+// resizePopup1
+function resizePopup1() {
+    if (!TEF){
+        var popupMsg = SGWorld.Window.GetPopupByCaption(gCaption);
+        popupMsg.Height = popupMsg.Height+1 ;
+    }
+}
+//------------
+// Exit
+var exited = false;
+function Exit()
+{
+    try {
+        if(exited)
+            return;
+        if (gFollowLineGroup && gFollowLineGroup != "0" && gActionType != "3")      // && !$("#CreateLayerButton")[0].disabled     - include this condition to the if if you don't want to remove the FollowLine
+            SGWorld.ProjectTree.DeleteItem(gFollowLineGroup);
+        if(gImageLabelOnTerrain){
+            SGWorld.ProjectTree.DeleteItem(gImageLabelOnTerrain.ID);
+            gImageLabelOnTerrain = null;
+        }
+        exited = true;
+    }
+    catch (e) { if(debug) alert("TerrainProfilePopup.html -> Exit: " + e.message); }
+    
+}
+//----------------
+//--  StartProfile
+function StartProfile() {
+    var succes = true;
+    switch (gActionType) {
+        case "0": // Manual drawing
+            succes = DrawGroup(gFollowLineGroup);
+            break;
+        case "1":   // Group selection
+            succes = SelectGroupObjects();
+            break;
+        case "2":   // Clipboard
+            succes = SelectClipboardObjects();
+            break;
+        case "3":   // 3D line (from Threat Dome analysis)
+            for (var i = 0; i < 10; i++) {
+                var a = "ObjID" + i;
+                var objID = GetParamValue(a, "0");
+                if (objID != "0")
+                    if (Draw3DLine(objID)== false){
+                        gAbort = true;
+                    }
+            }
+            break;
+    }
+
+    return succes;
+}
+
+//------------------
+// Reset
+//------------------
+function Reset(FirstTime, FromMouseInputMode) {
+
+
+    gPolyObj = null;
+    gLayer = null;
+    bDontAskme = false;
+    gVisibilityDistance = 4000;
+
+    $("#lineButton").removeClass("MenuButtonHighlight");
+    $("#areaButton").removeClass("MenuButtonHighlight");
+    $("#groupButton").removeClass("MenuButtonHighlight");
+    $("#clipboardButton").removeClass("MenuButtonHighlight");
+
+    SGWorld.ProjectTree.EnableRedraw(1);
+    SGWorld.Window.HideMessageBarText();
+
+    bInEdit = false;
+
+    if (FirstTime != 1 && FromMouseInputMode == 0)
+	{
+		if(gDisableChangeInputMode==0)
+			SGWorld.Window.SetInputMode(0);
+	}
+}
+//-----------
+// DrawGroup
+function DrawGroup(node) {
+    SGWorld.Window.ShowMessageBarText(SGLang.i18n("Text19"));
+
+    searchGeometries2(node, DrawPoly);
+
+    return true;
+}
+//-------------
+// Draw3DLine
+function Draw3DLine(node) {
+    gASync = false; 
+    gPointsIndex = 0;
+    gPositionsArray[gNumLines] = [];
+    gAltitudeArray[gNumLines] = [];
+    var lineWaypointPositions = [];
+    gFoundLine = true;
+    var totlaDistance = 0;
+
+    var line = SGWorld.Creator.GetObject(node);
+    gNumPoints = line.Geometry.Points.Count;
+    for (var k = 0; k < line.Geometry.Points.Count; k++)   // calculate total distance
+        lineWaypointPositions[k] = SGWorld.Creator.CreatePosition(line.Geometry.Points.Item(k).X, line.Geometry.Points.Item(k).Y, line.Geometry.Points.Item(k).Z, 3, 0, 0, 0, 0);
+
+    for (var k = 1; k < line.Geometry.Points.Count; k++)   // calculate total distance
+        totlaDistance += lineWaypointPositions[k - 1].DistanceTo(lineWaypointPositions[k]);
+
+    gSpacing = totlaDistance / 1000 / gDensity;
+
+    for (var k = 0; k < line.Geometry.Points.Count; k++)   // calculate total distance
+        if (AddPoint(lineWaypointPositions[k], false, true)==false)
+            return false;
+
+    gTotalDistance[gNumLines] = totlaDistance;
+    gSamplingInterval[gNumLines] = gSpacing;
+
+    gNumLines += 1;
+
+}
+//-----------
+// SelectGroupObjects
+function SelectGroupObjects() {
+    var node = SGWorld.ProjectTree.GetNextItem("", 10);
+    if (node == 0 || !(SGWorld.ProjectTree.IsGroup(node) || SGWorld.ProjectTree.IsLayer(node))) {
+        alert(SGLang.i18n("Text24"));
+        return;
+    }
+    SGWorld.Window.ShowMessageBarText(SGLang.i18n("Text19"));
+    gFoundLine = false;
+    searchGeometries2(node, DrawPoly);
+    GetFunctionName(node);
+    isGroupFlag = true;
+    if (!gFoundLine){
+        alert(SGLang.i18n("Text56"));
+        return false;
+    }
+
+    return true;
+}
+//-----------
+// SelectClipboardObjects
+function SelectClipboardObjects() {
+    SGWorld.Window.ShowMessageBarText(SGLang.i18n("Text19"), -1);
+    gFoundLine = false;
+    searchGeometriesClipboard(DrawPoly);
+    if (!gFoundLine){
+        alert(SGLang.i18n("Text29"));
+        BringBackIrrelevantLayers();
+        return false;
+    }
+
+    return true;
+}
+
+//-------------
+// DrawPoly
+function DrawPoly(geometry, type, altitudeType) {
+    SGWorld.Window.ShowMessageBarText(SGLang.i18n("Text19"));
+    SGWorld.ProjectTree.EnableRedraw(0);
+
+    if (!ValidateInput())
+        return false;
+    if (gNumLines > 9) {
+        alert(SGLang.i18n("Text20"));
+        return false;
+    }
+    if (type == 1) {
+        if (!DrawOnPolyline(geometry, type, altitudeType)){
+            gAbort = true;
+            return false;
+        }
+        //if From Clipboard and in compare mode -> break after finding the first polyline in the clipboard
+        if(gActionType == 2 && gCompareMode == 1)
+            return false;
+    }
+
+    return true;
+
+}
+//----
+// DrawOnPolyline
+function DrawOnPolyline(polylineGeometry, type, altitudeType) {
+    var lastCoord;
+    var currCoord;
+    var tmpCoord;
+    var SegmentLength;
+    var lastSegmentLenght;
+    var totlaDistance = 0;
+    var tmpHorizontal = 0;
+    gPointsIndex = 0;
+    gFoundLine = true;
+    gPositionsArray[gNumLines] = [];
+    gAltitudeArray[gNumLines] = [];
+    var lineWaypointPositions = [];
+
+    // Houre glass cursor
+	// if(gDisableChangeInputMode==0)
+	// 	SGWorld.Window.SetInputMode(1, abspath()+"/hourglass.cur", true);
+
+    for (var k = 0; k < polylineGeometry.Points.Count; k++)   // calculate total distance
+    {
+        // We must convert the altitudes to absolute to avoid problems related to terrain changes during the loops below
+        //var Altitude = SGWorld.Terrain.GetGroundHeightInfo(polylineGeometry.Points.Item(k).X, polylineGeometry.Points.Item(k).Y, 2, true).Position.Altitude;
+        var Altitude = 0;       // According to bug #20540 we decided to flat the polyline by setting all altitdutes to 0
+        lineWaypointPositions[k] = SGWorld.Creator.CreatePosition(polylineGeometry.Points.Item(k).X, polylineGeometry.Points.Item(k).Y, Altitude, 3);
+        if (k > 0) {
+            totlaDistance += lineWaypointPositions[k - 1].DistanceTo(lineWaypointPositions[k]);
+            tmpHorizontal += SGWorld.CoordServices.GetDistance(polylineGeometry.Points.Item(k - 1).X, polylineGeometry.Points.Item(k - 1).Y, polylineGeometry.Points.Item(k).X, polylineGeometry.Points.Item(k).Y);
+        }
+    }
+
+    //gSpacing = Math.max(totlaDistance / 1000 / gDensity, 1 / gDensity);
+    gSpacing = totlaDistance / 1000 / gDensity;
+
+    gNumPoints = totlaDistance / gSpacing;
+    var firstSegment = true;
+
+    for (var i = 1; i < polylineGeometry.Points.Count; i++) {
+        lastCoord = lineWaypointPositions[i-1].Copy();
+        currCoord = lineWaypointPositions[i].Copy();
+
+        lastCoord.Yaw = lastCoord.AimTo(currCoord).Yaw;
+
+        // AddWaypoint(lastCoord);
+        var Waypoint = true;
+        if (firstSegment) {
+            tmpCoord = lastCoord.Copy();
+            if (AddPoint(tmpCoord, Waypoint, false) == false)
+                return false;
+            Waypoint = false;
+        }
+        SegmentLength = lastCoord.DistanceTo(currCoord);
+        lastSegmentLenght = SegmentLength;
+
+        while (SegmentLength > 0.00001 && lastSegmentLenght >= SegmentLength) {
+            lastSegmentLenght = SegmentLength;
+            if (SegmentLength < gSpacing)
+                lastCoord = lastCoord.MoveToward(currCoord, SegmentLength);
+            else lastCoord = lastCoord.MoveToward(currCoord, gSpacing);
+            tmpCoord = lastCoord.Copy();
+            if (AddPoint(tmpCoord, Waypoint,false) == false)
+                return false;
+            Waypoint = false;
+            SegmentLength = lastCoord.DistanceTo(currCoord);
+        }
+
+        firstSegment = false;
+    }
+
+    //// Add lst point
+    tmpCoord = currCoord.Copy();
+    if (AddPoint(tmpCoord, true,false) == false)
+        return false;
+
+    // fix for bug #14439
+    //Restore3DModelToGroundObject();
+
+    gNumLines += 1;
+
+    gTotalDistance[lineCounter] = totlaDistance;
+    gSamplingInterval[lineCounter] = gSpacing;
+    gHorizontalDistance[lineCounter] = (tmpHorizontal * gUnit).toFixed(2);
+    gGroundDistance[lineCounter] = (tmpGroundDistance * gUnit).toFixed(2);
+    //var a = (SGWorld.Analysis.MeasureTerrainGroundDistance(polylineGeometry, gSamplingInterval, true) * gUnit).toFixed(2);
+    tmpGroundDistance = 0;
+    lineCounter++;
+    return true;
+}
+
+//-------------
+// AddPoint
+function AddPoint(pos, waypoint, fromThreatDome) {
+    if(SGWorld.GetParam(9901)) { // user click on the ESC button in TE
+        return false;
+    }
+
+    var position1 = pos.ToAbsolute(0);
+    if (!fromThreatDome) {
+        var quality = (TEF)?1:2; // Temporary
+        var Altitude = SGWorld.Terrain.GetGroundHeightInfo(position1.X, position1.Y, quality, true).Position.Altitude;
+        position1.Altitude = Altitude;
+    }
+    else
+        Altitude = pos.Altitude;
+
+    gPointsArray[gNumLines] = gPointsIndex;
+    gPositionsArray[gNumLines][gPointsIndex] = position1;
+    gAltitudeArray[gNumLines][gPointsIndex] = [gPointsIndex * gSpacing * gUnit, Altitude * gUnit];
+    if (waypoint) {
+        gWaypointsArray[gWaypointIndex] = [gPointsIndex * gSpacing * gUnit, Altitude * gUnit];
+        gWaypointIndex += 1;
+    }
+
+    if (gPointsIndex%100==0)
+        SGWorld.Window.ShowMessageBarText(SGLang.i18n("Text3") + " [" + (gNumLines + 1) + "] : " + Math.floor((gPointsIndex / gNumPoints) * 100) + "%"+ SGLang.i18n("TextAbort"));
+    if (gPointsIndex >= 1)
+        tmpGroundDistance += gPositionsArray[gNumLines][gPointsIndex - 1].DistanceTo(gPositionsArray[gNumLines][gPointsIndex]);
+    gPointsIndex += 1;
+    return true;
+}
+//-------------
+// CalcMinMax
+function CalcMinMax() {
+
+    for (var Line = 0; Line < gNumLines; Line++) {
+        gMaxAltitudeArray[Line] = [0, -9999999];
+        gMinAltitudeArray[Line] = [0, 9999999];
+        var maxSlope = -999999;
+        var minSlope = 999999;
+
+        for (var Point = 0; Point <= gPointsArray[Line]; Point++) {
+            var Altitude = gPositionsArray[Line][Point].Altitude * gUnit;
+            // Min / Max altitude
+            if (Altitude > gMaxAltitudeArray[Line][1])
+                gMaxAltitudeArray[Line] = gAltitudeArray[Line][Point];
+
+            if (Altitude < gMinAltitudeArray[Line][1])
+                gMinAltitudeArray[Line] = gAltitudeArray[Line][Point];
+
+            // Min / Max Slope
+            var Slope = CalcSlope(Line, Point);
+            if (Slope > maxSlope) {
+                gMaxSlopeArray[Line] = gAltitudeArray[Line][Point];
+                maxSlope = Slope;
+            }
+
+            if (Slope < minSlope) {
+                gMinSlopeArray[Line] = gAltitudeArray[Line][Point];
+                minSlope = Slope;
+            }
+            
+    
+        }
+    }
+
+}
+
+//------------
+//  DrawGraph
+function DrawGraph() {
+    if (!gGraphReady)
+        return;
+    gExtraLines = 0;
+    lineCounter = 0;
+    var data = [];
+    if ($("#MinMaxAltID").attr('checked')) {
+        data.push({ data: gMaxAltitudeArray, points: { show: true, symbol: "square", radius: 4 }, color: "#ff00ff" });
+        data.push({ data: gMinAltitudeArray, points: { show: true, symbol: "square", radius: 4 }, color: "#ff00ff" });
+        gExtraLines += 2;
+    }
+    if ($("#MinMaxSlopeID").attr('checked')) {
+        data.push({ data: gMaxSlopeArray, points: { show: true, symbol: "diamond", radius: 4 }, lines: { show: false }, color: "#0000ff" });
+        data.push({ data: gMinSlopeArray, points: { show: true, symbol: "diamond", radius: 4 }, lines: { show: false }, color: "#0000ff" });
+        gExtraLines += 2;
+    }
+    if ($("#WaypointsID").attr('checked')) {
+        data.push({ data: gWaypointsArray, points: { show: true, symbol: "circle", radius: 2 }, lines: { show: false }, color: "#000000" });
+        gExtraLines += 1;
+    }
+    // 
+    var labelText;
+    if(gCompareMode == 1)
+        labelText = SGLang.i18n("Text67");
+    else
+        labelText = SGLang.i18n("Text15");
+
+    for (var i = 0; i < gNumLines; i++)
+    {
+        data.push({ data: gAltitudeArray[i], label: labelText + (i + 1) + ": " + "   " + SGLang.i18n("Text58") + ": " + gGroundDistance[i] + unitMethod, lines: { show: true, fill: false }, color: gColorArray[i] });
+    }
+
+    gPlot = $.plot("#chartdiv", data,
+    {
+        xaxis: { zoomRange: [0, ], panRange: [0, ] },
+
+        grid: {
+            hoverable: true,
+            clickable: true
+        },
+        zoom: {
+            interactive: true
+        },
+        pan: {
+            interactive: true
+        },
+        legend: {
+            labelFormatter: function (label, series) {
+                if (lineCounter >= gNumLines)
+                    lineCounter = 0;
+                lineCounter++;
+                if (isGroupFlag)
+                    return '<div id="labelTooltip" style="cursor:pointer" title="' + SGLang.i18n("Text60") + ': ' + gSamplingInterval[lineCounter - 1].toFixed(1) + '&#13;' + SGLang.i18n("Text62") +': ' + gObjectName[lineCounter - 1] + '&#13;' + SGLang.i18n("Text61") +': ' + gHorizontalDistance[lineCounter - 1] + '" style=BORDER:0.067rem solid #fdd;font-size:0.8rem;padding:0.135rem;opacity:0.8;>' + label + '</div>';
+                else return '<div id="labelTooltip" style="cursor:pointer" title="' + SGLang.i18n("Text60") + ': ' + gSamplingInterval[lineCounter - 1].toFixed(1) + '&#13;' + SGLang.i18n("Text61") +': ' + gHorizontalDistance[lineCounter - 1] + '" style=BORDER:0.067rem solid #fdd;font-size:0.8rem;padding:0.135rem;opacity:0.8;>' + label + '</div>';
+            }
+        }
+    });
+
+    $("<div id='tooltip'></div>").css({
+        position: "absolute",
+        display: "none",
+        border: "0.067rem solid #fdd",
+        padding: "0.135rem",
+        "background-color": "#fee",
+        opacity: 0.80,
+        fontSize: "0.8rem"
+    }).appendTo("body");
+
+
+    // Tooltip
+    $("#chartdiv").bind("plothover", function (event, pos, item) {
+        if (item) {
+            ToolTip(item, item.seriesIndex - gExtraLines, item.dataIndex);
+            ShowToolTipIn3DWindow(item, item.seriesIndex - gExtraLines, item.dataIndex);
+        } else {
+            $("#tooltip").hide();
+            HideToolTipIn3DWindow();
+        }
+    });
+
+    // Click the graph
+    $("#chartdiv").bind("plotclick", function (event, pos, item) {
+        if (item) {
+            JumpToPoint(item.seriesIndex - gExtraLines, item.dataIndex);
+        }
+    });
+
+}
+//-------------
+
+function ShowToolTipIn3DWindow(item, Line, Point){
+    try{
+        if(!gImageLabelOnTerrain){
+            var style = GetLabelStyleWithLineColor(Line)
+            gTooltipLineID = Line;
+  
+            gImageLabelOnTerrainPosition = SGWorld.Creator.CreatePosition(
+                gPositionsArray[Line][Point].X, 
+                gPositionsArray[Line][Point].Y, 
+                gAltitudeArray[Line][Point][1], 
+                3
+            );
+            gImageLabelOnTerrain = SGWorld.Creator.CreateImageLabel(
+                gImageLabelOnTerrainPosition, 
+                abspath() + "/img/3DWindowPointerTrans.png", 
+                style,
+                SGWorld.ProjectTree.HiddenGroupID
+            );
+            gImageLabelOnTerrain.SaveInFlyFile = false;
+        }
+        else{
+            gImageLabelOnTerrainPosition.X = gPositionsArray[Line][Point].X;
+            gImageLabelOnTerrainPosition.Y = gPositionsArray[Line][Point].Y;
+            gImageLabelOnTerrainPosition.Altitude = gAltitudeArray[Line][Point][1];
+            gImageLabelOnTerrain.Position = gImageLabelOnTerrainPosition;
+            if (gTooltipLineID != Line){
+                var style = GetLabelStyleWithLineColor(Line);
+                gImageLabelOnTerrain.Style = style;
+                gTooltipLineID = Line;
+            }
+        }
+    }
+    catch (err) { if (debug) alert("TerrainProfilePopup.html -> ShowToolTipIn3DWindow: " + err.message); } 
+}
+//-------------
+function GetLabelStyleWithLineColor(LineIndex){
+    var style = SGWorld.Creator.CreateLabelStyle();
+    var lineColor = gColorArray[LineIndex];
+    var color = SGWorld.Creator.CreateColor(0, 0, 0);
+    color.FromHTMLColor(lineColor);
+    style.IconColor = color;
+
+    return style;
+}
+//-------------
+function HideToolTipIn3DWindow(){
+    try{
+        if(gImageLabelOnTerrain){
+            SGWorld.ProjectTree.DeleteItem(gImageLabelOnTerrain.ID);
+            gImageLabelOnTerrain = null;
+        }
+    }
+    catch (err) { if (debug) alert("TerrainProfilePopup.html -> HideToolTipIn3DWindow: " + err.message); } 
+}
+//-------------
+// Tool tip
+function ToolTip(item, Line, Point) {
+
+    if (Line >= gNumLines)  // Max/Min altitude/slope
+        return;
+
+
+    var htmlStr = "";
+    var Slope = CalcSlope(Line, Point);
+    if (SGWorld.GetOptionParam("ShowMGRS"))         // if MGRS checkbox is checked
+        htmlStr = "X: " + gPositionsArray[Line][Point].X.toFixed(5) + "<br/>Y: " + gPositionsArray[Line][Point].Y.toFixed(5) + "<br/>MGRS: " + SGWorld.CoordServices.ConvertCoordinateToMGRS(gPositionsArray[Line][Point].X, gPositionsArray[Line][Point].Y) + "<br/>" + SGLang.i18n("Text45") + ": " + gAltitudeArray[Line][Point][1].toFixed(2) + "<br/>" + SGLang.i18n("Text47") + ": " + Slope.toFixed(2) + "\u00B0";
+    else htmlStr = "X: " + gPositionsArray[Line][Point].X.toFixed(5) + "<br/>Y: " + gPositionsArray[Line][Point].Y.toFixed(5) + "<br/>" + SGLang.i18n("Text45") + ": " + gAltitudeArray[Line][Point][1].toFixed(2) + "<br/>" + SGLang.i18n("Text47") + ": " + Slope.toFixed(2) + "\u00B0";
+
+    $("#tooltip").html(htmlStr)
+					.css({ top: item.pageY + 5, left: item.pageX + 5 })
+					.fadeIn(200);
+
+}
+
+//-------------
+// Tool tip
+function LineToolTip(item) {
+    var htmlStr = "";
+    htmlStr = "X: " + item;
+
+    $("#labelTooltip").html(htmlStr)
+					.css({ top: item.pageY + 5, left: item.pageX + 5 })
+					.fadeIn(200);
+
+}
+//-------------
+//  CalcSlope
+function CalcSlope (Line, Point) {
+    var tmpPos = gPositionsArray[Line][Point].Copy();
+    var Slope;
+
+    if (Point >= gPointsArray[Line] ) {
+        nextPoint = gPositionsArray[Line][Point - 1].Copy();
+        Slope = nextPoint.AimTo(tmpPos).Pitch;
+    }
+    else {
+        nextPoint = gPositionsArray[Line][Point + 1].Copy();
+        Slope = tmpPos.AimTo(nextPoint).Pitch;
+    }
+
+    return Slope;
+}
+//-------------
+// JumpToPoint
+function JumpToPoint (Line, Point)
+{
+    if (Line >= gNumLines)  // Max/Min altitude/slope
+        return;
+
+    var nextPoint;
+    var nextSign;
+
+    if (Point >= gPointsArray[Line]) {
+        nextPoint = gPositionsArray[Line][Point - 1].Copy();
+        nextSign = 1;
+    }
+    else {
+        nextPoint = gPositionsArray[Line][Point + 1].Copy();
+        nextSign = -1;
+    }
+
+    var jumpPos = gPositionsArray[Line][Point].Copy();
+    var tmpPos = gPositionsArray[Line][Point].Copy();
+    jumpPos.Distance = 250;
+    jumpPos.Pitch = -60;
+    jumpPos.Yaw = tmpPos.AimTo(nextPoint).Yaw + 90*nextSign;
+
+    SGWorld.Navigate.JumpTo(jumpPos);
+}
+//-----------
+// Create Layer
+function CreateLayer() {
+    var cLineString = [];
+    for (var i = 0; i < gNumLines; i++) {
+        for (var j = 0; j < gPointsArray[i]; j++) {
+            cLineString.push(gPositionsArray[i][j].X, gPositionsArray[i][j].Y, gPositionsArray[i][j].Altitude);
+            DrawObject(gPositionsArray[i][j], i , j);
+        }
+        if (isPolyline)
+        {
+            DrawPolyline(cLineString, i);
+            cLineString = [];
+        }
+    }
+    gLayer.Save();
+    var groupID = SGWorld.ProjectTree.CreateGroup(gLayer.TreeItem.Name, "");
+    SGWorld.ProjectTree.SetParent(gLayer.ID, groupID);
+    //SGWorld.ProjectTree.SetParent(gFollowLineGroup, groupID);
+
+    $("#CreateLayerButton").attr("disabled", true);
+}
+//---------------
+function DrawObject(position, i, j) {
+    var ObjType;
+    var LayerColor;
+    if (isPolyline)
+        ObjType = "Polyline";
+    else ObjType = "ImageLabel";
+
+    LayerColor = LayerColorFunction(i);
+
+    var size = -2;
+
+    if (gLayer == null) {
+        CreateGroupOrLayer();
+
+            // style the feature group
+            if (featureLayerStyles[ObjType] != null) {
+                var result = featureLayerStyles[ObjType](size, abspath() + "/img/point.gif"); // ,"[Color]");
+                if (result === false)
+                    return false;
+            }
+    }
+    try {
+        if (!isPolyline)
+            gLayer.FeatureGroups.Point.CreateFeature([position.X, position.Y, position.Altitude], (i + 1) + ";" + Altitude + ";" + LayerColor);
+    }
+    catch (ex)
+    {
+        alert(ex);
+    }
+
+    return true;
+
+}
+
+    // -------------- 
+function DrawPolyline(cLineString, i)
+{
+    layerColor = LayerColorFunction(i);
+
+    try {
+        var cLineStringGeometry = SGWorld.Creator.GeometryCreator.CreateLineStringGeometry(cLineString);
+        gLayer.FeatureGroups.Polyline.CreateFeature(cLineStringGeometry, gGroundDistance[i] + ";" + gHorizontalDistance[i] + ";" + layerColor);
+    }
+    catch (err) { if (debug) alert("TerrainProfilePopup.html -> DrawPolyline: " + err.message); } 
+}
+
+// ------------
+function LayerColorFunction(i)
+{
+    if (i < 10)
+        return gColorArray2[i];
+    else
+        return (255 + 0 * 256 + 0 * 65536); // red
+
+}
+
+//----------
+//    CreateGroupOrLayer
+function CreateGroupOrLayer() {
+
+
+    if (gLayer == null) {
+        var postfix = new Date().getTime();
+        var LayerName = SGLang.i18n("Text13") + " - " + postfix;
+        if (isPolyline) {
+            gLayer = SGWorld.Creator.CreateNewFeatureLayer(LayerName, LayerGeometryType.LGT_POLYLINE, "FileName=TerrainProfile" + postfix + ".shp;TEPlugName=OGR;", SGWorld.ProjectTree.RootID);
+        }
+        else
+            gLayer = SGWorld.Creator.CreateNewFeatureLayer(LayerName, LayerGeometryType.LGT_POINT, "FileName=TerrainProfile" + postfix + ".shp;TEPlugName=OGR;", SGWorld.ProjectTree.RootID);
+        gLayer.Streaming = $("#createAs").val() == "LayerStreaming";
+        gLayer.BlockWidth = gSpacing * 60;
+        gLayer.Refresh();
+        if (isPolyline)
+        {
+            gLayer.DataSourceInfo.Attributes.CreateAttribute(SGLang.i18n("Text54"), 2, 20, 2);       // Ground Distance = Total Slope
+            gLayer.DataSourceInfo.Attributes.CreateAttribute(SGLang.i18n("Text55"), 2, 20, 2);       // Total Horizontal
+        }
+        else
+        {
+            gLayer.DataSourceInfo.Attributes.CreateAttribute(SGLang.i18n("Text44"), 1, 20, 1);      // Line
+            gLayer.DataSourceInfo.Attributes.CreateAttribute(SGLang.i18n("Text45"), 2, 20, 1);      // Elevation        
+        }
+        gLayer.DataSourceInfo.Attributes.CreateAttribute(SGLang.i18n("Text46"), 1, 20, 0);          // Color
+        try {
+            gLayer.DataSourceInfo.Attributes.ImportAll = true;
+            gLayer.Visibility.MaxVisibilityDistance = gVisibilityDistance;
+        }
+        catch (err) {
+            alert(err);
+        }
+        // style the feature group
+        if (isPolyline)
+            gLayer.FeatureGroups.Polyline.DisplayAs = ObjectTypeCode.OT_POLYLINE;
+        else gLayer.FeatureGroups.Point.DisplayAs = ObjectTypeCode.OT_LABEL;
+
+    }
+
+}
+var featureLayerStyles = {
+
+    "ImageLabel": function (size, param) {
+        gLayer.FeatureGroups.Point.DisplayAs = ObjectTypeCode.OT_IMAGE_LABEL;
+        gLayer.FeatureGroups.Point.SetProperty("Image file", param)
+        gLayer.FeatureGroups.Point.SetProperty("Image Color", "[" + SGLang.i18n("Text46") + "]")
+        gLayer.FeatureGroups.Point.SetProperty("Scale", size);
+        gLayer.FeatureGroups.Point.SetProperty("Altitude Method", 1);
+        gLayer.FeatureGroups.Point.SetProperty("Limit growth", true);
+        gLayer.FeatureGroups.Point.SetProperty("Tool Tip", SGLang.i18n("Text45") + ": [" + SGLang.i18n("Text45") + "]");
+    },
+    "Polyline": function (size) {
+        gLayer.FeatureGroups.Polyline.SetProperty("Line Color", "[" + SGLang.i18n("Text46") + "]");
+        gLayer.FeatureGroups.Polyline.SetProperty("Altitude Method", 1);
+        gLayer.FeatureGroups.Polyline.SetProperty("Line Width", size);
+    }
+}
+
+
+//---------------
+// ValidateInput
+    function ValidateInput() {
+    return true;
+}
+//--------------
+// CheckNumberEx
+function CheckNumberEx(field, defVal, MinNum, MaxNum) {
+    try {
+        field.value = validateNumber(field.value);
+
+        if (field.value < MinNum)
+            field.value = MinNum;
+        if (field.value > MaxNum)
+            field.value = MaxNum;
+    }
+    catch (e) { field.value = defVal }
+}
+
+function GetFunctionName(node) {
+    var getFunctionNameNode = SGWorld.ProjectTree.GetNextItem(node, 11);
+    while (getFunctionNameNode != "") {
+        if (SGWorld.ProjectTree.IsGroup(getFunctionNameNode) || SGWorld.ProjectTree.IsLayer(getFunctionNameNode))
+            GetFunctionName(getFunctionNameNode);
+        else {
+            var Object = SGWorld.Creator.GetObject(getFunctionNameNode);
+            if (Object != null)
+                if (Object.ObjectType == 1 || Object.ObjectType == 2)
+                {
+                    gObjectName[objectNameIndex] = SGWorld.ProjectTree.GetItemName(getFunctionNameNode);
+                    objectNameIndex++;
+                }
+            }
+            getFunctionNameNode = SGWorld.ProjectTree.GetNextItem(getFunctionNameNode, 13);
+    }
+}
+</script>
+
+</body>
+</html>
+

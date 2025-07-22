@@ -1,0 +1,58 @@
+html {font-size: 15px; overflow:hidden;height:100%;width:100%}
+input[type='checkbox'] {transform: scale(1.);}
+
+select option:disabled {
+    color: #000;
+    font-weight: bold;
+}
+
+img {vertical-align:middle;margin-right: 0;width:2.13rem;height:auto}
+.image-ruler{ font-family:  Calibri,Arial; font-size: 2.67rem; font-style: normal; font-weight: normal; color:#0CC2DE; background-image:url(images/marker.png); width:2.1rem; height: 2.1rem ; }        
+
+.photoInspectorBody {border: 0rem; margin: 0rem 0rem 0rem 0rem; overflow: hidden; }
+.toolbox{top:0rem; left:0rem;width:100%; height:3rem; background-color: #151515; display:inline-block; position: fixed;  }
+.toolboxIcon{padding-top: 0.33rem; padding-bottom:  0.33rem; padding-left:  0.33rem; padding-right:  0.33rem; background-color: #151515; width:2.1rem !important; height:2.1rem !important}
+.toolboxSeparator{padding: 0.33rem 0.33rem 0.33rem 0.33rem; width:0.2rem; height:auto; background-color: #151515; }
+.toolboxIcon:hover {background-color: #2b2b2b;}
+.toolboxIconHighlight{ background-color: #004975;}
+.toolboxIconDisabled {opacity: 0.5;}
+.QuickGuide {padding: 0.67rem 0.67rem 0.67rem 0.67rem}
+.settings {width:100%; height:calc(100% - 3rem);position:absolute; left:0rem; top:3rem;background-color: white;overflow-y:auto; overflow-x: hidden;}
+
+.settingsTable {padding:0.67rem; width:100%;  }
+.settingsTable td {padding:0.33rem; }
+.settingsFieldTable {padding:0rem; width:100%;  }
+.settingsFieldTable td {padding:0rem; }
+
+.InspectionList {width:100%; height:calc(100% - 16.6rem);}
+
+.photoViewers {width:100%; height:100%;position:absolute; position: fixed;left:0rem; top:3rem; background-color: black;}
+.photoViewers[multipleViewers='false'] .trHalf {display: none;}
+.photoViewerTable {width:100%; height:calc(100% - 3rem); background-color: black;}
+.photoViewerTable td {padding:0rem}
+.photoViewerTDFull {width:100%;height:50%; overflow: hidden;}
+.photoViewerTDQuarter {width:50%; height:25%;     overflow: hidden;}
+.PhotoWindowWrapper {width:100%; height:100%; }
+.PhotoWindowHeader {height: 2rem; width:100%;background-color: white; padding-top: 0.13rem;padding-right: 0.33rem;}
+.PhotoWindowOpenSeaDragon { cursor:move;height: calc(100% - 2rem); overflow: hidden;}
+.photoViewerTitle {padding-left: 0.33rem;}
+.PhotoWindow {width:100%; height:100%; border: 0.13rem solid black; }
+.waypoint {width:0.33rem; height:0.33rem; border: 0.067rem solid black;}
+.distance {font-family:  Calibri,Arial; font-size: 1.067rem; font-style: normal; font-weight: normal; color: #FFE99F; text-decoration: none;text-shadow: 0.13rem 0.13rem #000000;}
+.annotation {font-family:  Calibri,Arial; font-size: 1.067rem; font-style: normal; font-weight: normal; color: #ffffff; text-decoration: none;text-shadow: 0.13rem 0.13rem #000000;}
+
+#PhotoInspectorBody input {width:100%;font-family:  Calibri,Arial; font-size: 1rem; font-style: normal; font-weight: normal; color: #000000; text-decoration: none; border: solid 0.067rem #dddddd;box-shadow: 0rem 0rem 0.067rem 0.13rem rgba(0,0,0,.04);}
+#PhotoInspectorBody input:hover {border: solid 0.067rem #000000;}
+#PhotoInspectorBody textarea {width:100%;font-family:  Calibri,Arial; font-size: 1rem; font-style: normal; font-weight: normal; color: #000000; text-decoration: none; border: solid 0.067rem #dddddd;box-shadow: 0rem 0rem 0.067rem 0.13rem rgba(0,0,0,.04);}
+#PhotoInspectorBody textarea:hover {border: solid 0.067rem #000000;}
+.selectNewLong {width: 50%; padding: 0.13rem 0.13rem 0.13rem 0.13rem ; }
+.imgMiddle {vertical-align:middle}
+.padding10 {padding:0.67rem;}
+.lineSpace2 {line-height-step: 2rem;}
+.margin-left5 {margin-left: 0.33rem;}
+.margin-right5 {margin-right: 0.33rem;}
+
+.dataTables_filter {
+    float: left !important;
+ }
+

@@ -1,0 +1,161 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>ToolTitle</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=11" />
+    <!--<meta http-equiv="Content-Type" content="text/html; charset=utf-8">-->
+    <link rel="StyleSheet" href="../Style80.css" type="text/css">
+    <script language="javascript" src="../jquery/jquery-3.1.1.min.js"></script>
+    <script language="javascript" src="../ToolsCommon80.js"></script>
+    <style>
+    </style>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" style="border: 0rem;overflow: hidden;" id="Body" onunload="Exit();">
+    <!--oncontextmenu="return false;">  onclick="bHide=true;HideOptionsNow()" > -->
+    <table border="0" width="100%" class="tableSpacer">
+        <tr>
+            <td style="width:8rem ;padding-top:0.33rem; padding-bottom: 0.33rem;"><span  class="s9 i18n py6">Move</span></td>
+            <td align="right"><input type="range" id="MoveSlider" min="-500" max="2000" value="0" oninput="setMove();"/> </td>
+        </tr>
+        <tr id="panelSizeID">
+            <td ><span  class="s9 i18n py6">Size</span></td>
+            <td align="right"><input type="range" id="SizeSlider" min="1" max="100" value="50" oninput="setSize();"/></td>
+        </tr>
+    </table>
+
+<script language="JavaScript">
+    var gDebug = false;
+    var gObjID = "";
+    var gBoxObj = null;
+    var gOrigPos = null;
+    var gLastPos = null;
+     
+    var gLastWidth = null;
+    var gOriginBoxSize = 0;
+    var gGeometry;
+
+var SGWorld = null;
+
+//--------------
+// Init
+function Init() {
+    try {
+        SGWorld = initSGWorld();
+   
+        gObjID = GetParamValue("ObjID", "0");
+
+        gBoxObj = SGWorld.ProjectTree.GetObject(gObjID);
+        gOrigPos = gBoxObj.Position.Copy();
+        gOriginBoxSize = gBoxObj.Width;
+       
+        SGWorld.AttachEvent("OnFrame", showCrossSection);
+    }
+    catch (err) { }
+}
+//------------------
+function Exit() {
+
+    try {
+        SGWorld.Analysis.HideCrossSectionBox();
+        if (gBoxObj != null && SGWorld.ProjectTree.GetNextItem(gBoxObj.ID, 15) == SGWorld.ProjectTree.HiddenGroupID) 
+           SGWorld.Creator.DeleteObject(gBoxObj.ID);
+        SGWorld.Window.ShowMessageBarText("##CrossSectionExit:" + gBoxObj.ID);
+
+    } 
+    catch (err) { if (gDebug) alert(err.message); }
+ 
+}
+
+//--------------
+function setMove() {
+    try {
+
+        var distanceVal = $("#MoveSlider").val()/10.0 * gBoxObj.Width / 100.0;
+        if (gBoxObj.Position.Pitch == 90) { // vertical
+            //gBoxObj.Position = gOrigPos.Move(-distanceVal.toFixed(2), gBoxObj.Position.Yaw.toFixed(2), 0);
+            gBoxObj.Position = gOrigPos.Move(parseFloat(-distanceVal.toFixed(2)), parseFloat(gBoxObj.Position.Yaw.toFixed(2)), 0);// parseFloat - fix #23020, decimal symbol = comma seperator french OS
+
+            gBoxObj.Position.Pitch = 90;
+        }
+        else gBoxObj.Position.Altitude = gOrigPos.Altitude - distanceVal;
+
+    }
+    catch (err) { }
+}
+//--------------
+function setSize() {
+
+var size = $("#SizeSlider").val();
+try {
+    if (gBoxObj != null) {
+        var boxSize = gOriginBoxSize /50 * $("#SizeSlider").val();
+        gBoxObj.Width = boxSize;
+        gBoxObj.Depth = boxSize;
+        gBoxObj.Height = boxSize/100;
+    }
+}
+catch (err) { if (gDebug) alert(err.message); }
+}
+
+//-------------------
+function showCrossSection() {
+    setMove();
+    setSize();
+    
+    try {
+        if (gBoxObj == null )
+            return;
+
+        if (gLastPos == null || !gLastPos.IsEqual(gBoxObj.Position) || gLastWidth != gBoxObj.Width) {
+            var vertices = [];
+            var sectionSize = gBoxObj.Width * 5;
+            gLastPos = gBoxObj.Position.Copy();
+            gLastWidth = gBoxObj.Width;
+            var pos = gBoxObj.Position;
+            var planeTolarance = gOriginBoxSize / 100;
+            if (gBoxObj.Position.Pitch == 90) {
+                var yaw = gBoxObj.Position.Yaw - 180;
+                pos = pos.Move(planeTolarance, yaw - 180, 0);  // make sure the cut area doesn't include the box
+                pos = pos.Move(gBoxObj.Width / 2, 0, -90);
+                pos = pos.Move(gBoxObj.Width / 2, yaw + 90, 0);
+                vertices[0] = pos;
+                pos = pos.Move(sectionSize, yaw - 180, 0);
+                vertices[1] = pos;
+                pos = pos.Move(gBoxObj.Width, yaw - 90, 0);
+                vertices[2] = pos;
+                pos = pos.Move(sectionSize, yaw, 0);
+                vertices[3] = pos;
+                vertices[4] = vertices[0].Move(gBoxObj.Width, 0, 90);
+                vertices[5] = vertices[1].Move(gBoxObj.Width, 0, 90);
+                vertices[6] = vertices[2].Move(gBoxObj.Width, 0, 90);
+                vertices[7] = vertices[3].Move(gBoxObj.Width, 0, 90);
+            }
+            else {
+                pos = pos.Move(planeTolarance, 0, 90);  // make sure the cut area doesn't include the box
+                pos = pos.Move(gBoxObj.Width / 2, gBoxObj.Position.Yaw, 0);
+                pos = pos.Move(gBoxObj.Width / 2, gBoxObj.Position.Yaw + 90, 0);
+                vertices[0] = pos;
+                pos = pos.Move(gBoxObj.Width, gBoxObj.Position.Yaw - 180, 0);
+                vertices[1] = pos;
+                pos = pos.Move(gBoxObj.Width, gBoxObj.Position.Yaw - 90, 0);
+                vertices[2] = pos;
+                pos = pos.Move(gBoxObj.Width, gBoxObj.Position.Yaw, 0);
+                vertices[3] = pos;
+                vertices[4] = vertices[0].Move(sectionSize, 0, 90);
+                vertices[5] = vertices[1].Move(sectionSize, 0, 90);
+                vertices[6] = vertices[2].Move(sectionSize, 0, 90);
+                vertices[7] = vertices[3].Move(sectionSize, 0, 90);
+            }
+
+            gGeometry = SGWorld.Creator.GeometryCreator.CreateLineStringGeometry(vertices);
+        // tmpBox = SGWorld.Creator.CreatePolyline(geometry, $("#color").val(), 3, "", "dd");        
+        SGWorld.Analysis.ShowCrossSectionBox(gGeometry, false, "#ff" + $("#color").val()); // 
+    }
+}
+    catch (err) { }
+}
+
+</script>
+
+</body>
+</html>

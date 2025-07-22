@@ -1,0 +1,415 @@
+﻿<html>
+    <head>
+        <meta name="viewport" content="initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=11" />
+        <title>Image Comparison Tool</title>
+<script type="text/javascript" src="range.js"></script>
+<script type="text/javascript" src="timer.js"></script>
+<script type="text/javascript" src="slider.js"></script>     
+ 
+<link type="text/css" rel="StyleSheet" href="slider.css" />  
+<link rel="StyleSheet" href="../Style80.css" type="text/css">
+<script language="javascript" src="../jquery/jquery-3.1.1.min.js"></script>
+<script language="javascript" src="../ToolsCommon80.js"></script>
+<style>
+input[type="range"] {-webkit-appearance: none;width:90%;height: 1px;background-color: #bbbbbb;box-shadow: 0px 0px 1px 0px rgba(0,0,0,0.2);border-radius: 0px;background-size: 70% 100%;background-repeat: no-repeat;}
+input[type="range"]::-webkit-slider-thumb {  -webkit-appearance: none;height: 15px;width: 15px;border:2px solid #ffffff;border-radius: 50%;background: #0287BC;cursor: ew-resize;transition: box-shadow .15s ease-in-out}
+input[type="range"]:hover {background-color: #0287BC;}
+input[type="range"]::-webkit-slider-thumb:hover { border:2px solid #0287BC;border-radius: 50%;background: #ffffff;box-shadow: 0px 0px 15px 4px #0287BC;}
+
+</style> 
+    </head>
+        <body leftmargin="0px" topmargin="0px" marginwidth="0" marginheight="0" style="border: 0px;overflow:hidden; " id="Body"  class="hideUntillTranslated" onunload="exitTool();">
+        <table  cellpadding ="5" cellspacing = "0" border="0" width="100%" >
+        <tr id="modelNameID">
+        <td>
+            &nbsp;<span class="i18n s9">Text_ModelName</span>
+            &nbsp;<b><span id="modelNameID" class="s9"></span></b>
+        </td>
+        </tr>
+
+    </table>
+
+    <table id="textureSelectionTR" cellpadding ="3" cellspacing = "0" border="0" width="100%"  >
+        <tr>
+                
+            <td style="width:215px;" align="center">
+                    <select id="Layer1Mode"  class="selectNew"   style="width:210px; " onchange="SetLayerRenderMode(1,-1);">
+                        <option class="i18n" value=0 selected="selected">Text_Texture</option>
+                        <option class="i18n" value=32768 >Text_TextureWire</option>
+                        <option class="i18n" value=3 >Text_Solid</option>
+                        <option class="i18n" value=32771 >Text_SolidWire</option>
+                        <option class="i18n" value=2 >Text_Xray</option>
+                        <option class="i18n" value=-1 >Text_None</option>
+                        
+                    </select>
+            </td>
+            <td style="width:50px;" align="center">
+                <img style="margin-left:5px;" src=".\images\swipeicon.png" alt="" />
+            </td>
+            <td style="width:215px;" align="center">
+                <select id="Layer2Mode"  class="selectNew"   style="width:210px; " onchange="SetLayerRenderMode(2,-1);">
+                        <option class="i18n" value=0 >Text_Texture</option>
+                        <option class="i18n" value=32768 >Text_TextureWire</option>
+                        <option class="i18n" value=3 >Text_Solid</option>
+                        <option class="i18n" value=32771 >Text_SolidWire</option>
+                        <option class="i18n" value=2 selected="selected">Text_Xray</option>
+                        <option class="i18n" value=-1 >Text_None</option>
+                    </select>
+            </td>  
+    </tr>
+    <tr style="height: 10px;"><td></td></tr>
+     </table>
+                                
+    <table  cellpadding ="3" cellspacing = "0" border="0" width="100%" >
+    <tr >
+        <td style=" width:80px;" align="center"><button id="DirectionID" style="width: 100%;" class=" i18n" onclick="ChangeDirection();" ><span class="i18n">Text_UpDown</span></button></td>
+        <td style=" width:300px;" align="left">
+            <!-- <div id="SliderID">
+                <span id="gSliderClip" style="display:inline-block; width: 300px;"><input type="text" id="gSliderClipID" /></span></td>
+            </div> -->
+            <input type="range" min="0" max="99" id="sliderClipID" value="50" oninput = "SetClipTrans(this.value, false);">
+        <td style="width:35px;" align="left"> <span id="precentSpan"  class="s9">100%</span></td>
+        <td  style="width:35px;" align="center"  class="SectionText"  onclick="autoPlay(true);" ><img id="autoPlayIcon" class="link" src="Images/autoOff.png" alt="" align="absmiddle"/> </td>
+    </tr>
+    </table>
+    
+
+<script language="JavaScript">
+
+// var SGWorld = new ActiveXObject("TerraExplorerX.SGWorld71");
+
+var gDebug = false;
+var gLayer1ID;
+var gLayer2ID;
+var gLayer1Obj;
+var gLayer2Obj;
+var gLayer1Visibility = true;
+var gLayer1RenderMode;
+var gStartSwipe = false;
+var gLastLevel = 100;
+var gAutoOnOff = false;
+var gCliptimeout;
+var gClipUpdatetimeout;
+var gClipPosition;
+//var gSliderClip;
+var gSwipeDirection=1;
+var gDirection = 1;
+var gCameraPos;
+var SGWorld = null;
+
+
+//--------------
+//  Init - called when SGLang is ready
+function Init() {
+   try {
+        SGWorld = initSGWorld();
+        if (TEF){
+            $("#textureSelectionTR").hide();
+            $("#DirectionID").hide();
+            $("#modelNameID").hide();
+            // $("#precentSpan").hide();
+             $("#autoPlayIcon").hide();
+        }
+
+        gLayer1ID  = GetParamValue("ID", "");
+        if (gLayer1ID=="")
+        {
+            gLayer1ID = SGWorld.ProjectTree.GetNextItem (SGWorld.ProjectTree.RootID,10); 
+            gLayer1Obj = SGWorld.Creator.GetObject(gLayer1ID);
+            if (gLayer1Obj.ObjectType == 39){ // feature layer under 3DML - get the parent 3DML
+                gLayer1ID = SGWorld.ProjectTree.GetNextItem (gLayer1ID,15);
+                gLayer1Obj = SGWorld.Creator.GetObject(gLayer1ID);
+            }
+            if (gLayer1Obj.ObjectType != 38){
+                TEAlert (SGLang.i18n("Text_AlertCaption"), SGLang.i18n("Text_BIMNotFound"));
+                return;
+            }
+        }
+        $("#modelNameID").text(SGWorld.ProjectTree.GetItemName(gLayer1ID));
+        gLayer1Obj= SGWorld.Creator.GetObject(gLayer1ID);
+    }
+   catch (e) {  TEAlert (SGLang.i18n("Text_AlertCaption"),SGLang.i18n("Text_BIMNotFound") ); exitTool();return;}
+
+        try {
+
+        // Create temporary layer
+        var Path = gLayer1Obj.Path;
+        var questionmark = Path.indexOf("?");
+        if (checkUrl(Path)){
+            SGWorld.Creator.CreateMeshLayerFromSGSAsync(Path.substring(0,questionmark),Path.substring(questionmark+7,Path.length),SGWorld.ProjectTree.HiddenGroupID)
+            .OnResolve(function(layer) {
+                gLayer2Obj = layer;
+                InitCallback();
+            })
+            .OnReject(function (error) {
+                TEAlert (SGLang.i18n("Text_AlertCaption"),SGLang.i18n("Text_BIMNotFound"))
+            })
+        }
+        else{
+            gLayer2Obj=SGWorld.Creator.CreateMeshLayerFromFile(Path,SGWorld.ProjectTree.HiddenGroupID);
+            InitCallback();
+        }
+
+   }
+   catch (e) {  TEAlert (SGLang.i18n("Text_AlertCaption"),SGLang.i18n("Text_BIMNotFound") + e.message); return;}
+
+   
+}
+
+//--------------
+function InitCallback() {
+
+    gLayer2ID = gLayer2Obj.ID;
+    gLayer2Obj.Position = gLayer1Obj.Position.Copy();
+    gLayer2Obj.Position.Pitch = 0; // This is to overcome a TE bug
+    gLayer2Obj.ScaleX = gLayer1Obj.ScaleX;
+    gLayer2Obj.ScaleX = gLayer1Obj.ScaleX;
+    gLayer2Obj.ScaleY = gLayer1Obj.ScaleY;
+    gLayer2Obj.ScaleZ = gLayer1Obj.ScaleZ;
+    //gLayer2Obj.SaveInFlyFile = 0;
+
+    
+    SetLayerRenderMode(1,-1);
+    SetLayerRenderMode(2,-1);
+
+    SGWorld.AttachEvent("OnProjectTreeAction", OnProjectTreeAction);
+    StartSwipe();
+}
+//--------------
+//  checkUrl
+function ChangeDirection(){
+    if (gDirection==1){
+        gDirection=0;
+        $("#DirectionID").text(SGLang.i18n("Text_Sides"));
+    }
+    else {
+
+        gDirection=1;
+        $("#DirectionID").text(SGLang.i18n("Text_UpDown"));
+    }
+    SetClipTrans($(""), true);
+
+}
+//--------------
+//  checkUrl
+function checkUrl(s) {
+     var regexp = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/
+     return regexp.test(s); 
+}
+//--------------
+//  StartSwipe
+function StartSwipe(){
+    try {
+
+        gStartSwipe = true;
+        gLayer1Visibility = SGWorld.ProjectTree.GetVisibility (gLayer1ID);
+        gLayer1RenderMode = gLayer1Obj.DisplayStyle;
+        SetLayerRenderMode (1,gLayer1RenderMode);
+        gCameraPos = SGWorld.Navigate.GetPosition ();
+        SGWorld.ProjectTree.SetVisibility (gLayer1ID,true);
+        SGWorld.ProjectTree.SetVisibility (gLayer2ID,true);
+        setTimeout ("relocateCamera();",100);  // We need it to overcomae a problem of camera "jump" when we turn on layers
+
+        SGWorld.Analysis.SetCompareGroup(gLayer1ID, 1);
+        SGWorld.Analysis.SetCompareGroup(gLayer2ID, 2);
+        if (TEF)
+            gLayer2Obj.Visibility.Show = false;
+
+        // gSliderClip = new Slider(document.getElementById("gSliderClip"), document.getElementById("gSliderClipID"));
+        // gSliderClip.setValue(50);
+        // gSliderClip.setMinimum(0);
+        // gSliderClip.setMaximum(99);
+        // gSliderClip.onchange = function () {
+        //     SetClipTrans(gSliderClip.getValue(), false);
+        // };
+        SetClipTrans($("#sliderClipID").val(), true);
+        SGWorld.SetParam(450, 1);
+        
+    }
+        catch (e) { if (gDebug) alert(SGLang.i18n("Text_MeshError") + e.message); }
+}
+
+//--------------
+// relocateCamera
+// We need it to overcomae a problem of camera "jump" when we turn on layers
+function relocateCamera() {
+    SGWorld.Navigate.SetPosition (gCameraPos);
+}
+
+//--------------
+// 
+function SetClipTrans(level, force) {
+    if (level == gLastLevel && force == false )
+        return;
+    gLastLevel = level;
+
+    // Clipping
+    try {
+        document.getElementById("precentSpan").innerHTML = level + "%";
+        
+        var vertices = [];
+
+        switch (gDirection){
+        case 0:  // Sides
+            var boxWidth = Math.max(500, SGWorld.Navigate.GetPosition(0).Altitude*20); //  1000;//LeftPos.DistanceTo(RightPos)*10;
+            var Pos = SGWorld.Window.PixelToWorld(SGWorld.Window.Rect.Width* (level) / 100.0, (SGWorld.Window.Rect.Height)-10, 0).Position;
+            var Pos1 = SGWorld.Window.PixelToWorld(SGWorld.Window.Rect.Width* (level) / 100.0, (SGWorld.Window.Rect.Height)-50, 0).Position;
+            var boxYaw = Pos.AimTo(Pos1).Yaw;
+            Pos = Pos.Move (boxWidth,boxYaw ,0);
+            Pos = Pos.Move (boxWidth/4,0,-90);
+            vertices[0] = Pos;
+            Pos = Pos.Move(boxWidth, boxYaw+90 , 0);
+            vertices[1] = Pos;
+            Pos = Pos.Move(boxWidth*2, boxYaw + 180, 0);
+            vertices[2] = Pos;
+            Pos = Pos.Move(boxWidth, boxYaw+270, 0);
+            vertices[3] = Pos;
+            vertices[4] = vertices[0].Move(boxWidth, 0, 90);
+            vertices[5] = vertices[1].Move(boxWidth, 0, 90);
+            vertices[6] = vertices[2].Move(boxWidth, 0, 90);
+            vertices[7] = vertices[3].Move(boxWidth, 0, 90);
+            break;
+
+            case 1:   // Up-Down
+            var MinX = gLayer1Obj.BBox.MinX;
+            var MinY = gLayer1Obj.BBox.MinY;
+            var MaxX = gLayer1Obj.BBox.MaxX;
+            var MaxY = gLayer1Obj.BBox.MaxY;
+            var MinHeight = gLayer1Obj.BBox.MinHeight + (gLayer1Obj.BBox.MaxHeight-gLayer1Obj.BBox.MinHeight)* (level / 100.0)*1.05;
+            var MaxHeight = gLayer1Obj.BBox.MaxHeight*1.05;
+         
+            vertices[0] = SGWorld.Creator.CreatePosition(MinX,MinY,MinHeight,3,0,0,0,1);
+            vertices[1] = SGWorld.Creator.CreatePosition(MinX,MaxY,MinHeight,3,0,0,0,1);
+            vertices[2] = SGWorld.Creator.CreatePosition(MaxX,MaxY,MinHeight,3,0,0,0,1);
+            vertices[3] = SGWorld.Creator.CreatePosition(MaxX,MinY,MinHeight,3,0,0,0,1);
+            vertices[4] = SGWorld.Creator.CreatePosition(MinX,MinY,MaxHeight,3,0,0,0,1);
+            vertices[5] = SGWorld.Creator.CreatePosition(MinX,MaxY,MaxHeight,3,0,0,0,1);
+            vertices[6] = SGWorld.Creator.CreatePosition(MaxX,MaxY,MaxHeight,3,0,0,0,1);
+            vertices[7] = SGWorld.Creator.CreatePosition(MaxX,MinY,MaxHeight,3,0,0,0,1);
+            break;
+
+            // case 3:   // depth
+            // var boxWidth = Math.max(50, SGWorld.Navigate.GetPosition(0).Altitude)*10; //  1000;//LeftPos.DistanceTo(RightPos)*10;
+            // var Pos = SGWorld.Window.PixelToWorld(5, (SGWorld.Window.Rect.Height)-5, 0).Position;
+            // var boxYaw = SGWorld.Navigate.GetPosition(0).Yaw;
+            
+            // Pos = Pos.Move (boxWidth*level/ 100.0,boxYaw ,0);
+            // Pos = Pos.Move (boxWidth/4,0,-90);
+            // vertices[0] = Pos;
+            // Pos = Pos.Move(boxWidth, boxYaw+90 , 0);
+            // vertices[1] = Pos;
+            // Pos = Pos.Move(boxWidth, boxYaw+180 , 0);
+            // vertices[2] = Pos;
+            // Pos = Pos.Move(boxWidth, boxYaw+270, 0);
+            // vertices[3] = Pos;
+            // vertices[4] = vertices[0].Move(boxWidth, 0, 90);
+            // vertices[5] = vertices[1].Move(boxWidth, 0, 90);
+            // vertices[6] = vertices[2].Move(boxWidth, 0, 90);
+            // vertices[7] = vertices[3].Move(boxWidth, 0, 90);
+            // break;
+        }
+        var BoxGeometry = SGWorld.Creator.GeometryCreator.CreateLineStringGeometry(vertices);
+        SGWorld.Analysis.ShowCompareBox(BoxGeometry, false, "#ffffffff");
+        //SGWorld.Creator.CreatePolyline (BoxGeometry,542346, 3);
+
+        gClipPosition = SGWorld.Navigate.GetPosition();
+        clearTimeout(gClipUpdatetimeout);
+        gClipUpdatetimeout = setTimeout("checkClipUpdate()", 100);
+    }
+    catch (e) { if (gDebug) alert(SGLang.i18n("Text3") + e.message); }
+}
+//--------------
+// 
+function checkClipUpdate() {
+    var currPosition = SGWorld.Navigate.GetPosition()
+    if (currPosition.IsEqual(gClipPosition) == false) {
+        SetClipTrans(gLastLevel, true);
+    }
+    else {
+        clearTimeout(gClipUpdatetimeout);
+        gClipUpdatetimeout = setTimeout("checkClipUpdate()", 100);
+    }
+}
+//--------------
+// 
+function autoPlay(fromClick) {
+    if (fromClick) {
+        gAutoOnOff = !gAutoOnOff;
+    }
+
+    if (gAutoOnOff) {
+        document.getElementById("autoPlayIcon").src = "Images/autoOn.png";
+        // var a = gSliderClip.getValue();
+        var a = $("#sliderClipID").val();
+        a = ((1.0*a) + 2) % 101;
+        //gSliderClip.setValue(a);
+        $("#sliderClipID").val(a);
+        SetClipTrans(a, false);
+        gCliptimeout = setTimeout("autoPlay(false)", 20);
+
+    }
+    else {
+        document.getElementById("autoPlayIcon").src = "Images/autoOff.png";
+        clearTimeout(gCliptimeout);
+    }
+}
+
+//--------------
+//  SetLayerRenderMode
+function SetLayerRenderMode (layerIndex,forceValue){
+    var LayerID = (layerIndex==1)?gLayer1ID:gLayer2ID;
+    var modeID = (layerIndex==1)?$("#Layer1Mode"):$("#Layer2Mode");
+    var obj = (layerIndex==1)?gLayer1Obj:gLayer2Obj;
+    var renderMode ;
+    if (forceValue==-1)
+        renderMode = (layerIndex==1)?$("#Layer1Mode").val():$("#Layer2Mode").val();
+    else{
+        renderMode=forceValue;
+        modeID.val(renderMode).change();
+    }
+    if (renderMode != -1){
+        obj.Visibility.Show = true;
+        obj.DisplayStyle=renderMode;
+    }
+    else {
+        obj.Visibility.Show = false;
+    }
+    
+}
+//--------------
+//  OnProjectTreeAction
+function OnProjectTreeAction(ID,Action) {
+    try{
+        if (Action.Code == 15 && ID ==gLayer1ID)
+            exitTool ();
+    }
+    catch (e) { if (gDebug) alert(SGLang.i18n("Text3") + e.message);}
+}
+
+//--------------
+//  exitTool
+function exitTool() {
+    try {
+            SGWorld.ProjectTree.DeleteItem(gLayer2ID);
+            if (gStartSwipe){
+
+                if (gLayer1ID != -1) {
+                    SGWorld.ProjectTree.SetVisibility (gLayer1ID,gLayer1Visibility);
+                    SetLayerRenderMode (1,gLayer1RenderMode);
+                    SGWorld.Analysis.SetCompareGroup(gLayer1ID, 0);
+                }
+                SGWorld.Analysis.HideCompareBox();
+                SGWorld.SetParam(450, 0);
+            }
+            SGWorld.Window.RemovePopupByCaption(SGLang.i18n("Text9"));
+    }
+    catch (e) { if (gDebug) alert(SGLang.i18n("Text3") + e.message);}
+}
+      
+    </script>
+
+</body>
+</html>
+
+

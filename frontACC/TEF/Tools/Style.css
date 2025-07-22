@@ -1,0 +1,241 @@
+
+html { overflow:hidden;height:100%;width:100%}
+body {  background-color: White;  background-repeat: no-repeat; overflow-x:hidden; overflow-y:auto; height:100%;width:100%; }
+.helpHtml { overflow:inherit}
+.background {  background-color: #555555; background-image: url(img\background.gif); background-repeat: no-repeat}
+.s6 {font-family:  Calibri,Arial; font-size: 8pt; font-style: normal; font-weight: normal; color: #000000; text-decoration: none;}
+.s7 {font-family:  Calibri,Arial; font-size: 9pt; font-style: normal; font-weight: normal; color: #000000; text-decoration: none;}
+.s7red {font-family:  Calibri,Arial; font-size: 9pt; font-style: normal; font-weight: normal; color: #B90000; text-decoration: none;}
+.s8 {font-family:  Calibri, Arial; font-size: 10pt; font-style: normal; font-weight: normal; color: #000000; text-decoration: none;}
+.s8w {font-family:  Calibri,Arial; font-size: 10pt; font-style: normal; font-weight: normal; color: #ffffff; text-decoration: none;}
+.s8b {font-family:  Calibri,Arial; font-size: 10pt; font-style: normal; font-weight: bold; color: #000000; text-decoration: none;}
+.s8bu {font-family:  Calibri, Arial; font-size: 10pt; font-style: normal; font-weight: bold; color: #000000; text-decoration: underline;}
+.s9 {font-family:  Calibri,Arial; font-size: 11pt; font-style: normal; font-weight: normal; color: #000000; text-decoration: none;}
+.s9b {font-family:  Calibri,Arial; font-size: 11pt; font-style: normal; font-weight: bold; color: #000000; text-decoration: none;}
+.s9w {font-family:  Calibri,Arial; font-size: 11pt; font-style: normal; font-weight: normal; color: #ffffff; text-decoration: none;}
+.s9red{font-family:   Calibri,Arial;font-size: 11pt;font-style: normal;line-height: normal;font-weight: normal;font-variant: normal;text-transform: none;color: #B90000;text-decoration: none;}
+.s9bred{font-family:   Calibri,Arial;font-size: 11pt;font-style: normal;line-height: normal;font-weight: bold;font-variant: normal;text-transform: none;color: #B90000;text-decoration: none;}
+.s10 {font-family:  Calibri,Arial; font-size: 12pt; font-style: normal; font-weight: normal; color: #000000; text-decoration: none;}
+.s10w {font-family:  Calibri,Arial; font-size: 12pt; font-style: normal; font-weight: normal; color: #ffffff; text-decoration: none;}
+.s10b {font-family:  Calibri,Arial; font-size: 12pt; font-style: normal; font-weight: bold; color: #000000; text-decoration: none;}
+.s12 {font-family:  Calibri,Arial; font-size: 13pt; font-style: normal; font-weight: normal; color: #000000; text-decoration: none;}
+.s12b {font-family:  Calibri,Arial; font-size: 13pt; font-style: normal; font-weight: bold; color: #000000; text-decoration: none;}
+.s12w {font-family:  Calibri,Arial; font-size: 13pt; font-style: normal; font-weight: normal; color: #ffffff; text-decoration: none;}
+.s13b {font-family:  Calibri,Arial; font-size: 14pt; font-style: normal; font-weight: bold; color: #000000; text-decoration: none;}
+.s14b {font-family:  Calibri,Arial; font-size: 16pt; font-style: normal; font-weight: bold; color: #000000; text-decoration: none;}
+.s14bi {font-family:  Calibri,Arial; font-size: 16pt; font-style: italic; font-weight: bold; color: #000000; text-decoration: none;}
+.s18 {font-family:  Calibri,Arial; font-size: 18pt; font-style: normal; font-weight: normal; color: #000000; text-decoration: none;}
+
+p {font-family:  Calibri, Arial; font-size: 11pt; font-style: normal; font-weight: normal; color: #000000; text-decoration: none;}
+span {font-family:  Calibri, Arial; font-size: 10pt;  }
+
+h1	{margin-top:0in;	margin-right:0in;margin-bottom:12.0pt;	margin-left:.5in;	text-indent:-.5in;	page-break-before:always;	page-break-after:avoid;	border:none;	padding:0in;	font-size:16.0pt;	font-family:Calibri;	text-transform:uppercase;	font-weight:bold;}
+h2	{margin-top:24.0pt;	margin-right:0in;	margin-bottom:0in;	margin-left:0in;	margin-bottom:.0001pt;	page-break-after:avoid;	font-size:14.0pt;	font-family:Calibri;	font-weight:bold;}
+h3	{margin-top:12.0pt;	margin-right:0in;	margin-bottom:3.0pt;	margin-left:0in;	page-break-after:avoid;	font-size:11.0pt;	font-family:Calibri;	font-weight:bold;}
+h4	{margin-top:6.0pt;	margin-right:0in;	margin-bottom:0in;	margin-left:0in;	margin-bottom:.0001pt;	page-break-after:avoid;	font-size:11.0pt;	font-family:Calibri;	font-weight:bold;}
+h5	{margin-top:6.0pt;	margin-right:0in;	margin-bottom:0in;	margin-left:0in;	margin-bottom:.0001pt;	page-break-after:avoid;	font-size:8.0pt;	font-family:Verdana;	color:red;	font-weight:bold;}
+h6	{margin-top:12.0pt;	margin-right:0in;	margin-bottom:3.0pt;	margin-left:0in;	text-align:justify;	font-size:11.0pt;	font-family:"ITCCentury Light";	font-weight:bold;}
+
+.HelpTextHeader {font-family:  Calibri,Arial; font-size: 24px; font-style: normal; font-weight: normal; color: #007F7F; text-decoration: none;}
+.HelpText {font-family:  Calibri,Arial; font-size: 14px; font-style: normal; font-weight: normal; color: #000000; text-decoration: none;}
+
+.ToolTopArea {background-color: #151515; height:30pt; color:#FFFFFF; font-weight:bold; font-size:9pt; vertical-align:middle; }
+.ToolTopSeperator{background-color: #151515; height:1pt;}
+.PropertiesSheet {background-color:#ffffff;width:100%; border-collapse: collapse;}
+.PropertiesSheet td { border:1pt solid #cccccc; }
+.TableOtherLine{background-color:#ffffff; }
+.ToolButtonsArea {background-color:#151515; }
+.MenuButton{height: 56pt;width: 48pt;padding: 1pt;white-space: normal; background-color:#151515;border:0pt; border-right:1pt solid #606060;font-family:  Calibri,Arial; font-size: 10pt;  color:white; line-height:120%}
+.MenuButton2{height: 34pt;width: 34pt;padding: 2pt;white-space: normal; background-color:#151515;border:0pt; border-right:1pt solid #606060;font-family:  Calibri,Arial; font-size: 10pt;  color:white; line-height:120%}
+.MenuButton img {margin-bottom: 4pt; width:24pt;}
+.MenuButton:hover{background-color:#2B2B2B; }
+.MenuButton2:hover{background-color:#2B2B2B;cursor: pointer;}
+.MenuButtonLast{border-right:0pt}
+.MenuButtonHighlight{background-color:#004975;font-weight: bold;}
+.MenuButtonHighlight:hover{background-color:#0CC2DE; }
+.MenuButtonMedium {height: 36pt;width: 48pt;margin: 2pt;white-space: normal; background-color:#151515;border:0pt; border-right:1pt solid #76757A;font-family:  Calibri,Arial; font-size: 10pt;  color:white;line-height:120%; }
+.MenuButtonMedium:hover{background-color:#2B2B2B; }
+.MenuButtonSmall {height: 15pt;margin: 0pt;white-space: normal; background-color:#151515;border:0pt; border-right:1pt solid #76757A;font-family:  Calibri,Arial; font-size: 10pt;  color:white; }
+.MenuButtonSmallWhite {height: 15pt;margin: 0pt;white-space: normal;padding-left:4pt; padding-right: 4pt; background-color:white;border:0pt; border-right:1pt solid #000000;font-family:  Calibri,Arial; font-size: 10pt;  color:black;cursor: pointer; }
+.MenuButtonSmall:hover{background-color:#2B2B2B; }
+.MenuButtonSmallRound {margin: 0pt;padding: 2px 8px 2px 8px ; white-space: normal; background-color:#151515;border:0pt; border-right:1pt solid #76757A;font-family:  Calibri,Arial; font-size: 12pt;  color:white; border-radius: 3px; }
+.MenuButtonSmallRound:hover{background-color:#2B2B2B; cursor: pointer;}
+.MenuButtonSmallRoundOutline {margin: 0pt;padding: 2px 8px 2px 8px ; white-space: normal; background-color:#fafafa;border:1px solid #dddddd;font-family:  Calibri,Arial; font-size: 12pt; font-weight: normal;  color:black; border-radius: 3px; box-shadow: 0px 0px 1px 2px rgba(0,0,0,.04);}
+.MenuButtonSmallRoundOutline:hover{border:1px solid #151515; cursor: pointer;}
+.MenuButtonSmallRoundOutlineChecked { background-color:#0CC2DE;border:1px solid #cccccc; color:white; }
+.MenuButtonWhiteMedium{background-color:white; padding: 5px 5px 5px 5px; width:48px; height:48px;border:0pt;box-shadow: 0px 0px 4px 2px rgba(0,0,0,.04);border-radius: 3px; margin-left: 4px; margin-right: 4px;}
+.MenuButtonWhiteMedium:hover{background-color:#A4E8FF; cursor: pointer;}
+.MenuButtonBlueShadow {background-color:#F0F7FF ; border:1px solid rgba(164, 232, 255, 1); border-radius: 2px; box-shadow: 0px 0px 8px 1px rgba(164, 232, 255, 1);}
+.MenuButtonShort {height:20px;padding: 0px 4px 0px 4px ;}
+.pointer {cursor: pointer}
+
+.SpanOutline {margin: 0pt;padding: 2px 8px 2px 8px ; white-space: normal; background-color:#fafafa;border:1px solid #dddddd;font-family:  Calibri,Arial; font-size: 12pt; font-weight: normal;  color:black; border-radius: 3px; box-shadow: 0px 0px 1px 2px rgba(0,0,0,.04);}
+.ML5 {margin-left: 5px;}
+.MR5 {margin-right: 5px;}
+.tabArea {background-color:#151515;}
+.tab {float: left;background-color: #2B2B2B;border: solid 1pt #2B2B2B;margin: 0px 3px 0px 3px;color:white;padding: 3pt;cursor: pointer; }
+.tabSelected {background-color: #0CC2DE;border:solid 1pt #0CC2DE;}
+.scrollbar-dark {scrollbar-base-color:white;scrollbar-face-color: #2b2b2b;scrollbar-arrow-color:white; scrollbar-shadow-color:#2b2b2b;scrollbar-3dlight-color: #2b2b2b;scrollbar-highlight-color:#2b2b2b;scrollbar-track-color: white;  }
+.lightGrayBackground {background-color: #eeeeee;}
+
+.SectionCaption{font-style:normal;  font-weight: bold;font-size:12pt;font-family:  Calibri,Arial; color:rgb(69,103,131)}
+.SectionText{font-style:normal;  font-weight: normal;font-size:8pt;font-family:  Calibri,Arial; color:rgb(49,74,95)}
+.SectionTextWhite{font-style:normal;  font-weight: normal;font-size:8pt;font-family:  Calibri,Arial; color:black}
+
+.Footer{BORDER-top: rgb(198,207,214) 5pt solid;BORDER-bottom:rgb(198,207,214) 2pt solid;BACKGROUND-COLOR: rgb(239,243,247);font-style:normal;  font-weight: normal;font-size:10pt;font-family:  Calibri,Arial; color:rgb(49,74,95)}
+
+li{margin: 0 0 0 9; list-style-type: square; font-family:  Calibri, Arial; font-size: 11pt; font-style: normal; font-weight: normal; color: #000000; text-decoration: none;}
+ol li{ list-style-type:inherit !important;  }
+
+A {COLOR: #000000; text-decoration: none; font-weight: normal; cursor:pointer; }
+A:link {COLOR: #000000; text-decoration: none; font-weight: bold; }
+A:visited {color: #000000; text-decoration: none;; font-weight: bold;}
+A:hover {COLOR: #E2A21B; text-decoration: none;}
+
+td.ColorWin {  padding: 0 0 0 0;  margin:  0 0 0 0;  border:  0 0 0 0;  height: 12pt;  width: 12pt;}
+#PS.td {border-bottom: solid 1pt #ffcc00;}
+Select {width:98pt;font-family:  Calibri,Arial;  font-size: 9pt; font-style: normal; font-weight: normal; color: #000000; text-decoration: none;}
+.SelectDark {border-style:solid; border-width: 1px; border-color: white ; height:20px; font-family:  Calibri,Arial;  font-size: 9pt; font-style: normal; font-weight: normal; color: #ffffff; text-decoration: none; background-color:#000000;background-image: url(http://i62.tinypic.com/15xvbd5.png) no-repeat 96% 0; }
+INPUT[type=text] {width:95pt;font-family:  Calibri,Arial; font-size: 9pt; font-style: normal; font-weight: normal; color: #000000; text-decoration: none; border: solid 1pt #aaaaaa;padding: 1px}
+INPUT.checkbox {width:15pt;font-family:  Calibri,Arial; font-size: 9pt; font-style: normal; font-weight: normal; color: #000000; text-decoration: none;}
+INPUT.file {width:160pt;font-family:  Calibri,Arial; font-size: 9pt; font-style: normal; font-weight: normal; color: #000000; text-decoration: none;}
+INPUT.ColorButton {width:50pt;font-family:  Calibri,Arial; font-size: 9pt; font-style: normal; font-weight: normal; text-decoration: none;}
+INPUT.ColorButton2 {width:97pt;font-family:  Calibri,Arial; font-size: 9pt; font-style: normal; font-weight: normal;}
+INPUT.button {width:124pt;border-width:1;filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#FFFAFAE2', endColorstr='#FFC0C18B')}
+INPUT.button2 {width:124pt;border-width:1;filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#FFFFEEE7', endColorstr='#FFDBA47B')}
+td{font-style:normal;  font-weight: normal;font-size:9pt;font-family:  Calibri,Arial; color:rgb(49,74,95)}
+
+.SelectSymbol1 {height: 150pt; overflow:auto}
+.SelectSymbol2 {height: 150pt; overflow:auto; background-color: #FFFFFF;}
+.SelectedSymbol {font-style: italic; background-color: #00FFFF;}
+.UnSelectedSymbol {font-style: normal; background-color: #FFFFFF;}
+
+
+.PropertiesTable{border-collapse :separate;BORDER-RIGHT: #c6cbce 1pt solid;  BORDER-TOP: #c6cbce 1pt solid; BORDER-LEFT: #c6cbce 1pt solid; BORDER-BOTTOM: #c6cbce 1pt solid; BACKGROUND-COLOR: #f7f7f7}
+.PropertiesTDTop{PADDING-Left: 1pt; BORDER-BOTTOM: #c6cbce 1pt solid;font-family:  Calibri,Arial; FONT-SIZE: 8pt;font-weight: bold;BACKGROUND-COLOR: #e6e3e0;}
+.PropertiesTD{PADDING-Left: 1pt; BORDER-BOTTOM: #c6cbce 1pt solid;font-family:  Calibri,Arial; FONT-SIZE: 8pt;font-weight: normal;}
+
+.ButtonYellow{BACKGROUND-COLOR: #ffffff;PADDING-RIGHT: 0pt; BACKGROUND-POSITION: left top; PADDING-LEFT: 0pt; FONT-WEIGHT: bold; FONT-SIZE: 8pt;  PADDING-BOTTOM: 0pt; MARGIN: 0pt; COLOR: black; BORDER-TOP-STYLE: none; PADDING-TOP: 0pt; BACKGROUND-REPEAT: no-repeat; FONT-FAMILY: Calibri,Arial; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; HEIGHT: 21pt; BORDER-BOTTOM-STYLE: none;text-align :center;line-height:15pt;cursor:hand}
+.ButtonYellowLeftTD{BACKGROUND-IMAGE: url(Images\ButtonYellowLeft.gif);width:2pt; background-repeat:no-repeat}
+.ButtonYellowCenterTD{width:100% ;BACKGROUND-IMAGE: url(Images\ButtonYellowCenter.gif);text-align:center ; FONT-WEIGHT: bold; FONT-SIZE: 8pt;  PADDING-BOTTOM: 0pt; MARGIN: 0pt; COLOR: black; FONT-FAMILY: Calibri,Arial;height:21pt}
+.ButtonYellowRightTD{BACKGROUND-IMAGE: url(Images\ButtonYellowRight.gif);width:3pt; background-repeat:no-repeat}
+.ButtonYellowTable{PADDING: 0pt; MARGIN: 0pt; WIDTH: 100%; HEIGHT: 100%;  BORDER-STYLE:none}
+
+.link {cursor:pointer; }
+.link2 {cursor:pointer;COLOR: #000000; text-decoration: none;  }
+.link2:hover {COLOR: #E2A21B; text-decoration: none;cursor: pointer;}
+.underline {text-decoration: underline;}
+
+a.button {
+    background: transparent url('commonImg/bg_button_a.gif') no-repeat scroll top right;
+    color: #444;
+    display: block;
+    float: left;
+    font: normal 9pt Calibri,Arial, sans-serif;
+    height: 23pt;
+    margin-right: 5pt;
+    padding-right: 8pt;
+    text-decoration: none;
+}
+
+a.button span {
+    background: transparent url('commonImg/bg_button_span.gif') no-repeat;
+    display: block;
+    line-height: 10pt;
+    padding: 4pt 0 4pt 8pt;
+}
+
+a.button:active {
+    background-position: bottom right;
+    color: #000;
+    outline: none;
+}
+
+a.button:active span {
+    background-position: bottom left;
+    padding: 5pt 0 3pt 8pt;
+}
+.hideUntillTranslated
+{
+	display:none;
+}
+
+/* Animated checkbox */
+.switch {
+    float: inherit ;
+    position: relative;
+    display: inline-block;    
+    width: 30px;
+    left: 5px;
+    height: 4px;
+    top:8px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: -4px;
+    left: -1px;
+    right: 0;
+    bottom: 0;
+    background-color: #88898E;
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 13px;
+  width: 13px;
+  left: -2px;
+  bottom: -4px;
+  background-color:white;
+  border: 2px solid #88898E;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #00869E;
+}
+input:checked + .slider:before {
+  border: 2px solid #00869E;
+}
+input:focus + .slider {
+    box-shadow: 0 0 1px #00869E;
+}
+input:checked + .slider:before {
+  -webkit-transform: translateX(20px);
+  -ms-transform: translateX(20px);
+  transform: translateX(20px);
+}
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* new selection box*/
+.selectNew {font-size: 11pt;  font-family: Calibri,Arial;    color: #000000;   padding: 1px 15px 1px 1px;  width: 100%;  max-width: 100%;  box-sizing: border-box;  margin: 0;  border: solid 1px #dddddd;box-shadow: 0px 0px 1px 2px rgba(0,0,0,.04);  border-radius: 1px;  -moz-appearance: none; -webkit-appearance: none; appearance: none; background-color: #ffffff;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'),    linear-gradient(to bottom, #ffffff 0%,#ffffff 100%);  background-repeat: no-repeat, repeat;  background-position: right 5px top 50%, 0 0;  background-size: 8px auto, 100%;}
+/* Hide arrow icon in IE browsers */
+.selectNew::-ms-expand {  display: none;}
+/* Hover style */
+.selectNew:hover {  border-color: #000000;}
+/* Focus style */
+.selectNew:focus {  border-color: #000000;  /* It'd be nice to use -webkit-focus-ring-color here but it doesn't work on box-shadow */
+  color: #000000;   outline: none;}
+/* Set options to normal weight */
+.selectNew option {  font-weight:normal;}
+/* Disabled styles */
+.selectNew:disabled, .selectNew[aria-disabled=true] {  color: graytext;  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22graytext%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'),    linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%);}
+.selectNew:disabled:hover, .selectNew[aria-disabled=true] {  border-color: #aaa;}

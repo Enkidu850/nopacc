@@ -1,0 +1,7 @@
+#panelDiv{
+	top:100px;
+}
+#toolbox {
+    height: calc(100% - 75px);
+    top: 75px;
+}

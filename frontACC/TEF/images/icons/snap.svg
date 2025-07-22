@@ -1,0 +1,14 @@
+<svg id="Component_44_1" data-name="Component 44 – 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_1184" data-name="Rectangle 1184" width="24" height="24" fill="none"/>
+    </clipPath>
+  </defs>
+  <g id="Group_2176" data-name="Group 2176" clip-path="url(#clip-path)">
+    <path id="Path_1336" data-name="Path 1336" d="M22.534,7.02A2.468,2.468,0,0,0,19.1,6.464a2.431,2.431,0,0,0-.871,2.724L6.061,18.439a2.439,2.439,0,0,0-3.519,3.33,2.468,2.468,0,0,0,3.439.556,2.433,2.433,0,0,0,.942-2.482L19.212,10.5A2.438,2.438,0,0,0,22.534,7.02" fill="#646871"/>
+    <path id="Path_1337" data-name="Path 1337" d="M5.552,8.764,3.714,6.348A1.71,1.71,0,1,1,6.392,4.221l.042.055L8.274,6.69l1.865-1.423L8.3,2.855A4.058,4.058,0,1,0,1.776,7.683c.022.03.045.06.068.089l1.841,2.416Z" fill="#646871"/>
+    <path id="Path_1338" data-name="Path 1338" d="M10.138,5.267h0l.037.049Z" fill="#646871"/>
+    <rect id="Rectangle_1182" data-name="Rectangle 1182" width="2.349" height="3.335" transform="matrix(0.795, -0.606, 0.606, 0.795, 8.602, 7.125)" fill="#646871"/>
+    <rect id="Rectangle_1183" data-name="Rectangle 1183" width="2.349" height="3.334" transform="matrix(0.795, -0.606, 0.606, 0.795, 4.015, 10.622)" fill="#646871"/>
+  </g>
+</svg>

@@ -1,0 +1,983 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <title>ToolTitle</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=11" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="StyleSheet" href="../Style80.css" type="text/css">
+	<script language="javascript" src="../jquery/jquery-3.1.1.min.js"></script>
+    <script language="javascript" src="../ToolsCommon80.js"></script>
+    <style>
+    </style>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" style="border: 0rem" id="Body"  class="hideUntillTranslated" onunload="queryCompleted()" >
+    <!--oncontextmenu="return false;">  onclick="bHide=true;HideOptionsNow()" > -->
+    <table id="PropertiesSheetTbl" class="PropertiesSheet" cellspacing="0" cellpadding="2" >
+        <tr class='TableOtherLine'> <!-- spacing between points-->
+            <td class="s8b ">
+                <span id="spacingText" class="i18n">Text9</span>
+            </td>
+            <td align="left">
+                &nbsp;<input id="spacing" type="number" value="2" size="7" onchange="CheckNumberEx(spacing,10,0.1,9999)" style="width:6.67rem" readonly disabled/>
+                <span class="i18n">Text6</span>
+            </td>
+        </tr>
+        <tr > <!-- Add Viewer Altitude delta-->
+            <td class="s8b ">
+                <span class="i18n">Text32</span>
+            </td>
+            <td align="left">
+                <label class="switch">
+                    <input type="checkbox" id="addViewerDeltaAltitude" onchange="showViewerAltitude();">
+                    <span class="slider round"></span>
+                </label>		
+            </td>
+        </tr >
+        <tr id="setViewerAltitudeTR" style="display: none;"> <!-- Viewer Altitude above model-->
+            <td class="s8b ">
+                <span class="i18n">Text28</span>
+            </td>
+            <td align="left">
+                &nbsp;<input id="viewerAltitude" type="number" value="0" size="5" onchange="CheckNumberEx(viewerAltitude,1.7,0,9999);changeViewerAltitude();" style="width:6.67rem"  step="0.1">
+                <span class="i18n">Text33</span>
+            </td>
+            <!--single/multi measurements -->
+        <tr> 
+            <td class="s8b">
+                <span class="i18n">Text38</span>
+            </td>
+            <td align="left">
+                &nbsp;<select id="calculateType" onchange="">
+                    <option class="i18n" value=2 selected="selected">Text47</option>
+                    <option class="i18n" value=0 >Text43</option>
+                    <option class="i18n" value=1 >Text44</option>
+                </select>
+            </td>     
+        </tr>
+        <tr > <!-- First Altitude above model-->
+            <td class="s8b ">
+                <span class="i18n">Text11</span>
+            </td>
+            <td align="left">
+                &nbsp;<input id="minAltitude" type="number" value="1.7" size="5" onchange="CheckNumberEx(minAltitude,1.7,0.01,999999)" style="width:6.67rem" step="0.1">
+                <span class="i18n">Text10</span>
+            </td>
+        </tr >
+        <tr id="secondAltitudeTR" style="display:none"> <!-- First Altitude above ground-->
+            <td class="s8b ">
+                <span id="Span1" class="i18n">Text12</span>
+            </td>
+            <td align="left">
+                &nbsp;<input id="maxAltitude" type="number" value="2.0" size="7" onchange="CheckNumberEx(maxAltitude,2.0,0.01,999999)" style="width:6.67rem" >
+                <span class="i18n">Text10</span>
+            </td>
+        </tr >
+        <tr class="s8" >
+            <td colspan="2" align="center"  class="ToolButtonsArea">
+                <button id="calcBtn" class="MenuButton " onclick="calc()"><img src="img/ViewshedIcon.png" /><br /><span class="i18n">Text38</span></button>
+            </td>
+        </tr>
+    </table>
+
+    <table id="progressTbl" class="s9 w100" cellspacing="0" cellpadding="10" style="display: none">
+        <tr>
+            <td align="center">
+                <img src="img/loading.gif" style="width: 10rem; height: 10rem;"/>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding-bottom: 0px !important;">
+                <div id="progress" class="progressBarBlue"><div ></div></div>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding-top: 0px !important;">
+                <div id="progress2"  class="progressBarBlue"><div ></div></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span id='progressText' class="i18n"></span><br><br>
+                <span class="i18n">Text17</span>
+            </td>
+            <td>
+                <!-- <button class="MenuButton " onclick="parent.analysis.closeViewshedQueryTool(true,gPointLayerID)"><img src="img/properties.png" /><br /><span class="i18n">Text42</span></button> -->
+            </td>
+        </tr>
+    </table>
+
+    <table id="queryCompleteTbl" class="s9" cellspacing="0" cellpadding="2" style="display: none">
+        <tr>
+            <td colspan="2">
+                <span class="i18n">Text39</span><br>
+                <span class="i18n">Text40</span><span id="pointsCreatedID"></span><br>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button class="MenuButton " onclick="closeTool()"><img src="img/close.png" /><br /><span class="i18n">Text41</span></button>
+            </td>
+            <td>
+                <!-- <button class="MenuButton " onclick="parent.analysis.closeViewshedQueryTool(true,gPointLayerID)"><img src="img/properties.png" /><br /><span class="i18n">Text42</span></button> -->
+            </td>
+        </tr>
+    </table>
+
+<script language="JavaScript">
+var gDebug = true;
+var gViewshedObj = null;
+var gPointLayerID = null;
+var gPointLayer;
+var gGroupID = "";
+var gVisibleGroupID = "";
+var gInvisibleGroupID = "";
+var gFoundLine = false;
+var gPositionsArray = [];  //[x1,altitude1,y1,x2,altitude2,y2,...] 
+var gPositionsArrayIndex = 0;
+var gPositionsArrayToDraw = []; 
+var gVisibleArray = [];
+var gVisibleArrayToDraw = [];
+var gRedPointsCount = 0;
+var gGreenPointsCount = 0;
+var gVisibilityDistance;
+var gSpacing ;
+var gMinAltitude = 1;
+var gMaxAltitude = 1;
+var gTmpPolygon = null;
+var gOriginalViewerAltitude = 0;
+var gViewshedCalcStarted=false;
+var gForceOutOfRange;
+var SGWorld = null;
+var gRedArray = [];
+var gGreenArray = [];
+var gOrangeArray = [];
+var gMeshlayersQuality=[];
+var gImageryLayersToShow=[];
+var gSettingQuality;
+var gOriginalViewshedYaw;
+var gOriginalViewshedPitch;
+var gOriginalVieshedFOVX;
+var gOriginalVieshedFOVY;
+var viewshedID;
+var bufferParams;
+var polygonGeometry;
+var viewSpacingX;
+var viewSpacingY;
+var scanSpacingX;
+var scanSpacingY;
+var maxFieldOfView;
+var numOfSplitsX;
+var numOfSplitsY;
+var splitFOVX;
+var splitFOVY;
+var leftBorderYaw;
+var bottomBorderPitch;
+var yawPitchQueue;
+var numOfScanPointsOnXAxis;
+var numOfScanPointsOnYAxis;
+var SplitToSlicesRecOnGoing;
+var abort = false;
+var calculating = false;
+var viewSpacingToScanSpacingRatio;
+
+//--------------
+function Init() {
+    SGWorld = initSGWorld();
+    viewshedID = GetParamValue("itemID", "");
+    gViewshedObj = SGWorld.Creator.GetObject(viewshedID);
+    gOriginalViewerAltitude = gViewshedObj.Position.Altitude;
+    gViewshedObj.Visibility.Show = true;
+    
+    if (TEF) // make sure to save the Viewshed in the local storage 
+       parent.projectTree.refreshMyData();
+
+    //calculate spacing in meters
+    findBBox(gViewshedObj);
+    var elevationInfo = getElevationInfo(polygonGeometry);
+
+    var ratio =  elevationInfo.resX/elevationInfo.resY;
+    //spacing should be equal for X and Y
+
+    var scanSpacingMeters = 2;
+    if(gViewshedObj.Distance > 5000)
+        scanSpacingMeters = 3;
+    scanSpacingX = Math.round(scanSpacingMeters / elevationInfo.resXMeters);     //how much is 2 meters in X axis pixels
+    scanSpacingY = Math.round(scanSpacingMeters / elevationInfo.resYMeters);     //how much is 2 meters in Y axis pixels
+
+    viewSpacingToScanSpacingRatio = Math.max(1, Math.floor(Math.sqrt(gViewshedObj.Distance) / 10) - 1);
+    //scan spacing is 2m. view spacing is viewSpacingToScanSpacingRatio * scan spacing.
+    $("#spacing").val((2 * viewSpacingToScanSpacingRatio).toFixed(2));
+
+    SGWorld.ProjectTree.DeleteItem(gTmpPolygon.ID);
+}
+
+//---------------------
+function calculateTypeChange(){
+    var calculateType = $("#calculateType").val();
+    if (calculateType==0)
+        $("#secondAltitudeTR").hide()
+    else
+        $("#secondAltitudeTR").show()
+}
+//---------------
+function showViewerAltitude() {
+    if  ($("#addViewerDeltaAltitude").is(':checked')){
+        $("#viewerAltitude").val(1.7);
+        changeViewerAltitude();
+        $("#setViewerAltitudeTR").show();
+    }
+    else{
+        gViewshedObj.Position.Altitude = gOriginalViewerAltitude;
+        $("#setViewerAltitudeTR").hide();
+    }
+}
+//---------------------
+function changeViewerAltitude() {
+    var modelAltitude =  SGWorld.Terrain.GetGroundHeightInfo(gViewshedObj.Position.X, gViewshedObj.Position.Y, 1, true).Position.Altitude;
+    var terrainAltitude =  SGWorld.Terrain.GetGroundHeightInfo(gViewshedObj.Position.X, gViewshedObj.Position.Y,1, false).Position.Altitude;
+    modelAltitude += (1.0*$("#viewerAltitude").val());
+    gViewshedObj.Position.Altitude = modelAltitude - terrainAltitude;
+    // gViewshedObj.Position.Altitude = $("#viewerAltitude").val();
+}
+//-----------
+// calc 
+function calc() {
+    if (!ValidateInput()){
+        return false;
+    }
+    gViewshedCalcStarted=true;
+    SplitToSlicesRecOnGoing = false;
+    calculating = true;
+
+    gRedPointsCount = 0;
+    gGreenPointsCount = 0;
+    
+    var parentGroup = TEF ? parent.projectTree.getMyDataGroup() : SGWorld.ProjectTree.RootID;
+    gGroupID = SGWorld.ProjectTree.CreateGroup(gViewshedObj.TreeItem.Name+"-"+SGLang.i18n("Text7"), parentGroup);
+    var calculateType = $("#calculateType").val();
+    if(calculateType == 0 || calculateType == 2) //green or both
+        gVisibleGroupID = SGWorld.ProjectTree.CreateLockedGroup(SGLang.i18n("Text43"), gGroupID);
+    if(calculateType == 1 || calculateType == 2) //red or both
+        gInvisibleGroupID = SGWorld.ProjectTree.CreateLockedGroup(SGLang.i18n("Text44"), gGroupID);
+
+    //draw viewer
+    var imageCreator = objectTypeCreators["ImageLabel"];
+    var viewerPosition = gViewshedObj.Position.Copy().ToAbsolute();
+    var pos = SGWorld.Creator.CreatePosition(viewerPosition.X,viewerPosition.Y,viewerPosition.Altitude, 3, 0);
+    if (imageCreator)
+        imageCreator(pos, SGLang.i18n("Text46"), "#ffffff");
+
+    $("#calcBtn").addClass("MenuButtonHighlight");
+   
+    gForceOutOfRange = true;
+    gMinAltitude = validateNumber($("#minAltitude").val());
+    gMaxAltitude = validateNumber($("#maxAltitude").val());
+    //gViewshedObj.Visibility.Show = false;
+
+    $("#PropertiesSheetTbl").hide();
+    $("#progressTbl").show();
+    
+    // Hide all imagery layers (performance optimization)
+    var imageryLayers=[];
+    BuildObjectsList(SGWorld.ProjectTree.RootID, imageryLayers, 26); 
+    imageryLayers.forEach(function(element) {
+        if (SGWorld.ProjectTree.GetVisibility(element)==1){
+            gImageryLayersToShow.push (element);
+            SGWorld.ProjectTree.SetVisibility(element,false);
+        }
+    });
+    // Upscale quality of all mesh layers in the project
+    var meshLayers=[];
+    BuildObjectsList(SGWorld.ProjectTree.RootID, meshLayers, 38); 
+    meshLayers.forEach(function(element) {
+        var meshObj = SGWorld.Creator.GetObject (element);
+
+        gMeshlayersQuality.push ([element,meshObj.Oversampling]);
+        meshObj.Oversampling = 150; // Best
+    });
+    gSettingQuality = SGWorld.GetOptionParam ("TerrainModelQuality"  );
+    SGWorld.SetOptionParam ('TerrainModelQuality',2);
+    
+    if(gViewshedObj.Distance > 1000)
+        SGWorld.SetParam(-22, 1);  //enter async long work (3dml no limit , no texture no render )
+    prepareQuery ();     
+    
+}
+//---------------------
+function prepareQuery ()
+{
+    $("#progressText").text(SGLang.i18n("Text18"));
+    updateProgressBar (1);
+    getModelElevation();
+}
+//---------------------
+function findBBox(viewshedObj){
+    var centerPoint = viewshedObj.Position;
+    var verticesArray=[];
+    if (viewshedObj.FieldOfViewX == 360) // Spherical
+    {
+        var sqrDist = viewshedObj.Distance * Math.sqrt(2) ;
+        var Point1 = centerPoint.Move(sqrDist, 45, centerPoint.Pitch);
+        var Point2 = centerPoint.Move(sqrDist, 135, centerPoint.Pitch);
+        var Point3 = centerPoint.Move(sqrDist, 225, centerPoint.Pitch);
+        var Point4 = centerPoint.Move(sqrDist, 315, centerPoint.Pitch);
+        verticesArray = [Point1.X, Point1.Y, 0, Point2.X, Point2.Y, 0, Point3.X, Point3.Y, 0, Point4.X, Point4.Y, 0];
+    }
+    else {
+        verticesArray = [centerPoint.X, centerPoint.Y, 0]
+        var numSegments = 16;
+        var radius = viewshedObj.Distance * 1.05;
+        for (i=0; i<=numSegments; i++){
+            var point = centerPoint.Move(radius , centerPoint.Yaw - viewshedObj.FieldOfViewX * (i/numSegments-0.5), centerPoint.Pitch);
+            verticesArray.push (point.X);
+            verticesArray.push (point.Y);
+            verticesArray.push (0);
+        }
+    }
+    
+    gTmpPolygon = SGWorld.Creator.CreatePolygonFromArray(verticesArray, 0, 0, 0, SGWorld.ProjectTree.HiddenGroupID, "");
+    polygonGeometry = gTmpPolygon.Geometry;
+
+    //SGWorld.Creator.CreatePolygon(polygonGeometry.Envelope, SGWorld.Creator.CreateColor(0, 255, 0, 1), SGWorld.Creator.CreateColor(0, 255, 0, 0.5), 2, "", "bBox");
+}
+//---------------------------
+function getModelElevation () {
+    rectangleGeometryToMultipleElevationParams(
+        polygonGeometry, 
+        function (bufferParamsVar) {
+            bufferParams = bufferParamsVar;
+
+            $("#progressText").text(SGLang.i18n("Text19"));
+
+            // if(gViewshedObj.Distance > 5000)
+            //     maxFieldOfView = 15;
+            // else
+            //     maxFieldOfView = 20;
+            maxFieldOfView = 15;
+            
+            if(gViewshedObj.Distance > 1000 || gViewshedObj.FieldOfViewX == 360)
+                PrepareSplitViewshedToSlices();
+            else{
+                findQueryPoints(true);
+                $("#progressText").text(SGLang.i18n("Text22"));
+                
+                updateProgressBar (45);
+                updateSecondaryProgressBar(0);
+                SGWorld.Analysis.StartViewshedVisibilityQueryAsync(gViewshedObj.ID,2)
+                .OnResolve(function() {
+                    updateProgressBar (60);
+                    updateSecondaryProgressBar(100);
+                    setTimeout (function(){
+                        AnalyzeViewshed();    
+                        updateProgressBar (75);
+                        setTimeout (function(){
+                            gPositionsArrayToDraw = gPositionsArray;
+                            gVisibleArrayToDraw = gVisibleArray;   
+                            DrawPoints();
+                            setTimeout (function(){
+                                updateProgressBar (80);
+                                calculating = false;
+                                gViewshedObj.Visibility.Show = false;
+                                queryCompleted();
+                                updateProgressBar (95); 
+                            },1);
+                        },1);
+                    },1);
+                })
+                .OnReject(function(error) {
+                    if (gDebug) alert("ViewshedQuery.html -> getModelElevation OnReject: " + err.message);
+                })
+                .OnProgress(function(progress){
+                    updateSecondaryProgressBar(progress);
+                });
+            }
+        },
+        function (progress, type) {
+            if(type == "primary")
+                updateProgressBar (Math.floor(progress / 5.0 + 1));
+            else
+                updateSecondaryProgressBar(progress);
+        },
+        function(error){
+            if (gDebug) alert("ViewshedQuery.html -> getModelElevation OnReject: " + error.message);
+            queryCompleted();
+        }
+    );
+}
+//-----------------
+// PrepareSplitViewshedToSlices
+function PrepareSplitViewshedToSlices(){
+    try{    
+        gOriginalViewshedYaw = gViewshedObj.Position.Yaw;
+        gOriginalViewshedPitch = gViewshedObj.Position.Pitch;
+        gOriginalVieshedFOVX = gViewshedObj.FieldOfViewX;   
+        gOriginalVieshedFOVY = gViewshedObj.FieldOfViewY;
+
+        numOfSplitsX = Math.ceil(gViewshedObj.FieldOfViewX  / maxFieldOfView);
+        numOfSplitsY = Math.ceil(gViewshedObj.FieldOfViewY  / maxFieldOfView);
+        splitFOVX = gViewshedObj.FieldOfViewX / numOfSplitsX;
+        splitFOVY = gViewshedObj.FieldOfViewY / numOfSplitsY;
+        leftBorderYaw = gViewshedObj.Position.Yaw - (gViewshedObj.FieldOfViewX / 2);
+        bottomBorderPitch = gViewshedObj.Position.Pitch - (gViewshedObj.FieldOfViewY / 2);
+
+        newPos = gViewshedObj.Position.Copy();
+        dinstance = gViewshedObj.Distance;
+        //loop and split
+        yawPitchQueue = [];
+        for(var i = 0; i < numOfSplitsX; i++){
+            for(var j = 0; j < numOfSplitsY; j++){
+                yawPitchQueue.push([leftBorderYaw + splitFOVX * i + splitFOVX / 2, bottomBorderPitch + splitFOVY * j + splitFOVY / 2])            
+            }
+        }
+        totalNumOfSplits = yawPitchQueue.length;
+        SplitToSlicesRecOnGoing = true;
+        secondaryProgressCanGetSmaller = true;
+
+        var meshLayers=[];
+        BuildObjectsList(SGWorld.ProjectTree.RootID, meshLayers, 38); 
+        meshLayers.forEach(function(element) {
+            var meshObj = SGWorld.Creator.GetObject (element);
+            meshObj.Oversampling = 100; // normal
+        });
+
+        SplitViewshedToSlicesRec();
+    }
+    catch (err) {
+        if(gDebug) alert("ViewshedQuery.html -> PrepareSplitViewshedToSlices: " + err.message);
+    }
+}
+var numOfSplitsLeft;
+var totalNumOfSplits;
+var newPos;
+var dinstance;
+//-----------------
+// SplitViewshedToSlices
+function SplitViewshedToSlicesRec(){
+    try{
+        if(abort){
+            SplitToSlicesRecOnGoing = false;
+            queryCompleted();
+            SetViewshedToOriginalSize();
+            gViewshedObj.Visibility.Show = true;
+            calculating = false;
+
+            return;
+        }
+        var yawPitch = yawPitchQueue.shift();
+        if(!yawPitch){
+
+            SplitToSlicesRecOnGoing = false;
+            calculating = false;
+            gViewshedObj.Visibility.Show = false;
+            queryCompleted();
+            SetViewshedToOriginalSize();
+            updateProgressBar (95);
+
+            return;
+        }
+
+        gViewshedObj.Position.Pitch = yawPitch[1];
+        gViewshedObj.Position.Yaw = yawPitch[0];
+        gViewshedObj.FieldOfViewX = splitFOVX;
+        gViewshedObj.FieldOfViewY = splitFOVY;
+
+        findBBox(gViewshedObj);
+        findQueryPoints();
+        $("#progressText").text(SGLang.i18n("Text22"));
+
+        SGWorld.ProjectTree.DeleteItem(gTmpPolygon.ID);
+        
+        SGWorld.Analysis.StartViewshedVisibilityQueryAsync(gViewshedObj.ID,1024)
+            .OnResolve(function() {
+                AnalyzeViewshed();       
+                ApplySmartFilter();
+                DrawPoints();
+                numOfSplitsLeft = yawPitchQueue.length;
+                updateProgressBar (20 + 75 * (totalNumOfSplits - numOfSplitsLeft) / totalNumOfSplits);
+                updateSecondaryProgressBar(0);
+                SplitViewshedToSlicesRec();
+            })
+            .OnReject(function(error) {
+                if (gDebug) alert("ViewshedQuery.html -> SplitViewshedToSlicesRec OnReject: " + err.message);
+                queryCompleted();
+            })
+            .OnProgress(function(progress){
+                updateSecondaryProgressBar(progress);
+            });
+    }
+    catch (err) {
+        if(gDebug) alert("ViewshedQuery.html -> SplitViewshedToSlicesRec: " + err.message);
+        queryCompleted();
+    }
+}
+//-----------
+// findQueryPoints
+var leftOffsetPixels;
+var rightOffsetPixels;
+var topOffsetPixels;
+var bottomOffsetPixels;
+function findQueryPoints(aroundThePoint) {
+    try {
+        var envelope = polygonGeometry.Envelope;
+        var sliceMinX = Math.min(envelope.Rings.Item(0).Points.Item(0).X, envelope.Rings.Item(0).Points.Item(2).X);
+        var sliceMaxX = Math.max(envelope.Rings.Item(0).Points.Item(0).X, envelope.Rings.Item(0).Points.Item(2).X);
+        var sliceMinY = Math.min(envelope.Rings.Item(0).Points.Item(0).Y, envelope.Rings.Item(0).Points.Item(2).Y);
+        var sliceMaxY = Math.max(envelope.Rings.Item(0).Points.Item(0).Y, envelope.Rings.Item(0).Points.Item(2).Y);
+
+        var leftOffset = Math.abs( bufferParams.minX - sliceMinX);
+        var rightOffset = Math.abs( bufferParams.maxX - sliceMaxX);
+        var topOffset = Math.abs( bufferParams.maxY - sliceMaxY);
+        var bottomOffset = Math.abs( bufferParams.minY - sliceMinY);
+
+        leftOffsetPixels = Math.floor(leftOffset / bufferParams.resX);
+        rightOffsetPixels = rightOffset / bufferParams.resX;
+        topOffsetPixels = Math.floor(topOffset / bufferParams.resY);
+        bottomOffsetPixels = bottomOffset / bufferParams.resY;
+
+        numOfScanPointsOnYAxis= Math.floor((bufferParams.dimensionYInPixels * bufferParams.numOfYQuerysNeeded - bottomOffsetPixels - topOffsetPixels) / scanSpacingX);
+        numOfScanPointsOnXAxis = Math.floor((bufferParams.dimensionXInPixels * bufferParams.numOfXQuerysNeeded - rightOffsetPixels - leftOffsetPixels) / scanSpacingX);
+
+        gPositionsArrayIndex = 0;
+        gPositionsArray = [];
+
+        for (var i = 0 + topOffsetPixels; i < bufferParams.dimensionYInPixels * bufferParams.numOfYQuerysNeeded - bottomOffsetPixels; i += scanSpacingX) {
+            var y = bufferParams.maxY - i * bufferParams.resY;
+            for (var j = 0 + leftOffsetPixels; j < bufferParams.dimensionXInPixels * bufferParams.numOfXQuerysNeeded - rightOffsetPixels; j += scanSpacingX){
+                var x = bufferParams.minX + j * bufferParams.resX;
+                var groundAltitude = bufferParams.buffer[i * bufferParams.dimensionXInPixels * bufferParams.numOfXQuerysNeeded + j];
+                var altitude  = groundAltitude + gMinAltitude;
+                AddPoint([x,y,altitude]);
+    
+                var neighborAltitude;
+                var neighborStep = Math.round(scanSpacingX/2);
+                var altitudeDiff = -1;
+
+                if(aroundThePoint){
+                    for (var k = i-(neighborStep); k <= i+(neighborStep); k+= (neighborStep*2)) {  // check for 10m+ walls 5 meters around the point;
+                        for (var l = j-(neighborStep); l <= j+(neighborStep); l+= (neighborStep*2)) { 
+                            if (k>=0 && l>=0 && k<bufferParams.dimensionYInPixels * bufferParams.numOfYQuerysNeeded - bottomOffsetPixels && l<bufferParams.dimensionXInPixels * bufferParams.numOfXQuerysNeeded - rightOffsetPixels){
+                                neighborAltitude = bufferParams.buffer[k * bufferParams.dimensionXInPixels * bufferParams.numOfXQuerysNeeded + l] ;
+                                if (neighborAltitude != undefined && !isNaN(neighborAltitude) ) {
+                                    altitudeDiff = Math.max(altitudeDiff, neighborAltitude - groundAltitude);
+                                }
+                            }
+                        }
+                    }
+                    if (altitudeDiff > 3){
+                        for (var currAltitude = gMinAltitude + 1; currAltitude <=  altitudeDiff; currAltitude += 2) { // add point every 2 meter
+                            AddPoint([x,y,groundAltitude +  currAltitude])
+                        }
+                    }
+                }
+            }
+        }
+    
+        // var calculateType = $("#calculateType").val();
+        // var deltaAltitude = gMaxAltitude - gMinAltitude;        
+        // if(calculateType == 1){   // second measurement at higher altitude
+        //     for(var i = 0; i < gPositionsArray.length - 2; i += 3){
+        //         gPositionsArray.push(gPositionsArray[i]);
+        //         gPositionsArray.push(gPositionsArray[i + 1] + deltaAltitude);
+        //         gPositionsArray.push(gPositionsArray[i + 2]);
+        //     }
+        // }
+
+        if(TEF)
+            gPositionsArray = new Float64Array(gPositionsArray);
+    
+        return true;
+    }
+    catch (err) {
+        if(gDebug) alert("ViewshedQuery.html -> findQueryPoints: " + err.message);
+    }
+}   
+//-------------
+// AddPoint
+function AddPoint(pos) {
+    gPositionsArray[gPositionsArrayIndex] = pos[0]; //x
+    gPositionsArray[gPositionsArrayIndex + 1] = pos[2]; //altitude
+    gPositionsArray[gPositionsArrayIndex + 2] = pos[1]; //y
+    gPositionsArrayIndex += 3;
+}
+//-----------------
+// AnalyzeViewshed
+function AnalyzeViewshed (){
+    $("#progressText").text(SGLang.i18n("Text31"));
+    AnalyzeViewshedPointsBulk();
+    // Release viewshed buffer
+    SGWorld.Analysis.EndVisibilityQuery();
+    
+    $("#progressText").text(SGLang.i18n("Text34"));
+}
+//-----------------
+function AnalyzeViewshedPointsBulk (){
+    try{
+        gVisibleArray = [];
+        gVisibleArray = SGWorld.Analysis.QueryPointsVisibility(gPositionsArray);
+        if(!TEF)
+            gVisibleArray = gVisibleArray.toArray();
+        // gVisibleArray = [];
+        // var pos = SGWorld.Creator.CreatePosition(0,0,0,3,0);
+        // for(var i = 0; i < gPositionsArray.length; i+=3){
+        //     pos.Init(gPositionsArray[i], gPositionsArray[i+2], gPositionsArray[i+1], 0,0,0,3,0);
+        //     var vis = SGWorld.Analysis.QueryPointVisibility(pos);
+        //     gVisibleArray.push(vis);
+        // }
+    }
+    catch (err) {
+        if(TEF)
+            parent.application.errorHandling(err.message,0);
+        else if (gDebug) alert("ViewshedQuery.html -> AnalyzeViewshedPointsBulk: " + err.message);
+    }
+}
+//-----------------
+function ApplySmartFilter() {
+    try{
+        //var viewSpacingToScanSpacingRatio = 3;
+        gVisibleArrayToDraw = [];
+        gPositionsArrayToDraw = [];
+        
+        for(var i = 0; i < numOfScanPointsOnYAxis * 3; i += viewSpacingToScanSpacingRatio * 3){ 
+            for(var j = 0 ; j < numOfScanPointsOnXAxis * 3; j += viewSpacingToScanSpacingRatio * 3){
+                var batchVisibility = [];
+                var batchPoints = [];
+                var heightestVisiblePoint = [0,-1000,0];
+                var heightestVisiblePointFound = false;
+                var lowestInvisiblePoint = [0,1000,0];
+                var lowestInvisiblePointFound = false;
+                var visibleCount = 0;
+                var invisibleCount = 0;
+                for(var l = i; (l < i + viewSpacingToScanSpacingRatio * 3) && (l < numOfScanPointsOnYAxis * 3); l += 3){
+                    for(var m = j; (m < j + viewSpacingToScanSpacingRatio * 3) && (m < numOfScanPointsOnXAxis * 3); m += 3){
+                        var positionArrayIndex = l * numOfScanPointsOnXAxis + m;
+                        var x = gPositionsArray[positionArrayIndex];
+                        var z = gPositionsArray[positionArrayIndex + 1];
+                        var y = gPositionsArray[positionArrayIndex + 2];
+                        if(positionArrayIndex > gPositionsArray.length - 1){
+                            return;
+                        }
+                        if (!x) {
+                            continue;
+                        }
+                        batchPoints.push(x,z,y);
+
+                        var visibility = gVisibleArray[positionArrayIndex / 3];
+                        batchVisibility.push(visibility);
+
+                        if(visibility == 0){
+                            invisibleCount++;
+                            if(z < lowestInvisiblePoint[1]){
+                                lowestInvisiblePointFound = true;
+                                lowestInvisiblePoint[0] = x;
+                                lowestInvisiblePoint[1] = z;
+                                lowestInvisiblePoint[2] = y;
+                            }
+                        }
+                        if(visibility == 1){
+                            visibleCount++;
+                            if(z > heightestVisiblePoint[1]){
+                                heightestVisiblePointFound = true;
+                                heightestVisiblePoint[0] = x;
+                                heightestVisiblePoint[1] = z;
+                                heightestVisiblePoint[2] = y;
+                            }
+                        }
+                    }
+                }
+                //all batch visible/invisible
+                if(visibleCount == batchPoints.length / 3 || invisibleCount == batchPoints.length / 3){
+                    var middleIndex = (Math.floor((batchPoints.length / 3) / 2)) * 3;
+                    gPositionsArrayToDraw.push(batchPoints[middleIndex]);
+                    gPositionsArrayToDraw.push(batchPoints[middleIndex + 1]);
+                    gPositionsArrayToDraw.push(batchPoints[middleIndex + 2]);
+                    gVisibleArrayToDraw.push(batchVisibility[0]);
+                }
+                else{
+                    if(heightestVisiblePointFound){
+                        gPositionsArrayToDraw = gPositionsArrayToDraw.concat(heightestVisiblePoint);
+                        gVisibleArrayToDraw.push(1);
+                    }
+                    if(lowestInvisiblePointFound){
+                        gPositionsArrayToDraw = gPositionsArrayToDraw.concat(lowestInvisiblePoint);
+                        gVisibleArrayToDraw.push(0);
+                    }
+                }
+                // gVisibleArrayToDraw = gVisibleArrayToDraw.concat(batchVisibility);
+                // gPositionsArrayToDraw = gPositionsArrayToDraw.concat(batchPoints);
+            }
+        }
+
+        gPositionsArrayToDraw = new Float64Array(gPositionsArrayToDraw);
+    }
+    catch (err) {
+        if (gDebug) alert("ViewshedQuery.html -> ApplySmartFilter: " + err.message);
+    }
+}
+//------------
+//  DrawPoints
+function DrawPoints() {
+    var ObjType = "ImageLabel";
+    var size = 0.5;
+
+    //draw points
+    for (var i = 0; i < gPositionsArrayToDraw.length; i += 3) {
+        DrawObject(i);
+    }
+    var calculateType = $("#calculateType").val();
+    var pointLine = objectTypeCreators["PointPolyline"];
+    if (gGreenArray.length>3 && (calculateType == 0 || calculateType == 2)){
+        gGreenPointsCount += gGreenArray.length / 3;
+        var greenGeometry = SGWorld.Creator.GeometryCreator.CreateLineStringGeometry(gGreenArray);
+        pointLine(greenGeometry, SGLang.i18n("Text43"), SGWorld.Creator.CreateColor (0,255,0,0), gVisibleGroupID);
+        // for(var i = 0; i < gGreenArray.length; i+=3){
+        //     var pos = SGWorld.Creator.CreatePosition(gGreenArray[i],gGreenArray[i+1],gGreenArray[i+2], 3, 0);
+        //     imageCreator(pos, "visible", "#454B1B");
+        // }
+    }
+    if (gRedArray.length>3 && (calculateType == 1 || calculateType == 2)){
+        gRedPointsCount += gRedArray.length / 3;
+        var redGeometry = SGWorld.Creator.GeometryCreator.CreateLineStringGeometry(gRedArray);
+        pointLine(redGeometry, SGLang.i18n("Text44"), SGWorld.Creator.CreateColor (255,0,0,0), gInvisibleGroupID);
+    }
+    // if (gOrangeArray.length>3){
+    //     var orangeGeometry = SGWorld.Creator.GeometryCreator.CreateLineStringGeometry(gOrangeArray);
+    //     pointLine(orangeGeometry, SGLang.i18n("Text45"), SGWorld.Creator.CreateColor (255,190,50,0));
+    // }
+
+    gRedArray = [];
+    //gOrangeArray = [];
+    gGreenArray = [];
+
+    return true;
+}
+//---------
+// DrawObject
+function DrawObject(index) {
+    var node;
+    var TEObj;
+    var ObjType = "ImageLabel";
+    var spacingMeter = validateNumber($("#spacing").val());
+    var noiseVal = 0;
+    var PointVisible;
+    
+    var VisibleValue = gVisibleArrayToDraw[index / 3];
+
+    if (VisibleValue < 0 )  // point outside the Viewshed range
+       return;
+
+    if (VisibleValue <= 0)
+        gRedArray.push (gPositionsArrayToDraw[index], gPositionsArrayToDraw[index + 2], gPositionsArrayToDraw[index + 1]);// // red
+    else
+        gGreenArray.push(gPositionsArrayToDraw[index], gPositionsArrayToDraw[index + 2], gPositionsArrayToDraw[index + 1]);// IconColor = "#00ff00"; // green
+    
+    // else {
+    //     if (VisibleValue == 0)
+    //         gRedArray.push (gPositionsArrayToDraw[index], gPositionsArrayToDraw[index + 2], gPositionsArrayToDraw[index + 1]);// IconColor = "#ff0000"; // red
+    //     else if (VisibleValue == 1)
+    //         gOrangeArray.push(gPositionsArrayToDraw[index], gPositionsArrayToDraw[index + 2], gPositionsArrayToDraw[index + 1]);//IconColor = "#FF6A00"; // orange
+    //     else 
+    //         gGreenArray.push(gPositionsArrayToDraw[index], gPositionsArrayToDraw[index + 2], gPositionsArrayToDraw[index + 1]);//IconColor = "#00ff00"; // green
+    // }
+
+    return;
+}
+//----------
+//    CreateFeatureLayer
+function CreateFeatureLayer() {
+
+    var spacing = 10;
+    spacing =  validateNumber($("#spacing").val());
+
+    if (gPointLayer == null) {
+        var viewshedName = gViewshedObj.TreeItem.Name+"-"+SGLang.i18n("Text7")
+        var postfix = new Date().getTime();
+        var parentGroup = TEF ? parent.projectTree.getMyDataGroup() : SGWorld.ProjectTree.RootID;
+        gPointLayer = SGWorld.Creator.CreateNewFeatureLayer(viewshedName, 0, "FileName=ViewshedQuery" + postfix + ".shp;", parentGroup);
+        gPointLayer.Streaming = false;
+        gPointLayer.BlockWidth = 500;
+        gPointLayer.Refresh();
+        gPointLayer.DataSourceInfo.Attributes.CreateAttribute('Viewshed', 1, 20, 0);
+        gPointLayer.DataSourceInfo.Attributes.CreateAttribute('Visible', 1, 20, 0);
+        gPointLayer.DataSourceInfo.Attributes.CreateAttribute('Color', 1, 20, 0);
+        gPointLayer.DataSourceInfo.Attributes.ImportAll = true;
+        gPointLayer.Visibility.MaxVisibilityDistance = gVisibilityDistance;
+        gPointLayer.FeatureGroups.Point.DisplayAs = 24; // image abel
+        gPointLayer.Save();
+        // gPointLayer.SaveInFlyFile = false;
+        gPointLayerID = gPointLayer.ID;
+
+    }  
+ 
+}
+var featureLayerStyles = {
+
+    "ImageLabel": function (size, param, param2) {
+        gPointLayer.FeatureGroups.Point.DisplayAs = 24;
+        gPointLayer.FeatureGroups.Point.SetProperty("Image file", param)
+        gPointLayer.FeatureGroups.Point.SetProperty("Image Color", param2)
+        gPointLayer.FeatureGroups.Point.SetProperty("Scale", size);
+        gPointLayer.FeatureGroups.Point.SetProperty("Altitude Method", 1);
+        gPointLayer.FeatureGroups.Point.SetProperty("Limit growth", true);
+        // PointLayer.FeatureGroups.Point.SetProperty("Tool Tip", SGLang.i18n("Text40") + ": [" + SGLang.i18n("Text40") + "]");
+    }
+   
+}
+
+//----
+// AnalyzePoint
+function AnalyzePoint(position) {
+    var a = SGWorld.Analysis.QueryPointVisibility(position);
+    
+    return a;
+}
+
+//---------------
+// flyToViewshed
+function flyToViewshed() 
+{
+    $("#ViewshedID option:selected").each(function () {
+        var viewshedID = ($(this).val());
+        SGWorld.Navigate.FlyTo (viewshedID,10);
+    });
+}
+//--------------
+var mainProgress;
+function updateProgressBar(progress) {
+    progress = Math.floor(progress);
+    if(!mainProgress || progress > mainProgress){
+        secondaryProgressCanGetSmaller = true;
+        $('#progress2 div').css('width', 0 + '%').css('height', '1.3rem');
+    }
+    else
+        secondaryProgressCanGetSmaller = false;
+    mainProgress = progress;
+
+    if(progress > 99)
+        progress = 99;
+    $('#progress div').css('width', progress + '%').text(Math.floor(progress) + '%');
+}
+//--------------
+var secondaryProgressCanGetSmaller = false;
+var prevSecondaryProgress = -1;
+function updateSecondaryProgressBar(progress) {
+    if(!secondaryProgressCanGetSmaller && progress < prevSecondaryProgress)
+        return;
+    
+    prevSecondaryProgress = progress;
+    secondaryProgressCanGetSmaller = false;
+
+    if(progress > 99)
+        progress = 99;
+    $('#progress2 div').css('width', progress + '%').css('height', '1.3rem');
+  }
+//---------------
+// ValidateInput
+function ValidateInput() {
+
+    return true;
+}
+//--------------
+// CheckNumberEx
+function CheckNumberEx(field, defVal, MinNum, MaxNum) {
+    try {
+        field.value = validateNumber(field.value);
+
+        if (field.value < MinNum)
+            field.value = MinNum;
+        if (field.value > MaxNum)
+            field.value = MaxNum;
+    }
+    catch (e) { field.value = defVal }
+}
+var objectTypeCreators = {
+    "ImageLabel": function (position, name, param)
+    {
+        TEObj = SGWorld.Creator.CreateImageLabel(position,abspath() + "/img/viewer.png", SGWorld.Creator.CreateLabelStyle(), gGroupID, name);
+        TEObj.Style.LimitScreenSize = true;
+        TEObj.Style.Scale = 1;
+        // TEObj.SaveInFlyFile = false;
+        TEObj.Style.IconColor.FromHTMLColor (param);
+        //TEObj.Visibility.MaxVisibilityDistance = $("#visibilityDistance").val();
+    },
+    "PointPolyline": function (geometry, name, param, groupID)
+    {
+        TEObj = SGWorld.Creator.CreatePolyline(geometry, param, 3, groupID, name);
+        TEObj.LineStyle.Width = ($("#calculateType").val()==2)? -1007:-1010; // new way to show only the waypoints
+        // TEObj.SaveInFlyFile = false;
+        TEObj.Visibility.MaxVisibilityDistance = 30000;
+        TEObj.LineStyle.Color.SetAlpha(0.4);
+    },
+}
+//------------------
+function queryCompleted() {
+    try {
+        SGWorld.SetParam(-22, 2); //exit async long work (clear cache terrain/3dml restore limit , restore textures and  render )
+        if (!gViewshedCalcStarted)
+            return;
+        gViewshedCalcStarted = false;
+
+        try {
+            
+        } catch (e) { }
+
+        if (TEF)
+            parent.projectTree.refreshMyData();
+            
+        if(SplitToSlicesRecOnGoing){
+            abort = true;
+            return;
+        }
+        if(calculating){
+            SGWorld.ProjectTree.DeleteItem(gGroupID);
+            gViewshedObj.Visibility.Show = true;
+        }
+
+        SGWorld.Window.HideMessageBarText();
+        
+        SGWorld.SetOptionParam ('TerrainModelQuality',gSettingQuality);
+        gMeshlayersQuality.forEach(function(element) {
+            var meshObj = SGWorld.Creator.GetObject (element[0]);
+            meshObj.Oversampling = element[1]; 
+        });
+        gImageryLayersToShow.forEach(function(element) {
+            SGWorld.ProjectTree.SetVisibility(element,true);
+        });
+        
+        var calculateType = $("#calculateType").val();
+        var numOfPoints = 0;
+        if(calculateType == 0) //green
+            numOfPoints += gGreenPointsCount;
+        if(calculateType == 1) //red
+            numOfPoints += gRedPointsCount;
+        if(calculateType == 2) //green & red
+            numOfPoints = gRedPointsCount + gGreenPointsCount;
+        $("#pointsCreatedID").text (numOfPoints)
+        $("#progressTbl").hide();
+        $("#queryCompleteTbl").show();
+    }
+    catch (e) {}
+}
+//------------------
+function SetViewshedToOriginalSize() {
+    try{
+        gViewshedObj.Position.Yaw = gOriginalViewshedYaw;
+        gViewshedObj.Position.Pitch = gOriginalViewshedPitch;
+        gViewshedObj.FieldOfViewX = gOriginalVieshedFOVX;
+        gViewshedObj.FieldOfViewY = gOriginalVieshedFOVY;
+    }
+    catch (err) {
+        if(gDebug) alert("ViewshedQuery.html -> SetViewshedToOriginalSize: " + err.message);
+    }
+}
+//------------------
+function closeTool() {
+    if(TEF)
+        parent.panel.back();
+    //else
+        // Needs popup ID
+}
+</script>
+
+</body>
+</html>
