@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <script src="./TEF/js/jquery-3.7.1.min.js"></script>
+        <script src="./TEF/js/jquery-ui.min.js"></script>
+        <link rel="stylesheet" href="./TEF/css/jquery-ui.min.css">
+        <!-- <script language="javascript" src="Tools/ToolsCommon80.js"></script> -->
+        <style>
+            body {
+                width: 100%;
+                height: 100%;
+                background-color: #ffffff;
+                border:0;
+                margin:0;
+                padding:0;
+                overflow:hidden;
+            }
+            .tef {
+                width: calc(100vw - 2px);
+                height: calc(100vh - 5px);
+                border:0;
+                margin:0;
+                padding:0;
+            }
+        </style>
+
+        <script>
+            //A ref to SGWorld API Object.
+            var SGWorld = null;
+            let project = "https://igogeovendee.igo.fr/sg/default/projects/ACC";
+            let scriptjs ="js/formation.js";
+            let scriptCss ="css/formation";
+            
+
+            //A ref to the TEF IFrame element.
+            var TEF = null;
+            $(() => {
+                TEF = document.getElementById('tef');
+                loadTEF(false);
+            });
+
+            /**
+             * Called by TEF on init.
+            */
+            function onTEFInit(event) {
+                //Gets the SGWorld object from the contentWindow of the IFrame.
+                SGWorld = TEF.contentWindow.SGWorld;
+            }
+            function loadTEF(GUI) {
+                var guiURL = (GUI) ? "" : "&script=" + scriptjs + "&css=" + scriptCss;
+                $("#tef").attr('src', "TEF/te.html?project=" + project + guiURL);
+                DisablePageScrollOnFusionIFrameFocus();
+            }
+            //Prevents page scroll on Fusion zoom/camera movement (on mouse wheel and on arrow up & down keys).
+            function DisablePageScrollOnFusionIFrameFocus(){
+                $("#tef").on("mouseover", () => {
+                    if($("body").height() > $(window).height())
+                        $('body').addClass("show-scroll");
+                    $('body').addClass("disable-scroll");
+                });
+                $("#tef").on("mouseleave", () => {
+                    $('body').removeClass("show-scroll");
+                    $('body').removeClass("disable-scroll");
+                })
+            }
+        </script>
+    </head>
+    <body>
+        <iframe id='tef' src="" class="tef" frameborder="0"></iframe>
+    </body>
+</html>

@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  	<meta charset="utf-8">
+  	<title>Popup</title>
+  	<script src="js/jquery-3.7.1.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="config.js"></script>
+	<!-- <script language="javascript" src="Tools/ToolsCommon80.js"></script> -->
+    <script src="popupFormation.html"></script>
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
+	<link rel="stylesheet" type="text/css" href="css/tableau.css">
+</head>
+<body>
+    <input type="text" name="sauvegarde" id="sauvegarde" placeholder="Nom de sauvegarde">
+    <button id="sauvegarder">Sauvegarder</button>
+    <p id="Savetips"><i>Rentrez un nom pour sauvegarder le projet</i></p>
+    <hr style="margin-bottom: 0;">
+
+    <script>
+        function filtres() {
+            var foo = document.getElementById("filtres");
+            if (foo.style.display === "block") {
+                foo.style.display = "none";
+                $("#titre-filtres").html("Filtrer &#11205;"); // Flèche vers le bas
+            } else {
+                foo.style.display = "block";
+                $("#titre-filtres").html("Filtrer &#11206;"); // Flèche vers le haut
+            }
+        }
+    </script>
+    <div id="div-titre-filtres">
+        <button id="btn-filtres" onclick="filtres()">
+            <h2 id="titre-filtres">Filtrer &#11205;</h2>
+        </button>
+    </div>
+    <div id="filtres" style="display: none;">
+        <div id="bloc-select">
+            <div class="selects">
+                <label for="owner-select">Propriétaire</label>
+                <select name="owner-select" id="owner-select" multiple></select>
+                <p><i>Utilisez CTRL + clic pour sélectionner/désélectionner plusieurs éléments</i></p>
+            </div>
+
+            <div class="selects">
+                <label for="tarif-select">Tarif</label>
+                <select name="tarif-select" id="tarif-select" multiple></select>
+                <p><i>Utilisez CTRL + clic pour sélectionner/désélectionner plusieurs éléments</i></p>
+            </div>
+        </div>
+
+        <div id="bloc-slider">
+            <div class="sliders">
+                <p>
+                    <label for="amount">Conso année précédente : </label>
+                    <input type="number" id="conso-annee-prec-amount-min" style="width:60px; color:#5d0f6d; font-weight:bold;"> -
+                    <input type="number" id="conso-annee-prec-amount-max" style="width:60px; color:#5d0f6d; font-weight:bold;">
+                </p>
+                <div id="slider-range-conso-annee-prec"></div>
+            </div>
+
+            <div class="sliders">
+                <p>
+                    <label for="amount">Puissance Souscrite Réduite : </label>
+                    <input type="number" id="psr-amount-min" style="width:60px; color:#5d0f6d; font-weight:bold;"> -
+                    <input type="number" id="psr-amount-max" style="width:60px; color:#5d0f6d; font-weight:bold;">
+                </p>
+                <div id="slider-range-psr"></div>
+            </div>
+        </div>
+        <div id="div-tout">
+            <button id="tout">Tout</button>
+        </div>
+    </div>
+    
+    <hr>
+    <h2 class="sousTitre" id="sousTitre_1">Compteurs dans le périmètre</h2>
+    <table id="table-data">
+        <thead id="thead-data"></thead>
+        <tbody id="data"></tbody>
+    </table>
+    
+    <hr>
+    <h2 class="sousTitre" id="sousTitre_2">Compteurs exclus du projet</h2>
+    <table id="table-deprecie">
+        <thead id="thead-deprecie"></thead>
+        <tbody id="deprecie"></tbody>
+    </table>
+	
+    <script>
+
+        // NE FONCTIONNE PAS COMME PREVU
+        // Si quelqu'un y arrive tant mieux mais en attendant ça peut se résumer en "h2 { text-align: center; }"
+        // L'objectif de base c'était de faire en sorte que les sous-titres soient centrés par rapport à la largeur totale de la page
+        // donc que ça reste au centre même si on scroll de gauche à droite
+
+        // const sous_titres = document.querySelectorAll(".sousTitre");
+        // const largeur_totale = document.body.clientWidth;
+        // const sous_titre_1 = document.querySelector("#sousTitre_1");
+        // const sous_titre_2 = document.querySelector("#sousTitre_2");
+        // const largeur_sous_titre_1 = sous_titre_1.clientWidth;
+        // const largeur_sous_titre_2 = sous_titre_2.clientWidth;
+        // const val_1 = (largeur_totale - largeur_sous_titre_1) / 2;
+        // const val_2 = (largeur_totale - largeur_sous_titre_2) / 2;
+        // console.log("Largeur totale :", largeur_totale);
+        // console.log("Largeur sous titre 1 :", largeur_sous_titre_1);
+        // console.log("Largeur sous titre 2 :", largeur_sous_titre_2);
+        // console.log("Valeur 1 :", val_1);
+        // console.log("Valeur 2 :", val_2);
+        // sous_titre_1.style.marginLeft = val_1 + "px";
+        // sous_titre_2.style.marginLeft = val_2 + "px";
+
+        // import { address, address_api } from "../config.js";
+
+        // Chargement du fichier de configuration pour récupérer l'adresse (en ligne ou en local)
+        const url_simple = address;
+        const url_popup_formation = address + "popupFormation.html?id=";
+        const url_api = address_api;
+
+
+        $("#thead-data").empty();
+        $("#thead-deprecie").empty();
+        $("#data").empty();
+        $("#deprecie").empty();
+        $("#owner-select").empty();
+        $("#tarif-select").empty();
+
+        function moveRow(checkbox) {
+            // Fonction pour déplacer une ligne entre les tableaux
+
+            const row = checkbox.closest('tr');
+            const currentTable = row.closest('table').id;
+            const targetTableId = currentTable === 'table-data' ? 'table-deprecie' : 'table-data';
+            const targetTable = document.getElementById(targetTableId).querySelector('tbody');
+            row.remove();
+            targetTable.appendChild(row);
+            checkbox.checked = targetTableId === 'table-data';
+        }
+
+        function addItem(dict) {
+            // Fonction pour ajouter les noms de champs aux tableaux
+
+            let ids = [];
+            $("#thead-data").empty();
+            $("#thead-deprecie").empty();
+            $("#data").empty();
+            $("#deprecie").empty();
+            $("#owner-select").empty();
+            $("#tarif-select").empty();
+
+            // Année en cours
+            const current_year = new Date().getFullYear();
+
+	        let lignes = `<tr>
+                <td></td>
+                <td class=\"htitre\">ID</td>
+                <td class=\"htitre\">Nom</td>
+                <td class=\"htitre\">Propriétaire</td>
+                <td class=\"htitre\">
+                    Conso ${current_year-1}
+                    <span class=\"tri desactive\" data-index=\"4\" >⇅</span>
+                </td>
+                <td class=\"htitre\">
+                    Conso ${current_year-2}
+                    <span class=\"tri desactive\" data-index=\"5\" >⇅</span>
+                </td>
+                <td class=\"htitre\">
+                    Conso ${current_year-3}
+                    <span class=\"tri desactive\" data-index=\"6\" >⇅</span>
+                </td>
+                <td class=\"htitre\">
+                    Conso ${current_year-4}
+                    <span class=\"tri desactive\" data-index=\"7\" >⇅</span>
+                </td>
+                <td class=\"htitre\">
+                    PSR 
+                    <span class=\"tooltip\" data-tooltip=\"Puissance Souscrite Réduite\">
+                        &#128712
+                    </span>
+                </td>
+                <td class=\"htitre\">Num. RAE PCE</td>
+                <td class=\"htitre\">Nom tarif</td>
+                <td class=\"htitre\">Invariant</td>
+            </tr>`;
+	        Object.entries(dict).forEach(([key, value]) => {
+	        	//lignes += "<tr><td class=\"value\">" + value.id + "</td><td class=\"value\">" + value.x + ", " + value.y + "</td></tr>";
+                ids.push(value.id);
+            });
+	        $("#thead-data").append(lignes);
+            $("#thead-deprecie").append(lignes);
+            chargerDonnees(ids);
+            updateMaxConsoAnneePrecedente();
+            updateMaxPSR();
+	    }
+
+        async function chargerDonnees(ids) {
+            // Fonction pour charger les données dans les tableaux
+
+            let names = [];
+            let font = "normal";
+            for (var id of ids) {
+                await new Promise(resolve => {
+                    // Pardonnez moi cette hérésie
+                    // Si ID divisible par 100000, font = bold et ID divisé par 100000
+                    if (id % 100000 === 0) {
+                        font = "bold";
+                        id = id / 100000;
+                    } else {
+                        font = "normal";
+                    }
+
+                    $.ajax({
+                        url: url_api + "pdl/" + id,
+                        method: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            if (data) {
+                                names.push(data.nom_patrimony);
+                                nom_patrimony = data.nom_patrimony;
+                                owner = data.owner;
+                                x = data.x;
+                                y = data.y;
+
+                                const totaux_par_annee = {}
+                                for (const annee in data.consommation) {
+                                    const mois = data.consommation[annee];
+                                    const total = Object.values(mois).reduce((acc, val) => acc + val, 0);
+                                    totaux_par_annee[annee] = total;
+                                }
+                                console.log("Totaux par année :", totaux_par_annee);
+
+                                // Année en cours
+                                const current_year = new Date().getFullYear();
+
+                                // Récupération des consommations pour les 4 dernières années
+                                conso_n_moins_1 = totaux_par_annee[current_year-1]+" kWh" || "-";
+                                conso_n_moins_2 = totaux_par_annee[current_year-2]+" kWh" || "-";
+                                conso_n_moins_3 = totaux_par_annee[current_year-3]+" kWh" || "-";
+                                conso_n_moins_4 = totaux_par_annee[current_year-4]+" kWh" || "-";
+
+                                puissance_souscrite_reduite = data.puissance_souscrite_reduite;
+                                num_rae_pce = data.numero_rae_pce;
+                                nom_tarif = data.nom_tarif;
+                                invariant = data.invariant;
+
+                                if ((conso_n_moins_1 === null) || (conso_n_moins_1 === "undefined kWh")) {
+                                    conso_n_moins_1 = "-";
+                                }
+                                if ((conso_n_moins_2 === null) || (conso_n_moins_2 === "undefined kWh")) {
+                                    conso_n_moins_2 = "-";
+                                }
+                                if ((conso_n_moins_3 === null) || (conso_n_moins_3 === "undefined kWh")) {
+                                    conso_n_moins_3 = "-";
+                                }
+                                if ((conso_n_moins_4 === null) || (conso_n_moins_4 === "undefined kWh")) {
+                                    conso_n_moins_4 = "-";
+                                }
+                                if (num_rae_pce === undefined || num_rae_pce === null || num_rae_pce === "") {
+                                    num_rae_pce = "-";
+                                }
+                                if (puissance_souscrite_reduite === undefined || puissance_souscrite_reduite === null || puissance_souscrite_reduite === "") {
+                                    puissance_souscrite_reduite = "-";
+                                }
+                                if (owner === "" || owner === null) {
+                                    owner = "-";
+                                }
+                                if ((nom_patrimony === "") || (nom_patrimony === null)) {
+                                    nom_patrimony = "-";
+                                }
+                                if (nom_tarif === "" || nom_tarif === null) {
+                                    nom_tarif = "-";
+                                }
+                                if (invariant === "" || invariant === null) {
+                                    invariant = "-";
+                                }
+                                if (conso_n_moins_1 === "-" || conso_n_moins_1 === "0 kWh") {
+                                    $("#deprecie").append(
+                                        `<tr onclick="
+                                            let SGWorld = parent.SGWorld;
+                                            let pos = SGWorld.Creator.CreatePosition(${x}, ${y}, 0, 2, 0, -75, 0, 1000);
+		                                    SGWorld.Navigate.FlyTo(pos, 0);
+                                            "
+                                            title="Cliquez sur la ligne pour zoomer sur le compteur">
+                                            <td class="value checkbox-arrow">
+                                                <input type="checkbox" class="test" name="test" onchange="moveRow(this)" />
+                                                <span class="arrow"></span>
+                                            </td>
+                                            <td class="value" style="font-weight: ${font}">${id}</td>
+                                            <td class="value" style="font-weight: ${font}">${nom_patrimony}</td>
+                                            <td class="value" style="font-weight: ${font}">${owner}</td>
+                                            <td class="value" style="font-weight: ${font}">${conso_n_moins_1}</td>
+                                            <td class="value" style="font-weight: ${font}">${conso_n_moins_2}</td>
+                                            <td class="value" style="font-weight: ${font}">${conso_n_moins_3}</td>
+                                            <td class="value" style="font-weight: ${font}">${conso_n_moins_4}</td>
+                                            <td class="value" style="font-weight: ${font}">${puissance_souscrite_reduite}</td>
+                                            <td class="value" style="font-weight: ${font}">${num_rae_pce}</td>
+                                            <td class="value" style="font-weight: ${font}">${nom_tarif}</td>
+                                            <td class="value" style="font-weight: ${font}">${invariant}</td>
+                                        </tr>`
+                                    );
+                                } else {
+                                    $("#data").append(
+                                        `<tr onclick="
+                                            let SGWorld = parent.SGWorld;
+                                            let pos = SGWorld.Creator.CreatePosition(${x}, ${y}, 0, 2, 0, -75, 0, 1000);
+		                                    SGWorld.Navigate.FlyTo(pos, 0);
+                                            "
+                                            title="Cliquez sur la ligne pour zoomer sur le compteur">
+                                            <td class="value checkbox-arrow">
+                                                <input type="checkbox" class="test" name="test" checked onchange="moveRow(this)" />
+                                                <span class="arrow"></span>
+                                            </td>
+                                            <td class="value" style="font-weight: ${font}">${id}</td>
+                                            <td class="value" style="font-weight: ${font}">${nom_patrimony}</td>
+                                            <td class="value" style="font-weight: ${font}">${owner}</td>
+                                            <td class="value" style="font-weight: ${font}">${conso_n_moins_1}</td>
+                                            <td class="value" style="font-weight: ${font}">${conso_n_moins_2}</td>
+                                            <td class="value" style="font-weight: ${font}">${conso_n_moins_3}</td>
+                                            <td class="value" style="font-weight: ${font}">${conso_n_moins_4}</td>
+                                            <td class="value" style="font-weight: ${font}">${puissance_souscrite_reduite}</td>
+                                            <td class="value" style="font-weight: ${font}">${num_rae_pce}</td>
+                                            <td class="value" style="font-weight: ${font}">${nom_tarif}</td>
+                                            <td class="value" style="font-weight: ${font}">${invariant}</td>
+                                        </tr>`
+                                    );
+                                }
+                                if (!$("#owner-select option[value='" + owner + "']").length) {
+                                    // Si l'option n'existe pas déjà, on l'ajoute
+                                    $("#owner-select").append(
+                                        `<option value="${owner}" selected>${owner}</option>`
+                                    );
+                                }
+                                if (!$("#tarif-select option[value='" + nom_tarif + "']").length) {
+                                    // Si l'option n'existe pas déjà, on l'ajoute
+                                    $("#tarif-select").append(
+                                        `<option value="${nom_tarif}" selected>${nom_tarif}</option>`
+                                    );
+                                }
+                                
+                            } else {
+                                console.error("Réponse inattendue :", data);
+                            }
+                            updateMaxConsoAnneePrecedente();
+                            updateMaxPSR();
+                            resolve();
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Erreur AJAX :", error);
+                            resolve();
+                        }
+                    });
+                });
+            }
+            updateMaxConsoAnneePrecedente();
+            updateMaxPSR();
+        
+            let seenIds = new Set();
+            const data = $("#data tr");
+            const deprecie = $("#deprecie tr");
+            const data_lignes = $("#data").find("tr");
+            const deprecie_lignes = $("#deprecie").find("tr");
+
+            // Supprimer les doublons dans les tableaux
+            data_lignes.each(function() {
+                let $row = $(this);
+                let id = $row.find("td").eq(1).text().trim();
+                if (seenIds.has(id)) {
+                    $row.remove();
+                } else {
+                    seenIds.add(id);
+                }
+            });
+            deprecie_lignes.each(function() {
+                let $row = $(this);
+                let id = $row.find("td").eq(1).text().trim();
+                if (seenIds.has(id)) {
+                    $row.remove();
+                } else {
+                    seenIds.add(id);
+                }
+            });
+
+            return names;
+        }
+
+        var turn = 0;
+        function updateMaxConsoAnneePrecedente() {
+            // Fonction pour mettre à jour le maximum du slider de consommation de l'année précédente
+
+            let nbData = $("#data tr").length - 1;      // -1 pour ignorer l'en-tête
+            let nbDeprecie = $("#deprecie tr").length - 1;
+            let total = nbData + nbDeprecie;
+            let max = 0;
+            // Parcourt toutes les lignes des deux tableaux (sauf l'en-tête)
+            $("#data tr, #deprecie tr").each(function(index) {
+                if (index === 0) return; // Ignore l'en-tête
+                let conso = $(this).find("td").eq(4).text().replace(" kWh", "").replace("-", "").trim();
+                let val = parseInt(conso);
+                if (!isNaN(val) && val > max) max = val;
+                max += 1000; // Ajoute 1000 pour avoir une marge de sécurité
+            });
+            // Met à jour le slider et l'input max
+            $("#slider-range-conso-annee-prec").slider("option", "max", max);
+            if (turn <= total) {
+                $("#conso-annee-prec-amount-max").attr("max", max).val(max);
+                turn++;
+            }
+            // Met à jour les valeurs du slider pour couvrir toute la plage
+            // $("#slider-range-conso-annee-prec").slider("values", [0, 50000]);
+            // $("#conso-annee-prec-amount-min").val(0);
+            let currentMin = parseInt($("#conso-annee-prec-amount-min").val()) || 0;
+            let currentMax = parseInt($("#conso-annee-prec-amount-max").val()) || 0;
+            if (currentMax > max) {
+                //$("#conso-annee-prec-amount-max").val(max);
+                $("#slider-range-conso-annee-prec").slider("values", [currentMin, max]);
+            } else {
+                $("#conso-annee-prec-amount-min").val(currentMin);
+                $("#conso-annee-prec-amount-max").val(currentMax);
+                $("#slider-range-conso-annee-prec").slider("values", [currentMin, currentMax]);
+            }
+        }
+
+        var turn2 = 0;
+        function updateMaxPSR() {
+            // Fonction pour mettre à jour le maximum du slider de Puissance Souscrite Réduite (PSR)
+
+            let nbData = $("#data tr").length - 1;      // -1 pour ignorer l'en-tête
+            let nbDeprecie = $("#deprecie tr").length - 1;
+            let total = nbData + nbDeprecie;
+            let max = 0;
+            // Parcourt toutes les lignes des deux tableaux (sauf l'en-tête)
+            $("#data tr, #deprecie tr").each(function(index) {
+                if (index === 0) return; // Ignore l'en-tête
+                let psr = $(this).find("td").eq(8).text().replace(" kWh", "").replace("-", "").trim();
+                let val = parseInt(psr);
+                if (!isNaN(val) && val > max) max = val;
+                max += 10; // Ajoute 10 pour avoir une marge de sécurité
+            });
+            // Met à jour le slider et l'input max
+            $("#slider-range-psr").slider("option", "max", max);
+            if (turn2 <= total) {
+                $("#psr-amount-max").attr("max", max).val(max);
+                turn2++;
+            }
+            // Met à jour les valeurs du slider pour couvrir toute la plage
+            // $("#slider-range-psr").slider("values", [0, 50000]);
+            // $("#conso-annee-prec-amount-min").val(0);
+            let currentMin = parseInt($("#psr-amount-min").val()) || 0;
+            let currentMax = parseInt($("#psr-amount-max").val()) || 0;
+            if (currentMax > max) {
+                //$("#conso-annee-prec-amount-max").val(max);
+                $("#slider-range-psr").slider("values", [currentMin, max]);
+            } else {
+                $("#psr-amount-min").val(currentMin);
+                $("#psr-amount-max").val(currentMax);
+                $("#slider-range-psr").slider("values", [currentMin, currentMax]);
+            }
+        }
+
+        // Initialisation des sliders pour la consommation de l'année précédente et la Puissance Souscrite Réduite (PSR)
+        $(function() {
+            $("#slider-range-conso-annee-prec").slider({
+                range: true,
+                min: 0,
+                max: 1,
+                values: [0, 1],
+                slide: function(event, ui) {
+                    $("#conso-annee-prec-amount-min").val(ui.values[0]);
+                    $("#conso-annee-prec-amount-max").val(ui.values[1]);
+                }
+            });
+            $("#conso-annee-prec-amount-min").val($("#slider-range-conso-annee-prec").slider("values", 0));
+            $("#conso-annee-prec-amount-max").val($("#slider-range-conso-annee-prec").slider("values", 1));
+            $("#conso-annee-prec-amount-min, #conso-annee-prec-amount-max").on("input change", function() {
+                let min = parseInt($("#conso-annee-prec-amount-min").val()) || 0;
+                let max = parseInt($("#conso-annee-prec-amount-max").val()) || 0;
+                if (min > max) min = max;
+                $("#slider-range-conso-annee-prec").slider("values", [min, max]);
+            });
+
+            // function filterBySlider() {
+            //     let min = parseInt($("#conso-annee-prec-amount-min").val()) || 0;
+            //     let max = parseInt($("#conso-annee-prec-amount-max").val()) || 0;
+            //     $("#data tr").each(function(index) {
+            //         if (index === 0) return; // Ignore l'en-tête
+            //         let conso = $(this).find("td").eq(4).text().replace(" kWh", "").replace("-", "").trim();
+            //         let consoVal = parseInt(conso) || 0;
+            //         if (consoVal < min || consoVal > max) {
+            //             $("#deprecie").append($(this));
+            //             $(this).find('input[type="checkbox"]').prop('checked', false);
+            //         }
+            //     });
+
+            //     $("#deprecie tr").each(function(index) {
+            //         if (index === 0) return; // Ignore l'en-tête
+            //         let conso = $(this).find("td").eq(4).text().replace(" kWh", "").replace("-", "").trim();
+            //         let consoText = $(this).find("td").eq(4).text().trim();
+            //         let consoVal = parseInt(conso) || 0;
+            //         if (consoVal >= min && consoVal <= max && consoText !== "0 kWh" && consoText !== "-") {
+            //             $("#data").append($(this));
+            //             $(this).find('input[type="checkbox"]').prop('checked', true);
+            //         }
+            //     });
+            //     updateMaxConsoAnneePrecedente();
+            // }
+
+            // // Appelle le filtre à chaque changement du slider ou des inputs
+            // $("#slider-range-conso-annee-prec").on("slide", filterBySlider);
+            // $("#conso-annee-prec-amount-min, #conso-annee-prec-amount-max").on("input change", filterBySlider);
+        });
+
+        // Initialisation des sliders pour la Puissance Souscrite Réduite (PSR)
+        $(function() {
+            $("#slider-range-psr").slider({
+                range: true,
+                min: 0,
+                max: 1,
+                values: [0, 1],
+                slide: function(event, ui) {
+                    $("#psr-amount-min").val(ui.values[0]);
+                    $("#psr-amount-max").val(ui.values[1]);
+                }
+            });
+            $("#psr-amount-min").val($("#slider-range-psr").slider("values", 0));
+            $("#psr-amount-max").val($("#slider-range-psr").slider("values", 1));
+            $("#psr-amount-min, #psr-amount-max").on("input change", function() {
+                let min = parseInt($("#psr-amount-min").val()) || 0;
+                let max = parseInt($("#psr-amount-max").val()) || 0;
+                if (min > max) min = max;
+                $("#slider-range-psr").slider("values", [min, max]);
+            });
+        });
+        
+        window.addEventListener("message", function(event) {
+            // Reçoit les données à intégrer dans les tableaux
+
+            if (event.data.type === "nouveau") {
+                const donnees = event.data.donnees;
+                if (donnees && typeof donnees === 'object') {
+                    addItem(donnees);
+                } else {
+                    console.error("Les données reçues ne sont pas valides ou sont vides.");
+                }
+            }
+        });
+
+        var etat = 0; // 0 - désactivé; 1 - activé bas; 2 - activé haut
+        $(document).on("click", ".tri", function() {
+            // Fonction pour gérer le tri des données dans le tableau
+
+            let $this = $(this);
+            let colIndex = parseInt($this.data("index")); // Récupérer l'index de la colonne à trier
+
+            // Remettre tous les autres .tri du même tableau à l'état 0
+            $this.closest("table").find(".tri").not($this).each(function() {
+                $(this)
+                    .data("etat", 0)
+                    .removeClass("active-bas active-haut")
+                    .addClass("desactive")
+                    .html("⇅");
+            });
+
+            let etat = $this.data("etat") || 0; // Récupérer l'état actuel ou initialiser à 0
+
+            $this.html("");
+            // Changer l'état de l'icône et mettre à jour la flèche
+            if (etat === 0) {
+                $this.removeClass("desactive").addClass("active-bas").html("↓");
+                etat = 1;
+            } else if (etat === 1) {
+                $this.removeClass("active-bas").addClass("active-haut").html("↑");
+                etat = 2;
+            } else {
+                $this.removeClass("active-haut").addClass("desactive").html("⇅");
+                etat = 0;
+            }
+            $this.data("etat", etat); // Mettre à jour l'état dans l'élément cliqué
+
+            let tbody = $this.closest("table").find("tbody");
+            let rows = tbody.find("tr").get();
+
+            // Trier les lignes en fonction de l'état et de la colonne sélectionnée
+            rows.sort(function(a, b) {
+                let keyA = $(a).find(".value").eq(colIndex).text();
+                let keyB = $(b).find(".value").eq(colIndex).text();
+                let keyNomA = $(a).find(".value").eq(2).text().toLowerCase(); // Nom
+                let keyNomB = $(b).find(".value").eq(2).text().toLowerCase(); // Nom
+
+                if (etat === 1 || etat === 2) {
+                    if (keyA === "-") return 1;
+                    if (keyB === "-") return -1;
+                }
+                
+                if (etat === 1) {
+                    // Tri croissant conso année précédente, tri alphabétique sur Nom si égalité
+                    let diff = parseFloat(keyA) - parseFloat(keyB); // Tri croissant
+                    if (diff === 0) {
+                        return keyNomA.localeCompare(keyNomB);
+                    }
+                    return diff;
+                } else if (etat === 2) {
+                    // Tri décroissant conso année précédente, tri alphabétique sur Nom si égalité
+                    let diff = parseFloat(keyB) - parseFloat(keyA); // Tri croissant
+                    if (diff === 0) {
+                        return keyNomA.localeCompare(keyNomB);
+                    }
+                    return diff;
+                } else {
+                    return keyNomA.localeCompare(keyNomB);
+                }
+            });
+            $.each(rows, function(index, row) {
+                tbody.append(row);
+            });
+        });
+
+        // Filtrage dynamique selon la sélection du propriétaire
+        //$("#owner-select").on("change", function() {
+            // let selectedOwners = $(this).val() || [];
+
+            // // Parcourt chaque ligne du tableau #data (sauf l'en-tête)
+            // $("#data tr").each(function(index) {
+            //     if (index === 0) return; // Ignore l'en-tête
+            //     let owner = $(this).find("td").eq(3).text().trim();
+            //     if (!selectedOwners.includes(owner)) {
+            //         $("#deprecie").append($(this));
+            //         // décoche la case si besoin
+            //         $(this).find('input[type="checkbox"]').prop('checked', false);
+            //     }
+            // });
+
+            // $("#deprecie tr").each(function(index) {
+            //     if (index === 0) return; // Ignore l'en-tête
+            //     let owner = $(this).find("td").eq(3).text().trim();
+            //     let consoNmoins1 = $(this).find("td").eq(4).text().trim();
+            //     if (selectedOwners.includes(owner) && consoNmoins1 !== "0 kWh" && consoNmoins1 !== "-") {
+            //         $("#data").append($(this));
+            //         // coche la case si besoin
+            //         $(this).find('input[type="checkbox"]').prop('checked', true);
+            //     }
+            // });
+        //     updateMaxConsoAnneePrecedente();
+        // });
+
+        // Filtrage dynamique selon la sélection du propriétaire
+        // $("#tarif-select").on("change", function() {
+            // let selectedTarifs = $(this).val() || [];
+
+            // // Parcourt chaque ligne du tableau #data (sauf l'en-tête)
+            // $("#data tr").each(function(index) {
+            //     if (index === 0) return; // Ignore l'en-tête
+            //     let tarif = $(this).find("td").eq(10).text().trim();
+            //     if (!selectedTarifs.includes(tarif)) {
+            //         $("#deprecie").append($(this));
+            //         // décoche la case si besoin
+            //         $(this).find('input[type="checkbox"]').prop('checked', false);
+            //     }
+            // });
+
+            // $("#deprecie tr").each(function(index) {
+            //     if (index === 0) return; // Ignore l'en-tête
+            //     let tarif = $(this).find("td").eq(10).text().trim();
+            //     let consoNmoins1 = $(this).find("td").eq(4).text().trim();
+            //     if (selectedTarifs.includes(tarif) && consoNmoins1 !== "0 kWh" && consoNmoins1 !== "-") {
+            //         $("#data").append($(this));
+            //         // coche la case si besoin
+            //         $(this).find('input[type="checkbox"]').prop('checked', true);
+            //     }
+            // });
+        //     updateMaxConsoAnneePrecedente();
+        // });
+
+        // Pour appliquer le filtre après ajout de lignes (optionnel)
+        function applyOwnerFilter() {
+            $("#owner-select").trigger("change");
+        }
+        applyOwnerFilter();
+
+        // Sélectionner toutes les options quand le bouton "Tout" est cliqué
+        $("#tout").on("click", function() {
+            $("#owner-select option").prop("selected", true);
+            $("#owner-select").trigger("change");
+            $("#tarif-select option").prop("selected", true);
+            $("#tarif-select").trigger("change");
+            $("#conso-annee-prec-amount-min").val(0);
+            $("#conso-annee-prec-amount-max").val($("#slider-range-conso-annee-prec").slider("option", "max"));
+            $("#slider-range-conso-annee-prec").slider("values", [0, $("#slider-range-conso-annee-prec").slider("option", "max")]);
+            $("#psr-amount-min").val(0);
+            $("#psr-amount-max").val($("#slider-range-psr").slider("option", "max"));
+            $("#slider-range-psr").slider("values", [0, $("#slider-range-psr").slider("option", "max")]);
+        });
+
+        function triggerZoom() {
+            // J'ai aucune idée d'à quoi ça sert mais dans le doute touchez y pas svp
+            element.classList.remove('zoom'); // reset animation
+            void element.offsetWidth; // force reflow
+            element.classList.add('zoom');
+            count++;
+            if (count < maxRepeats) {
+                setTimeout(triggerZoom, 1000); // durée de l'animation
+            }
+        }
+
+
+        $("#sauvegarder").on("click", function() {
+            // Sauvegarde du projet
+
+            let nomSauvegarde = $("#sauvegarde").val().trim();
+            if (nomSauvegarde != "") { // Si un nom de sauvegarde est entré
+                // 1. Sauvegarde des tableaux
+                let data = [];
+                $("#data tr").each(function(index) {
+                    let row = $(this);
+                    let firstTd = row.find("td").eq(1);
+                    let fontWeight = firstTd.css("font-weight");
+                    let producteur = false;
+                    if (fontWeight === "700") {
+                        producteur = true; // Si la première cellule est en gras, c'est un producteur
+                    }
+                    data.push({
+                        id: row.find("td").eq(1).text().trim(),
+                        nom: row.find("td").eq(2).text().trim(),
+                        owner: row.find("td").eq(3).text().trim(),
+                        consoNmoins1: row.find("td").eq(4).text().trim(),
+                        consoNmoins2: row.find("td").eq(5).text().trim(),
+                        consoNmoins3: row.find("td").eq(6).text().trim(),
+                        consoNmoins4: row.find("td").eq(7).text().trim(),
+                        psr: row.find("td").eq(8).text().trim(),
+                        numRaePce: row.find("td").eq(9).text().trim(),
+                        nomTarif: row.find("td").eq(10).text().trim(),
+                        invariant: row.find("td").eq(11).text().trim(),
+                        producteur: producteur
+                    });
+                });
+                let deprecie = [];
+                $("#deprecie tr").each(function(index) {
+                    let row = $(this);
+                    let firstTd = row.find("td").eq(1);
+                    let fontWeight = firstTd.css("font-weight");
+                    let producteur = false;
+                    if (fontWeight === "700") {
+                        producteur = true; // Si la première cellule est en gras, c'est un producteur
+                    }
+                    deprecie.push({
+                        id: row.find("td").eq(1).text().trim(),
+                        nom: row.find("td").eq(2).text().trim(),
+                        owner: row.find("td").eq(3).text().trim(),
+                        consoNmoins1: row.find("td").eq(4).text().trim(),
+                        consoNmoins2: row.find("td").eq(5).text().trim(),
+                        consoNmoins3: row.find("td").eq(6).text().trim(),
+                        consoNmoins4: row.find("td").eq(7).text().trim(),
+                        psr: row.find("td").eq(8).text().trim(),
+                        numRaePce: row.find("td").eq(9).text().trim(),
+                        nomTarif: row.find("td").eq(10).text().trim(),
+                        invariant: row.find("td").eq(11).text().trim(),
+                        producteur: producteur
+                    });
+                });
+
+                // 2. Sauvegarde des filtres
+                let filters = {
+                    owners: $("#owner-select").val() || [],
+                    tarifs: $("#tarif-select").val() || [],
+                    consoMin: $("#conso-annee-prec-amount-min").val(),
+                    consoMax: $("#conso-annee-prec-amount-max").val(),
+                    psrMin: $("#psr-amount-min").val(),
+                    psrMax: $("#psr-amount-max").val()
+                };
+
+                // 3. Sauvegarde des tris
+                function getTriData() {
+                    let tri_data = null;
+                    $("#thead-data .tri").each(function() {
+                        let etat = $(this).data("etat") || 0;
+                        if (etat && etat !== 0) {
+                            tri_data = {
+                                colIndex: $(this).data("index"),
+                                etat: etat
+                            };
+                        }
+                    });
+                    return tri_data;
+                }
+
+                function getTriDeprecie() {
+                    let tri_deprecie = null;
+                    $("#thead-deprecie .tri").each(function() {
+                        let etat = $(this).data("etat") || 0;
+                        if (etat && etat !== 0) {
+                            tri_deprecie = {
+                                colIndex: $(this).data("index"),
+                                etat: etat
+                            };
+                        }
+                    });
+                    return tri_deprecie;
+                }
+                let tri_data = getTriData();
+                let tri_deprecie = getTriDeprecie();
+
+                // 4. Stockage dans le localStorage
+                let sauvegarde = {
+                    data: data,
+                    deprecie: deprecie,
+                    filters: filters,
+                    tri_data: tri_data,
+                    tri_deprecie: tri_deprecie
+                };
+                localStorage.setItem("sauvegarde_" + nomSauvegarde, JSON.stringify(sauvegarde));
+
+                alert("Projet sauvegardé sous le nom : " + nomSauvegarde);
+                window.parent.postMessage({
+                    url: "popupFormation.html"
+                }, "*");
+                return;
+            } else {
+                const element = document.getElementById("Savetips");
+                element.classList.add('zoom');
+                setTimeout(function() {
+                    element.classList.remove('zoom');
+                }, 500); // durée de l'animation
+                return;
+            }
+        });
+
+        function applyAllFilters() {
+            // Applique tous les filtres en fonction des sélections et des valeurs des sliders
+            let selectedOwners = $("#owner-select").val() || [];
+            let selectedTarifs = $("#tarif-select").val() || [];
+            let min = parseInt($("#conso-annee-prec-amount-min").val()) || 0;
+            let max = parseInt($("#conso-annee-prec-amount-max").val()) || 0;
+            let psrMin = parseInt($("#psr-amount-min").val()) || 0;
+            let psrMax = parseInt($("#psr-amount-max").val()) || 0;
+
+            // Sélectionne toutes les lignes SAUF la première (en-tête) dans chaque tbody
+            $("#data tr, #deprecie tr").each(function() {
+                let $row = $(this);
+                let owner = $row.find("td").eq(3).text().trim();
+                let tarif = $row.find("td").eq(10).text().trim();
+                let consoText = $row.find("td").eq(4).text().trim();
+                let conso = consoText.replace(" kWh", "").replace("-", "").trim();
+                let consoVal = parseInt(conso) || 0;
+                let psrText = $row.find("td").eq(8).text().trim();
+                let psrVal = parseInt(psrText) || 0;
+
+                let ownerOk = selectedOwners.length === 0 || selectedOwners.includes(owner);
+                let tarifOk = selectedTarifs.length === 0 || selectedTarifs.includes(tarif);
+                let consoOk = consoVal >= min && consoVal <= max && consoText !== "0 kWh" && consoText !== "-";
+                let psrOk = psrVal >= psrMin && psrVal <= psrMax;
+
+                if (ownerOk && tarifOk && consoOk && psrOk) {
+                    $("#data").append($row);
+                    $row.find('input[type="checkbox"]').prop('checked', true);
+                } else {
+                    $("#deprecie").append($row);
+                    $row.find('input[type="checkbox"]').prop('checked', false);
+                }
+            });
+            updateMaxConsoAnneePrecedente();
+            updateMaxPSR();
+        }
+
+        $("#owner-select, #tarif-select").on("change", applyAllFilters);
+        $("#slider-range-conso-annee-prec").on("slide", applyAllFilters);
+        $("#slider-range-psr").on("slide", applyAllFilters);
+        $("#conso-annee-prec-amount-min, #conso-annee-prec-amount-max").on("input change", applyAllFilters);
+        $("#psr-amount-min, #psr-amount-max").on("input change", applyAllFilters);
+    </script>
+</body>
+</html>
+

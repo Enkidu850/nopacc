@@ -1,4 +1,4 @@
-var startPage={render:function(cb){var version=SGWorld.Version.Major+"."+SGWorld.Version.Minor+"."+SGWorld.Version.Build+"."+SGWorld.Version.Freeze;try{fetch("custom/TEConfig.json",{method:"GET",headers:{Accept:"application/json"}}).then(response=>response.json()).then(response=>{var demoPorjects="",HelpPanels=(void 0!==response.DemoProjects&&response.DemoProjects.forEach(element=>{demoPorjects+=`<div class='grid2 gridPaddingExtra link hoverHighlight' onclick='application.openDemoProjectURL("${element.projectUrl}")'>
+var startPage={render:function(cb){var version=SGWorld.Version.Major+"."+SGWorld.Version.Minor+"."+SGWorld.Version.Build+"."+SGWorld.Version.Freeze;try{fetch("TEConfig.json",{method:"GET",headers:{Accept:"application/json"}}).then(response=>response.json()).then(response=>{var demoPorjects="",HelpPanels=(void 0!==response.DemoProjects&&response.DemoProjects.forEach(element=>{demoPorjects+=`<div class='grid2 gridPaddingExtra link hoverHighlight' onclick='application.openDemoProjectURL("${element.projectUrl}")'>
                                             <div > <img class='startPageDemoImg' src='${element.projectImageURL}' ></div>
                                             <div> 
                                                 <p class='s14 bold'>${element.projectName}</p>
@@ -19,7 +19,7 @@ var startPage={render:function(cb){var version=SGWorld.Version.Major+"."+SGWorld
                                 <div class="link hoverHighlight" onclick="window.location.href ='./licenseAgreement.html'"><img src="./images/icons/startPageLicense.svg">${Lang.startPage.license}</div>
                                 <div>${Lang.startPage.version}  ${version}</div>
                                 <div>${Lang.startPage.copyright}</div>
-                                <div><img class="w70" src="./custom/logo.png"></div>
+                                <div><img class="w70" src="logo.png"></div>
                             </div>
                         </div>
 

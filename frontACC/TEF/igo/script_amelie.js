@@ -1,0 +1,1 @@
+analysis.addAnalysisTool ({id:'myToolBtnID1',name:'Amélie tool',title:'My analysis tool',icon:'tools/MyAnalysisTool/myTool.png',action:`analysis.openAnalysisToolURL('igo/addingTool_ad.html','My tool',true)`});

@@ -1,0 +1,4 @@
+**/bin
+**/obj
+ApiACC/appsettings.Development.json
+ApiACC/appsettings.json
